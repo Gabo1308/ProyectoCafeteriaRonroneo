@@ -1,41 +1,40 @@
 <?php
-class actor
+class producto
 {
     public function index()
     {
         try {
             $response = new Response();
-            //Obtener el listado del Modelo
-            $genero = new ActorModel();
-            $result = $genero->all();
-            //Dar respuesta
+            $producto = new ProductoModel();
+            $result = $producto->all();
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
+
     public function get($param)
     {
         try {
             $response = new Response();
-            $genero = new ActorModel();
-            $result = $genero->get($param);
-            //Dar respuesta
+            $producto = new ProductoModel();
+            $result = $producto->get($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
-    public function getActorMovie($id)
+
+    public function getByCategoria($param)
     {
         try {
             $response = new Response();
-            $genero = new ActorModel();
-            $result = $genero->getActorMovie($id);
-            //Dar respuesta
+            $producto = new ProductoModel();
+            $result = $producto->getByCategoria($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 }
+
