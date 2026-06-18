@@ -11,10 +11,10 @@ export function Home() {
         color="text.primary" 
         gutterBottom 
       > 
-        Alquiler de Peliculas 
+        Cafeteria Ronroneo 
         </Typography> 
       <Typography variant="h5" align="center" color="text.secondary"> 
-        Descubre y alquila tus películas favoritas por días.
+        Disfrute de una buena comida
       </Typography> 
     </Container> 
   ); 

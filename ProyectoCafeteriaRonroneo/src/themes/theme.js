@@ -3,14 +3,14 @@ export const appTheme= createTheme  ({
   palette: { 
     mode: 'light', 
     primary: { 
-      main: '#468B97', 
+      main: '#8B5E3C', 
     }, 
     secondary: { 
-      main: '#1D5B79', 
+      main: '#D4A574', 
     }, 
     primaryLight: { 
-        main: "#95C7DE", 
-        contrastText: "#F3AA60"  
+        main: "#E8D5B5", 
+        contrastText: "#5C3A21"  
       } 
   }, 
 });
