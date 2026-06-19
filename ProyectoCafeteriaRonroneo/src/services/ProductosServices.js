@@ -1,6 +1,6 @@
 import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BASE_URL + 'producto';
-class ProductoService {
+class ProductosServices {
   getProductos() {
     return axios.get(BASE_URL);
   }
@@ -11,4 +11,4 @@ class ProductoService {
     return axios.get(BASE_URL + '/getByCategoria/' + CategoriaId);
   }
 }
-export default new ProductosService();
+export default new ProductosServices();
