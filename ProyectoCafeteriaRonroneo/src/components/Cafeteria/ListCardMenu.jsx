@@ -36,8 +36,9 @@ export function ListCardMenu({ data }) {
               />
               <CardMedia
                 component="img"
-                image={`${BASE_URL}/${item.imagen}`}
+                image={`${BASE_URL}/${item.Imagen}`}
                 alt={item.Nombre}
+                sx={{ width: 250, height: 160, objectFit: 'cover', mx: 'auto', mt: 1, borderRadius: 1 }}
               />
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>

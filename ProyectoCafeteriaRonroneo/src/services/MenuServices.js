@@ -13,5 +13,8 @@ class MenuServices {
   getCombosByMenu(MenuId) {
     return axios.get(BASE_URL + '/getCombos/' + MenuId);
   }
+  getProductosMenu() {
+    return axios.get(BASE_URL + '/getProductos');
+  }
 }
 export default new MenuServices();

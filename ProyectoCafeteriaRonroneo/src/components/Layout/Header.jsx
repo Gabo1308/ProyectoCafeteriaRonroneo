@@ -53,6 +53,7 @@ export default function Header() {
     { name: "Productos", link: "/catalog-productos/" },
     { name: "Combos", link: "/catalog-combos/" },
     { name: "Menú", link: "/catalog-menu/" },
+    { name: "Menú disponible", link: "/menu-disponible/" },
     { name: "Preparación", link: "/catalog-preparacion/" },
   ];
 
