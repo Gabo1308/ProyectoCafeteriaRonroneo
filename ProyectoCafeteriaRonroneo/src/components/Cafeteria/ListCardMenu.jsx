@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Grid from '@mui/material/Grid';
@@ -16,6 +17,8 @@ ListCardMenu.propTypes = {
 };
 
 export function ListCardMenu({ data }) {
+  const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
+
   return (
     <Grid container sx={{ p: 2 }} spacing={3}>
       {data &&
@@ -30,6 +33,11 @@ export function ListCardMenu({ data }) {
                 }}
                 style={{ textAlign: 'center' }}
                 title={item.Nombre}
+              />
+              <CardMedia
+                component="img"
+                image={`${BASE_URL}/${item.imagen}`}
+                alt={item.Nombre}
               />
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>

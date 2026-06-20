@@ -10,6 +10,7 @@ import { CatalogProductos } from "./components/Cafeteria/CatalogProductos.jsx";
 import { CatalogCombos } from "./components/Cafeteria/CatalogCombos.jsx";
 import { CatalogMenu } from "./components/Cafeteria/CatalogMenu.jsx";
 import { CatalogPreparacion } from "./components/Cafeteria/CatalogPreparacion.jsx";
+import { DetalleProductos } from './components/Cafeteria/DetalleProductos.jsx';
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -38,6 +39,10 @@ const rutas = createBrowserRouter(
         {
           path: '/catalog-preparacion/',
           element: <CatalogPreparacion />,
+        },
+        {
+          path: '/producto/:id',
+          element: <DetalleProductos />,
         },
       ], 
     }, 

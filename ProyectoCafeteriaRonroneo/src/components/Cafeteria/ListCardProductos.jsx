@@ -23,7 +23,7 @@ export function ListCardProductos({ data, isShopping }) {
       {data &&
         data.map((item) => (
           <Grid size={4} key={item.IdProducto}>
-            <Card>
+            <Card sx={{ border: '2px solid', borderColor: 'secondary.main' }}>
               <CardHeader
                 sx={{
                   p: 0,
@@ -38,16 +38,12 @@ export function ListCardProductos({ data, isShopping }) {
                 component="img"
                 image={`${BASE_URL}/${item.Imagen}`}
                 alt={item.Nombre}
+                sx={{ width: 250, height: 160, objectFit: 'cover', mx: 'auto', mt: 1, borderRadius: 1 }}
               />
               <CardContent>
                 <Typography variant="body2" color="text.secondary">
                   {item.Descripcion}
-                </Typography>
-                {isShopping && (
-                  <Typography variant="h6" align="right" gutterBottom>
-                    &cent;{item.Precio}
-                  </Typography>
-                )}
+                </Typography> 
               </CardContent>
               <CardActions
                 disableSpacing
@@ -55,6 +51,11 @@ export function ListCardProductos({ data, isShopping }) {
                   backgroundColor: (theme) => theme.palette.action.focus,
                 }}
               >
+                {isShopping && (
+                  <Typography variant="h6" align="right" gutterBottom>
+                    &cent;{item.Precio}
+                  </Typography>
+                )}
                 <IconButton
                   component={Link}
                   to={`/producto/${item.IdProducto}`}

@@ -12,9 +12,6 @@ export function CatalogProductos() {
   useEffect(() => {
     ProductoService.getProductos()
       .then((response) => {
-        console.log(typeof response.data);
-        console.log(Array.isArray(response.data));
-        console.log(response.data);
         setData(response.data);
         setError(response.error);
         setLoaded(true);       
@@ -31,6 +28,6 @@ export function CatalogProductos() {
   if(!loaded) return <p>Cargando..</p>
   if(error) return <p>Error: {error.message}</p>
   return <>
-    {data && <ListCardProductos data={data} isShopping={false} />}
+    {data && <ListCardProductos data={data} isShopping={true} />}
   </>
 }
