@@ -1,12 +1,12 @@
 <?php
-class producto
+class menu
 {
     public function index()
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->all();
+            $model = new MenuModel();
+            $result = $model->all();
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
@@ -17,24 +17,35 @@ class producto
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->get($param);
+            $model = new MenuModel();
+            $result = $model->get($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 
-    public function getByCategoria($param)
+    public function getDisponible()
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->getByCategoria($param);
+            $model = new MenuModel();
+            $result = $model->getDisponible();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function getCombos($param)
+    {
+        try {
+            $response = new Response();
+            $model = new MenuModel();
+            $result = $model->getCombos($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 }
-

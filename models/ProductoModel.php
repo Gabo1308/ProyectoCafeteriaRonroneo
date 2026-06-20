@@ -18,10 +18,12 @@ class ProductoModel
         }
     }
 
-    public function get($id)
-    {
+    public function get($id){
         try {
-            $vSql = "SELECT * FROM productos WHERE IdProducto=$id;";
+            $vSql = "SELECT p.*, c.Nombre as Categoria
+                    FROM productos p
+                    INNER JOIN categoria c ON p.IdCategoria = c.IdCategoria
+                    WHERE p.IdProducto=$id;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             return $vResultado[0];
         } catch (Exception $e) {

@@ -1,12 +1,12 @@
 <?php
-class producto
+class combo
 {
     public function index()
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->all();
+            $model = new ComboModel();
+            $result = $model->all();
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
@@ -17,24 +17,23 @@ class producto
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->get($param);
+            $model = new ComboModel();
+            $result = $model->get($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 
-    public function getByCategoria($param)
+    public function getProductos($param)
     {
         try {
             $response = new Response();
-            $producto = new ProductoModel();
-            $result = $producto->getByCategoria($param);
+            $model = new ComboModel();
+            $result = $model->getProductos($param);
             $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
     }
 }
-
