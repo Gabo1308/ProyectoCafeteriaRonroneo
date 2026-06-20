@@ -6,11 +6,11 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ComboService from '../../services/CombosServices';
 
 export function DetalleCombos() {
@@ -41,19 +41,20 @@ export function DetalleCombos() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Container component="main" sx={{ mt: 6, mb: 4 }}>
+    <Container component="main" sx={{ mt: 6, mb: 5 }}>
       {combo && (
         <Grid container spacing={3}>
-          <Grid size={5}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <Box
               component="img"
               src={`${import.meta.env.VITE_BASE_URL}uploads/${combo.Imagen}`}
               alt={combo.Nombre}
-              sx={{ width: '100%', borderRadius: 2 }}
+              sx={{ width: '100%', borderRadius: 2, maxHeight: 360, objectFit: 'cover' }}
             />
           </Grid>
-          <Grid size={7}>
-            <Typography variant="h4" component="h1" gutterBottom>
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Chip icon={<LocalOfferIcon />} label="Combo especial" color="secondary" sx={{ mb: 2 }} />
+            <Typography variant="h4" component="h1" gutterBottom color="primary.main">
               {combo.Nombre}
             </Typography>
             <Typography color="text.secondary" gutterBottom>
@@ -62,22 +63,30 @@ export function DetalleCombos() {
             <Typography variant="subtitle1" gutterBottom>
               Menu: {combo.MenuNombre}
             </Typography>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom color="primary.main">
               Precio: &cent;{combo.Precio}
             </Typography>
-            <Card sx={{ mt: 2 }}>
+            <Card variant="outlined" sx={{ mt: 2, borderRadius: 2 }}>
               <CardContent>
-                <Typography variant="h6">Productos del combo</Typography>
-                <List>
+                <Typography variant="h6" gutterBottom>Productos del combo</Typography>
+                <Stack spacing={1}>
                   {productos.map((producto) => (
-                    <ListItem key={producto.IdProducto} disablePadding>
-                      <ListItemText
-                        primary={`${producto.Cantidad} x ${producto.Nombre}`}
-                        secondary={`Precio individual: \u00a2${producto.Precio}`}
-                      />
-                    </ListItem>
+                    <Box
+                      key={producto.IdProducto}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        py: 1,
+                      }}
+                    >
+                      <Typography>{producto.Cantidad} x {producto.Nombre}</Typography>
+                      <Typography color="text.secondary">&cent;{producto.Precio}</Typography>
+                    </Box>
                   ))}
-                </List>
+                </Stack>
               </CardContent>
             </Card>
           </Grid>

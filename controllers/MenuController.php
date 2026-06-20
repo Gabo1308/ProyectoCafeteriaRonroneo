@@ -48,4 +48,16 @@ class menu
             handleException($e);
         }
     }
+
+    public function getProductos()
+    {
+        try {
+            $response = new Response();
+            $model = new MenuModel();
+            $result = $model->getProductos();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

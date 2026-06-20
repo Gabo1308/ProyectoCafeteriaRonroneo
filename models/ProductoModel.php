@@ -10,7 +10,9 @@ class ProductoModel
     public function all()
     {
         try {
-            $vSql = "SELECT * FROM productos;";
+            $vSql = "SELECT p.*, c.Nombre AS Categoria
+                    FROM productos p
+                    INNER JOIN categoria c ON p.IdCategoria = c.IdCategoria;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             return $vResultado;
         } catch (Exception $e) {
@@ -34,7 +36,10 @@ class ProductoModel
     public function getByCategoria($idCategoria)
     {
         try {
-            $vSql = "SELECT * FROM productos WHERE IdCategoria=$idCategoria;";
+            $vSql = "SELECT p.*, c.Nombre AS Categoria
+                    FROM productos p
+                    INNER JOIN categoria c ON p.IdCategoria = c.IdCategoria
+                    WHERE p.IdCategoria=$idCategoria;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             return $vResultado;
         } catch (Exception $e) {

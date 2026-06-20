@@ -1,6 +1,8 @@
 <?php
 // Composer autoloader
-require_once 'vendor/autoload.php';
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+}
 /*Encabezada de las solicitudes*/
 /*CORS*/
 header("Access-Control-Allow-Origin: * ");
@@ -18,13 +20,17 @@ require_once "controllers/core/Response.php";
 
 /***--- Agregar todos los modelos*/
 require_once "models/ProductoModel.php";
+require_once "models/CategoriaModel.php";
 require_once "models/ComboModel.php";
 require_once "models/MenuModel.php";
+require_once "models/PreparacionModel.php";
 
 /***--- Agregar todos los controladores*/
 require_once "controllers/ProductoController.php";
+require_once "controllers/CategoriaController.php";
 require_once "controllers/ComboController.php";
 require_once "controllers/MenuController.php";
+require_once "controllers/PreparacionController.php";
 
 
 //Enrutador

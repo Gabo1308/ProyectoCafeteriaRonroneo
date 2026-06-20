@@ -10,7 +10,10 @@ class ComboModel
     public function all()
     {
         try {
-            $vSql = "SELECT * FROM combos;";
+            $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
+                            CASE WHEN c.IdCombo BETWEEN 1 AND 3 THEN CONCAT('Combo', c.IdCombo, '.jpg') ELSE 'Combo1.jpg' END AS Imagen
+                     FROM combos c
+                     INNER JOIN menu m ON c.IdMenu = m.IdMenu;";
             return $this->enlace->ExecuteSQL($vSql);
         } catch (Exception $e) {
             handleException($e);
@@ -20,7 +23,11 @@ class ComboModel
     public function get($id)
     {
         try {
-            $vSql = "SELECT * FROM combos WHERE IdCombo=$id;";
+            $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
+                            CASE WHEN c.IdCombo BETWEEN 1 AND 3 THEN CONCAT('Combo', c.IdCombo, '.jpg') ELSE 'Combo1.jpg' END AS Imagen
+                     FROM combos c
+                     INNER JOIN menu m ON c.IdMenu = m.IdMenu
+                     WHERE c.IdCombo=$id;";
             $result = $this->enlace->ExecuteSQL($vSql);
             return $result[0];
         } catch (Exception $e) {

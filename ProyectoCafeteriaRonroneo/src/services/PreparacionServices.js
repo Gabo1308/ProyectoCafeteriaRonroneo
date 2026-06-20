@@ -7,8 +7,5 @@ class PreparacionServices {
   getPreparacionById(PreparacionId) {
     return axios.get(BASE_URL + '/' + PreparacionId);
   }
-  getPreparacionByPedido(PedidoId) {
-    return axios.get(BASE_URL + '/getByPedido/' + PedidoId);
-  }
 }
 export default new PreparacionServices();

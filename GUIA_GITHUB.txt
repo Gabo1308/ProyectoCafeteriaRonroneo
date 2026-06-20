@@ -1,0 +1,39 @@
+===========================================================
+GUÍA RÁPIDA DE GIT - PROYECTO CAFETERÍA RONRONEO
+===========================================================
+
+Sigue estos pasos cada vez que vayas a trabajar en el proyecto.
+
+1. PARA TRAER LOS CAMBIOS DE TU COMPAÑERO (BAJAR DATOS)
+-----------------------------------------------------------
+Antes de empezar a escribir código, asegúrate de tener lo último que subió tu compañero:
+
+   git pull origin master
+
+Nota: Si es la primera vez que unes repositorios distintos, podrías necesitar:
+   git pull origin master --allow-unrelated-histories
+
+2. PARA SUBIR TUS CAMBIOS AL GITHUB (SUBIR DATOS)
+-----------------------------------------------------------
+Cuando hayas terminado una parte del trabajo y quieras compartirlo:
+
+   a. Prepara los archivos:
+      git add .
+
+   b. Crea el paquete (Commit):
+      git commit -m "Explicación breve de lo que hiciste"
+
+   c. Súbelo a la nube:
+      git push origin master
+
+3. ¿QUÉ HACER SI HAY CONFLICTOS?
+-----------------------------------------------------------
+Si ambos modificaron el mismo archivo al mismo tiempo, Git te avisará.
+1. Abre el archivo que tiene el error.
+2. Busca las marcas <<<<<<< y >>>>>>>.
+3. Deja el código que sirve y borra las marcas.
+4. Guarda el archivo y repite el paso de "SUBIR DATOS".
+
+4. COMANDO DE CONTROL
+-----------------------------------------------------------
+Para ver en qué estado están tus archivos: git status
