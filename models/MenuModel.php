@@ -11,7 +11,11 @@ class MenuModel
     {
         try {
             $vSql = "SELECT *,
-                            CASE WHEN IdMenu BETWEEN 1 AND 3 THEN CONCAT('menu', IdMenu, '.jpg') ELSE 'menu1.jpg' END AS Imagen
+                            CASE
+                                WHEN IdMenu = 3 THEN 'Menu3.jpg'
+                                WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
+                                ELSE 'menu1.jpg'
+                            END AS Imagen
                      FROM menu
                      ORDER BY FechaInicio DESC, FechaFin DESC;";
             return $this->enlace->ExecuteSQL($vSql);
@@ -24,7 +28,11 @@ class MenuModel
     {
         try {
             $vSql = "SELECT *,
-                            CASE WHEN IdMenu BETWEEN 1 AND 3 THEN CONCAT('menu', IdMenu, '.jpg') ELSE 'menu1.jpg' END AS Imagen
+                            CASE
+                                WHEN IdMenu = 3 THEN 'Menu3.jpg'
+                                WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
+                                ELSE 'menu1.jpg'
+                            END AS Imagen
                      FROM menu
                      WHERE IdMenu=$id;";
             $result = $this->enlace->ExecuteSQL($vSql);
@@ -38,11 +46,21 @@ class MenuModel
     {
         try {
             $vSql = "SELECT *,
-                            CASE WHEN IdMenu BETWEEN 1 AND 3 THEN CONCAT('menu', IdMenu, '.jpg') ELSE 'menu1.jpg' END AS Imagen
+                            CASE
+                                WHEN IdMenu = 3 THEN 'Menu3.jpg'
+                                WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
+                                ELSE 'menu1.jpg'
+                            END AS Imagen
                      FROM menu
                      WHERE FechaInicio <= CURDATE()
                        AND FechaFin >= CURDATE()
                        AND Estado = 1
+                       AND (
+                            HoraInicio IS NULL
+                            OR HoraFin IS NULL
+                            OR (HoraInicio <= HoraFin AND CURTIME() BETWEEN HoraInicio AND HoraFin)
+                            OR (HoraInicio > HoraFin AND (CURTIME() >= HoraInicio OR CURTIME() <= HoraFin))
+                       )
                      ORDER BY FechaInicio DESC
                      LIMIT 1;";
             $result = $this->enlace->ExecuteSQL($vSql);
@@ -56,7 +74,7 @@ class MenuModel
     {
         try {
             $vSql = "SELECT *,
-                            CASE WHEN IdCombo BETWEEN 1 AND 3 THEN CONCAT('Combo', IdCombo, '.jpg') ELSE 'Combo1.jpg' END AS Imagen
+                            CONCAT('Combo', ((IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
                      FROM combos
                      WHERE IdMenu=$idMenu;";
             return $this->enlace->ExecuteSQL($vSql);

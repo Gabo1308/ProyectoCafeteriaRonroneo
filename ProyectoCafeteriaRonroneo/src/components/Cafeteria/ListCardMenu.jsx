@@ -62,6 +62,11 @@ export function ListCardMenu({ data }) {
                     {item.FechaInicio} - {item.FechaFin}
                   </Typography>
                 </Box>
+                {item.HoraInicio && item.HoraFin && (
+                  <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
+                    Horario: {item.HoraInicio} - {item.HoraFin}
+                  </Typography>
+                )}
                 <Chip label={item.Estado ? 'Activo' : 'Inactivo'} color={item.Estado ? 'success' : 'error'} size="small" sx={{ mt: 2 }} />
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>

@@ -96,6 +96,11 @@ export function MenuDisponible() {
             variant="outlined"
             sx={{ mt: 1 }}
           />
+          {menu.HoraInicio && menu.HoraFin && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Horario: {menu.HoraInicio} - {menu.HoraFin}
+            </Typography>
+          )}
         </Box>
       )}
 

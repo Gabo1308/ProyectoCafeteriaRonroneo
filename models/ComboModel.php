@@ -11,7 +11,7 @@ class ComboModel
     {
         try {
             $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
-                            CASE WHEN c.IdCombo BETWEEN 1 AND 3 THEN CONCAT('Combo', c.IdCombo, '.jpg') ELSE 'Combo1.jpg' END AS Imagen
+                            CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
                      FROM combos c
                      INNER JOIN menu m ON c.IdMenu = m.IdMenu;";
             return $this->enlace->ExecuteSQL($vSql);
@@ -24,7 +24,7 @@ class ComboModel
     {
         try {
             $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
-                            CASE WHEN c.IdCombo BETWEEN 1 AND 3 THEN CONCAT('Combo', c.IdCombo, '.jpg') ELSE 'Combo1.jpg' END AS Imagen
+                            CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
                      FROM combos c
                      INNER JOIN menu m ON c.IdMenu = m.IdMenu
                      WHERE c.IdCombo=$id;";
