@@ -20,21 +20,22 @@ export function MenuDisponible() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([
-      MenuService.getMenuDisponible(),
-      MenuService.getProductosMenu(),
-    ])
-      .then(([menuResponse, productosResponse]) => {
+    MenuService.getMenuDisponible()
+      .then((menuResponse) => {
         const menuActual = menuResponse.data;
         setMenu(menuActual);
-        setProductos(productosResponse.data);
         if (!menuActual?.IdMenu) {
+          setProductos([]);
           setCombos([]);
           setLoaded(true);
           return;
         }
-        MenuService.getCombosByMenu(menuActual.IdMenu)
-          .then((combosResponse) => {
+        Promise.all([
+          MenuService.getProductosMenu(menuActual.IdMenu),
+          MenuService.getCombosByMenu(menuActual.IdMenu),
+        ])
+          .then(([productosResponse, combosResponse]) => {
+            setProductos(productosResponse.data || []);
             setCombos(combosResponse.data || []);
             setLoaded(true);
           })
@@ -99,6 +100,11 @@ export function MenuDisponible() {
           {menu.HoraInicio && menu.HoraFin && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               Horario: {menu.HoraInicio} - {menu.HoraFin}
+            </Typography>
+          )}
+          {menu.DiasDisponibles && (
+            <Typography variant="body2" color="text.secondary">
+              Dias: {menu.DiasDisponibles}
             </Typography>
           )}
         </Box>

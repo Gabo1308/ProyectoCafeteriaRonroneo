@@ -1,0 +1,255 @@
+import React, { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import toast from 'react-hot-toast';
+import ProductoService from '../../services/ProductosServices';
+import CategoriaService from '../../services/CategoriaServices';
+
+const productoVacio = {
+  IdProducto: null,
+  IdCategoria: '',
+  Nombre: '',
+  Descripcion: '',
+  ingredientes: '',
+  Imagen: '',
+  Precio: '',
+  Estado: 1,
+};
+
+export function GestionProductos() {
+  const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [form, setForm] = useState(productoVacio);
+  const [loaded, setLoaded] = useState(false);
+  const [subiendoImagen, setSubiendoImagen] = useState(false);
+  const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
+
+  const cargarDatos = () => {
+    Promise.all([ProductoService.getProductos(), CategoriaService.getCategorias()])
+      .then(([productosResponse, categoriasResponse]) => {
+        setProductos(productosResponse.data || []);
+        setCategorias(categoriasResponse.data || []);
+        setLoaded(true);
+      })
+      .catch((err) => {
+        setLoaded(true);
+        toast.error(`Error al cargar datos: ${err.message}`);
+      });
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  const actualizarCampo = (event) => {
+    const { name, value } = event.target;
+    setForm((actual) => ({ ...actual, [name]: value }));
+  };
+
+  const limpiarFormulario = () => {
+    setForm(productoVacio);
+  };
+
+  const subirImagen = (event) => {
+    const archivo = event.target.files?.[0];
+    if (!archivo) return;
+
+    setSubiendoImagen(true);
+    ProductoService.uploadImagenProducto(archivo)
+      .then((response) => {
+        setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
+        toast.success('Imagen copiada en uploads');
+      })
+      .catch((err) => toast.error(`No se pudo subir la imagen: ${err.message}`))
+      .finally(() => {
+        setSubiendoImagen(false);
+        event.target.value = '';
+      });
+  };
+
+  const editarProducto = (producto) => {
+    setForm({
+      IdProducto: producto.IdProducto,
+      IdCategoria: producto.IdCategoria,
+      Nombre: producto.Nombre,
+      Descripcion: producto.Descripcion || '',
+      ingredientes: producto.ingredientes || producto.Ingredientes || '',
+      Imagen: producto.Imagen || '',
+      Precio: producto.Precio,
+      Estado: producto.Estado ?? 1,
+    });
+  };
+
+  const guardarProducto = (event) => {
+    event.preventDefault();
+    const accion = form.IdProducto
+      ? ProductoService.updateProducto(form)
+      : ProductoService.createProducto(form);
+
+    accion
+      .then(() => {
+        toast.success(form.IdProducto ? 'Producto actualizado' : 'Producto creado');
+        limpiarFormulario();
+        cargarDatos();
+      })
+      .catch((err) => toast.error(`No se pudo guardar: ${err.message}`));
+  };
+
+  const eliminarProducto = (idProducto) => {
+    ProductoService.deleteProducto(idProducto)
+      .then(() => {
+        toast.success('Producto eliminado');
+        cargarDatos();
+      })
+      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+  };
+
+  if (!loaded) return <p>Cargando...</p>;
+
+  return (
+    <Box sx={{ py: 2 }}>
+      <Typography variant="h4" color="primary.main" gutterBottom>
+        CRUD de productos
+      </Typography>
+      <Typography color="text.secondary" sx={{ mb: 3 }}>
+        Administra productos, categorias, imagenes, ingredientes y precios.
+      </Typography>
+
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card variant="outlined" sx={{ borderRadius: 2, position: 'sticky', top: 16 }}>
+            <CardContent component="form" onSubmit={guardarProducto}>
+              <Stack spacing={2}>
+                <Typography variant="h6">
+                  {form.IdProducto ? 'Editar producto' : 'Nuevo producto'}
+                </Typography>
+                <TextField label="Nombre" name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
+                <TextField
+                  label="Categoria"
+                  name="IdCategoria"
+                  value={form.IdCategoria}
+                  onChange={actualizarCampo}
+                  required
+                  select
+                  fullWidth
+                >
+                  {categorias.map((categoria) => (
+                    <MenuItem key={categoria.IdCategoria} value={categoria.IdCategoria}>
+                      {categoria.Nombre}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  label="Descripcion"
+                  name="Descripcion"
+                  value={form.Descripcion}
+                  onChange={actualizarCampo}
+                  multiline
+                  minRows={3}
+                  fullWidth
+                />
+                <TextField
+                  label="Ingredientes separados por coma"
+                  name="ingredientes"
+                  value={form.ingredientes}
+                  onChange={actualizarCampo}
+                  fullWidth
+                />
+                <Stack spacing={1}>
+                  <Button
+                    variant="outlined"
+                    component="label"
+                    startIcon={<UploadFileIcon />}
+                    disabled={subiendoImagen}
+                  >
+                    {subiendoImagen ? 'Subiendo imagen...' : 'Seleccionar imagen'}
+                    <input type="file" hidden accept="image/*" onChange={subirImagen} />
+                  </Button>
+                  <TextField
+                    label="Imagen en uploads"
+                    name="Imagen"
+                    value={form.Imagen}
+                    onChange={actualizarCampo}
+                    helperText="Tambien puede escribir el nombre si la imagen ya existe en uploads."
+                    fullWidth
+                  />
+                </Stack>
+                <TextField label="Precio" name="Precio" value={form.Precio} onChange={actualizarCampo} type="number" required fullWidth />
+                {form.Imagen && (
+                  <Box
+                    component="img"
+                    src={`${BASE_URL}/${form.Imagen}`}
+                    alt={form.Nombre}
+                    sx={{ width: '100%', height: 150, objectFit: 'cover', borderRadius: 2 }}
+                  />
+                )}
+                <Stack direction="row" spacing={1}>
+                  <Button type="submit" variant="contained" startIcon={<SaveIcon />} fullWidth>
+                    Guardar
+                  </Button>
+                  <Button variant="outlined" startIcon={<AddIcon />} onClick={limpiarFormulario} fullWidth>
+                    Nuevo
+                  </Button>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Grid container spacing={2}>
+            {productos.map((producto) => (
+              <Grid size={{ xs: 12, sm: 6 }} key={producto.IdProducto}>
+                <Card sx={{ height: '100%', borderRadius: 2, overflow: 'hidden' }}>
+                  <CardMedia
+                    component="img"
+                    image={`${BASE_URL}/${producto.Imagen}`}
+                    alt={producto.Nombre}
+                    sx={{ height: 165, objectFit: 'cover' }}
+                  />
+                  <CardContent>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+                      <Box>
+                        <Typography variant="h6">{producto.Nombre}</Typography>
+                        <Chip label={producto.Categoria} size="small" color="secondary" sx={{ mt: 1 }} />
+                      </Box>
+                      <Typography variant="h6" color="primary.main">
+                        &cent;{producto.Precio}
+                      </Typography>
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {producto.Descripcion}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ px: 2, pb: 2 }}>
+                    <Button variant="outlined" startIcon={<EditIcon />} onClick={() => editarProducto(producto)}>
+                      Editar
+                    </Button>
+                    <Button color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarProducto(producto.IdProducto)}>
+                      Eliminar
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}

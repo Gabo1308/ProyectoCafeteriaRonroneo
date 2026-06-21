@@ -55,6 +55,9 @@ export default function Header() {
     { name: "Menú", link: "/catalog-menu/" },
     { name: "Menú disponible", link: "/menu-disponible/" },
     { name: "Preparación", link: "/catalog-preparacion/" },
+    { name: "CRUD Productos", link: "/admin/productos/" },
+    { name: "CRUD Combos", link: "/admin/combos/" },
+    { name: "CRUD Menús", link: "/admin/menus/" },
   ];
 
   const menuIdPrincipal = "menu-appbar";

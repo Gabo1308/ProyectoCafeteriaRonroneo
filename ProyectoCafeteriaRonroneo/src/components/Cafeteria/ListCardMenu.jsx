@@ -67,6 +67,11 @@ export function ListCardMenu({ data }) {
                     Horario: {item.HoraInicio} - {item.HoraFin}
                   </Typography>
                 )}
+                {item.DiasDisponibles && (
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Dias: {item.DiasDisponibles}
+                  </Typography>
+                )}
                 <Chip label={item.Estado ? 'Activo' : 'Inactivo'} color={item.Estado ? 'success' : 'error'} size="small" sx={{ mt: 2 }} />
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>

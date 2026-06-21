@@ -10,5 +10,14 @@ class ComboServices {
   getProductosByCombo(ComboId) {
     return axios.get(BASE_URL + '/getProductos/' + ComboId);
   }
+  createCombo(Combo) {
+    return axios.post(BASE_URL, JSON.stringify(Combo));
+  }
+  updateCombo(Combo) {
+    return axios.put(BASE_URL, JSON.stringify(Combo));
+  }
+  deleteCombo(ComboId) {
+    return axios.delete(BASE_URL + '/' + ComboId);
+  }
 }
 export default new ComboServices();

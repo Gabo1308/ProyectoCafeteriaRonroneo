@@ -34,12 +34,38 @@ PREPARE stmt_hora_fin FROM @sql_hora_fin;
 EXECUTE stmt_hora_fin;
 DEALLOCATE PREPARE stmt_hora_fin;
 
+SET @existe_dias_disponibles := (
+  SELECT COUNT(*)
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'menu'
+    AND COLUMN_NAME = 'DiasDisponibles'
+);
+SET @sql_dias_disponibles := IF(
+  @existe_dias_disponibles = 0,
+  'ALTER TABLE menu ADD COLUMN DiasDisponibles VARCHAR(100) NULL AFTER HoraFin',
+  'SELECT 1'
+);
+PREPARE stmt_dias_disponibles FROM @sql_dias_disponibles;
+EXECUTE stmt_dias_disponibles;
+DEALLOCATE PREPARE stmt_dias_disponibles;
+
+CREATE TABLE IF NOT EXISTS menuproductos (
+  IdMenu int(11) NOT NULL,
+  IdProducto int(11) NOT NULL,
+  PRIMARY KEY (IdMenu, IdProducto),
+  KEY fk_menuproducto_producto (IdProducto),
+  CONSTRAINT fk_menuproducto_menu FOREIGN KEY (IdMenu) REFERENCES menu (IdMenu),
+  CONSTRAINT fk_menuproducto_producto FOREIGN KEY (IdProducto) REFERENCES productos (IdProducto)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 DELETE FROM carritoproductos;
 DELETE FROM carritocombos;
 DELETE FROM detallepedidos;
 DELETE FROM comboproductos;
+DELETE FROM menuproductos;
 DELETE FROM productopreparacion;
 DELETE FROM combos;
 DELETE FROM productos;
@@ -77,11 +103,11 @@ ON DUPLICATE KEY UPDATE
   Nombre = VALUES(Nombre),
   Descripcion = VALUES(Descripcion);
 
-INSERT INTO menu (IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, FechaInicio, FechaFin, Estado)
+INSERT INTO menu (IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles, FechaInicio, FechaFin, Estado)
 VALUES
-(1, 'Menu Desayuno', 'Horario: 7:00 a. m. a 12:00 m.', '07:00:00', '12:00:00', '2026-01-01', '2026-12-31', 1),
-(2, 'Menu Almuerzo', 'Horario: 1:00 p. m. a 6:00 p. m.', '13:00:00', '18:00:00', '2026-01-01', '2026-12-31', 1),
-(3, 'Menu Cena', 'Horario: 7:00 p. m. a 12:00 a. m.', '19:00:00', '00:00:00', '2026-01-01', '2026-12-31', 1);
+(1, 'Menu Desayuno', 'Horario: 7:00 a. m. a 12:00 m.', '07:00:00', '12:00:00', 'Lunes a domingo', '2026-01-01', '2026-12-31', 1),
+(2, 'Menu Almuerzo', 'Horario: 1:00 p. m. a 6:00 p. m.', '13:00:00', '18:00:00', 'Lunes a domingo', '2026-01-01', '2026-12-31', 1),
+(3, 'Menu Cena', 'Horario: 7:00 p. m. a 12:00 a. m.', '19:00:00', '00:00:00', 'Lunes a domingo', '2026-01-01', '2026-12-31', 1);
 
 INSERT INTO productos (IdProducto, IdCategoria, Nombre, Descripcion, ingredientes, Imagen, Precio, Estado)
 VALUES
@@ -129,12 +155,18 @@ VALUES
 (8, 15, 1), (8, 18, 1),
 (9, 16, 1), (9, 19, 1);
 
+INSERT INTO menuproductos (IdMenu, IdProducto)
+VALUES
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6),
+(2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13),
+(3, 14), (3, 15), (3, 16), (3, 17), (3, 18), (3, 19);
+
 INSERT INTO productopreparacion (IdProducto, IdEstacion, Orden)
 VALUES
 (1, 4, 1), (1, 3, 2), (1, 5, 3),
 (2, 4, 1), (2, 3, 2), (2, 5, 3),
 (3, 4, 1), (3, 5, 2),
-(4, 3, 1), (4, 5, 2),
+(4, 3, 1),
 (5, 1, 1), (5, 5, 2),
 (6, 1, 1), (6, 5, 2),
 (7, 4, 1), (7, 5, 2),
@@ -143,7 +175,7 @@ VALUES
 (10, 4, 1), (10, 5, 2),
 (11, 2, 1), (11, 5, 2),
 (12, 2, 1), (12, 5, 2),
-(13, 3, 1), (13, 5, 2),
+(13, 3, 1),
 (14, 4, 1), (14, 5, 2),
 (15, 4, 1), (15, 5, 2),
 (16, 4, 1), (16, 5, 2),

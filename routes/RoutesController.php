@@ -160,6 +160,8 @@ class RoutesController
                                     } elseif ($action) {
                                         if (method_exists($controller, $action)) {
                                             $response->$action();
+                                        } elseif (count($routesArray) == 3) {
+                                            $response->delete($action);
                                         } else {
                                             $json = array(
                                                 'status' => 404,

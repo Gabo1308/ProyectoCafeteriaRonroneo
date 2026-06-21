@@ -7,13 +7,19 @@ class ComboModel
         $this->enlace = new MySqlConnect();
     }
 
+    private function limpiar($valor)
+    {
+        return addslashes(trim((string) $valor));
+    }
+
     public function all()
     {
         try {
             $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
                             CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
                      FROM combos c
-                     INNER JOIN menu m ON c.IdMenu = m.IdMenu;";
+                     INNER JOIN menu m ON c.IdMenu = m.IdMenu
+                     WHERE c.Estado = 1;";
             return $this->enlace->ExecuteSQL($vSql);
         } catch (Exception $e) {
             handleException($e);
@@ -43,6 +49,84 @@ class ComboModel
                      INNER JOIN productos p ON cp.IdProducto = p.IdProducto
                      WHERE cp.IdCombo=$idCombo;";
             return $this->enlace->ExecuteSQL($vSql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    private function guardarProductos($idCombo, $productos)
+    {
+        $idCombo = (int) $idCombo;
+        $this->enlace->executeSQL_DML("DELETE FROM comboproductos WHERE IdCombo=$idCombo;");
+
+        if (!empty($productos) && is_array($productos)) {
+            foreach ($productos as $producto) {
+                $idProducto = (int) ($producto->IdProducto ?? $producto->id ?? 0);
+                $cantidad = (int) ($producto->Cantidad ?? $producto->cantidad ?? 1);
+                if ($idProducto > 0 && $cantidad > 0) {
+                    $this->enlace->executeSQL_DML(
+                        "INSERT INTO comboproductos (IdCombo, IdProducto, Cantidad)
+                         VALUES ($idCombo, $idProducto, $cantidad);"
+                    );
+                }
+            }
+        }
+    }
+
+    public function create($objeto)
+    {
+        try {
+            $idMenu = (int) $objeto->IdMenu;
+            $nombre = $this->limpiar($objeto->Nombre ?? '');
+            $descripcion = $this->limpiar($objeto->Descripcion ?? '');
+            $precio = (float) ($objeto->Precio ?? 0);
+            $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
+
+            $vSql = "INSERT INTO combos (IdMenu, Nombre, Descripcion, Precio, Estado)
+                    VALUES ($idMenu, '$nombre', '$descripcion', $precio, $estado);";
+            $idCombo = $this->enlace->executeSQL_DML_last($vSql);
+            $this->guardarProductos($idCombo, $objeto->productos ?? []);
+            return $this->get($idCombo);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function update($objeto)
+    {
+        try {
+            $idCombo = (int) $objeto->IdCombo;
+            $idMenu = (int) $objeto->IdMenu;
+            $nombre = $this->limpiar($objeto->Nombre ?? '');
+            $descripcion = $this->limpiar($objeto->Descripcion ?? '');
+            $precio = (float) ($objeto->Precio ?? 0);
+            $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
+
+            $vSql = "UPDATE combos SET
+                        IdMenu=$idMenu,
+                        Nombre='$nombre',
+                        Descripcion='$descripcion',
+                        Precio=$precio,
+                        Estado=$estado
+                     WHERE IdCombo=$idCombo;";
+            $this->enlace->executeSQL_DML($vSql);
+            $this->guardarProductos($idCombo, $objeto->productos ?? []);
+            return $this->get($idCombo);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $idCombo = (int) $id;
+            $vSql = "UPDATE combos SET Estado=0 WHERE IdCombo=$idCombo;";
+            $this->enlace->executeSQL_DML($vSql);
+            return [
+                "IdCombo" => $idCombo,
+                "Eliminado" => true
+            ];
         } catch (Exception $e) {
             handleException($e);
         }
