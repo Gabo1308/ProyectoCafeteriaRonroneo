@@ -9,7 +9,7 @@ React Component -> Service.js -> index.php -> RoutesController.php -> Controller
 ## Requerimientos generales
 
 - Los datos se cargan desde MySQL en la base `cafeteriaronroneo`.
-- La semilla principal esta en `database/ronroneo_menus_productos_seed.sql`.
+- La base de datos completa esta unificada en `database/cafeteriaronroneo.sql`.
 - Las imagenes usadas por productos estan en `uploads/`.
 - Las pantallas React consumen datos mediante servicios Axios.
 - Los controladores PHP responden JSON usando `Response`.
