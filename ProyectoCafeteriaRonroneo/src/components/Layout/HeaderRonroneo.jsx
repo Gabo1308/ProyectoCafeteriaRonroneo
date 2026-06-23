@@ -11,7 +11,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import CoffeeIcon from "@mui/icons-material/Coffee";
+import Logo from "../../assets/Logo_cafeteria.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -63,11 +63,17 @@ export default function HeaderRonroneo() {
           <MenuIcon />
         </IconButton>
 
-        <Tooltip title="Cafeteria Ronroneo">
-          <IconButton component={Link} to="/" color="primary" aria-label="Cafeteria Ronroneo">
-            <CoffeeIcon />
-          </IconButton>
-        </Tooltip>
+        <Tooltip title="Cafetería Ronroneo">
+        <IconButton
+          size="large"
+          edge="end"
+          component="a"
+          href="/"
+          aria-label="Cafetería Ronroneo"
+        >
+          <img src={Logo} alt="Cafetería Ronroneo" style={{ height: 40, width: 40, borderRadius: '50%' }} />
+        </IconButton>
+      </Tooltip>
 
         <Typography
           variant="subtitle1"
