@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
@@ -11,7 +11,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import CoffeeIcon from "@mui/icons-material/Coffee";
+import logoCafeteria from "../../assets/Logo_cafeteria.jpeg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -64,8 +64,21 @@ export default function HeaderRonroneo() {
         </IconButton>
 
         <Tooltip title="Cafeteria Ronroneo">
-          <IconButton component={Link} to="/" color="primary" aria-label="Cafeteria Ronroneo">
-            <CoffeeIcon />
+          <IconButton component={Link} to="/" aria-label="Cafeteria Ronroneo" sx={{ p: 0.5 }}>
+            <Box
+              component="img"
+              src={logoCafeteria}
+              alt="Logo Cafeteria Ronroneo"
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid",
+                borderColor: "primary.main",
+                backgroundColor: "common.white",
+              }}
+            />
           </IconButton>
         </Tooltip>
 
@@ -178,3 +191,4 @@ export default function HeaderRonroneo() {
     </AppBar>
   );
 }
+
