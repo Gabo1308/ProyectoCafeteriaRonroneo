@@ -19,5 +19,10 @@ class ComboServices {
   deleteCombo(ComboId) {
     return axios.delete(BASE_URL + '/' + ComboId);
   }
+  uploadImagenCombo(archivo) {
+    const formData = new FormData();
+    formData.append('imagen', archivo);
+    return axios.post(BASE_URL + '/uploadImage', formData);
+  }
 }
 export default new ComboServices();

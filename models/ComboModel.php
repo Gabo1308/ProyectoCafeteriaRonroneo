@@ -15,8 +15,9 @@ class ComboModel
     public function all()
     {
         try {
-            $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
-                            CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
+            $vSql = "SELECT c.IdCombo, c.IdMenu, c.Nombre, c.Descripcion, c.Precio, c.Estado,
+                            m.Nombre AS MenuNombre,
+                            COALESCE(NULLIF(c.Imagen, ''), CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg')) AS Imagen
                      FROM combos c
                      INNER JOIN menu m ON c.IdMenu = m.IdMenu
                      WHERE c.Estado = 1;";
@@ -29,8 +30,9 @@ class ComboModel
     public function get($id)
     {
         try {
-            $vSql = "SELECT c.*, m.Nombre AS MenuNombre,
-                            CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
+            $vSql = "SELECT c.IdCombo, c.IdMenu, c.Nombre, c.Descripcion, c.Precio, c.Estado,
+                            m.Nombre AS MenuNombre,
+                            COALESCE(NULLIF(c.Imagen, ''), CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg')) AS Imagen
                      FROM combos c
                      INNER JOIN menu m ON c.IdMenu = m.IdMenu
                      WHERE c.IdCombo=$id;";
@@ -79,11 +81,12 @@ class ComboModel
             $idMenu = (int) $objeto->IdMenu;
             $nombre = $this->limpiar($objeto->Nombre ?? '');
             $descripcion = $this->limpiar($objeto->Descripcion ?? '');
+            $imagen = $this->limpiar($objeto->Imagen ?? '');
             $precio = (float) ($objeto->Precio ?? 0);
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
 
-            $vSql = "INSERT INTO combos (IdMenu, Nombre, Descripcion, Precio, Estado)
-                    VALUES ($idMenu, '$nombre', '$descripcion', $precio, $estado);";
+            $vSql = "INSERT INTO combos (IdMenu, Nombre, Descripcion, Imagen, Precio, Estado)
+                    VALUES ($idMenu, '$nombre', '$descripcion', '$imagen', $precio, $estado);";
             $idCombo = $this->enlace->executeSQL_DML_last($vSql);
             $this->guardarProductos($idCombo, $objeto->productos ?? []);
             return $this->get($idCombo);
@@ -99,6 +102,7 @@ class ComboModel
             $idMenu = (int) $objeto->IdMenu;
             $nombre = $this->limpiar($objeto->Nombre ?? '');
             $descripcion = $this->limpiar($objeto->Descripcion ?? '');
+            $imagen = $this->limpiar($objeto->Imagen ?? '');
             $precio = (float) ($objeto->Precio ?? 0);
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
 
@@ -106,6 +110,7 @@ class ComboModel
                         IdMenu=$idMenu,
                         Nombre='$nombre',
                         Descripcion='$descripcion',
+                        Imagen='$imagen',
                         Precio=$precio,
                         Estado=$estado
                      WHERE IdCombo=$idCombo;";

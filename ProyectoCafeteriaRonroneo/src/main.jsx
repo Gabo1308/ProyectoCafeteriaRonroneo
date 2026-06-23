@@ -12,6 +12,7 @@ import { CatalogMenu } from "./components/Cafeteria/CatalogMenu.jsx";
 import { CatalogPreparacion } from "./components/Cafeteria/CatalogPreparacion.jsx";
 import { DetalleProductos } from './components/Cafeteria/DetalleProductos.jsx';
 import { DetalleCombos } from './components/Cafeteria/DetalleCombos.jsx';
+import { DetalleMenu } from './components/Cafeteria/DetalleMenu.jsx';
 import { MenuDisponible } from './components/Cafeteria/MenuDisponible.jsx';
 import { DetallePreparacion } from './components/Cafeteria/DetallePreparacion.jsx';
 import { GestionProductos } from './components/Admin/GestionProductos.jsx';
@@ -57,6 +58,10 @@ const rutas = createBrowserRouter(
         {
           path: '/combo/:id',
           element: <DetalleCombos />,
+        },
+        {
+          path: '/menu/:id',
+          element: <DetalleMenu />,
         },
         {
           path: '/preparacion/:id',

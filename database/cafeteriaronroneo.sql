@@ -218,6 +218,7 @@ CREATE TABLE `combos` (
   `IdMenu` int(11) NOT NULL,
   `Nombre` varchar(150) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
+  `Imagen` varchar(255) DEFAULT NULL,
   `Precio` decimal(10,2) NOT NULL,
   `Estado` tinyint(1) NOT NULL,
   PRIMARY KEY (`IdCombo`),
@@ -232,7 +233,7 @@ CREATE TABLE `combos` (
 
 LOCK TABLES `combos` WRITE;
 /*!40000 ALTER TABLE `combos` DISABLE KEYS */;
-INSERT INTO `combos` VALUES (1,1,'Combo Gatito Dulce','Pancakes Ronroneo con miel y frutas y Cafe Latte Gatuno.',4300.00,1),(2,1,'Combo Manana Feliz','Omelette de queso y jamon, Croissant de mantequilla y Chocolate caliente con crema.',5800.00,1),(3,1,'Combo Bigotes','Tostadas francesas con fresas y Cafe Latte Gatuno.',4000.00,1),(4,2,'Combo Ronroneo Clasico','Pasta cremosa con pollo y Limonada natural.',5400.00,1),(5,2,'Combo Gatuno Ligero','Ensalada Cesar con pollo y Te frio de melocoton.',4700.00,1),(6,2,'Combo Bigotes Lunch','Sandwich Club Ronroneo, Limonada natural y Brownie de chocolate.',6200.00,1),(7,3,'Combo Noche Gatuna','Pizza artesanal de queso y Te Chai caliente.',5900.00,1),(8,3,'Combo Ronroneo Especial','Hamburguesa Ronroneo y Batido de vainilla.',5900.00,1),(9,3,'Combo Cena Suave','Crema de tomate con pan tostado y Te Chai caliente.',4600.00,1);
+INSERT INTO `combos` VALUES (1,1,'Combo Gatito Dulce','Pancakes Ronroneo con miel y frutas y Cafe Latte Gatuno.','Combo1.jpg',4300.00,1),(2,1,'Combo Manana Feliz','Omelette de queso y jamon, Croissant de mantequilla y Chocolate caliente con crema.','Combo2.jpg',5800.00,1),(3,1,'Combo Bigotes','Tostadas francesas con fresas y Cafe Latte Gatuno.','Combo3.jpg',4000.00,1),(4,2,'Combo Ronroneo Clasico','Pasta cremosa con pollo y Limonada natural.','Combo1.jpg',5400.00,1),(5,2,'Combo Gatuno Ligero','Ensalada Cesar con pollo y Te frio de melocoton.','Combo2.jpg',4700.00,1),(6,2,'Combo Bigotes Lunch','Sandwich Club Ronroneo, Limonada natural y Brownie de chocolate.','Combo3.jpg',6200.00,1),(7,3,'Combo Noche Gatuna','Pizza artesanal de queso y Te Chai caliente.','Combo1.jpg',5900.00,1),(8,3,'Combo Ronroneo Especial','Hamburguesa Ronroneo y Batido de vainilla.','Combo2.jpg',5900.00,1),(9,3,'Combo Cena Suave','Crema de tomate con pan tostado y Te Chai caliente.','Combo3.jpg',4600.00,1);
 /*!40000 ALTER TABLE `combos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -308,6 +309,7 @@ CREATE TABLE `menu` (
   `HoraInicio` time DEFAULT NULL,
   `HoraFin` time DEFAULT NULL,
   `DiasDisponibles` varchar(100) DEFAULT NULL,
+  `Imagen` varchar(255) DEFAULT NULL,
   `FechaInicio` date NOT NULL,
   `FechaFin` date NOT NULL,
   `Estado` tinyint(1) NOT NULL,
@@ -321,7 +323,7 @@ CREATE TABLE `menu` (
 
 LOCK TABLES `menu` WRITE;
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
-INSERT INTO `menu` VALUES (1,'Menu Desayuno','Horario: 7:00 a. m. a 12:00 m.','07:00:00','12:00:00','Lunes a domingo','2026-01-01','2026-12-31',1),(2,'Menu Almuerzo','Horario: 1:00 p. m. a 6:00 p. m.','13:00:00','18:00:00','Lunes a domingo','2026-01-01','2026-12-31',1),(3,'Menu Cena','Horario: 7:00 p. m. a 12:00 a. m.','19:00:00','00:00:00','Lunes a domingo','2026-01-01','2026-12-31',1);
+INSERT INTO `menu` VALUES (1,'Menu Desayuno','Horario: 7:00 a. m. a 12:00 m.','07:00:00','12:00:00','Lunes a domingo','menu1.jpg','2026-01-01','2026-12-31',1),(2,'Menu Almuerzo','Horario: 1:00 p. m. a 6:00 p. m.','13:00:00','18:00:00','Lunes a domingo','menu2.jpg','2026-01-01','2026-12-31',1),(3,'Menu Cena','Horario: 7:00 p. m. a 12:00 a. m.','19:00:00','00:00:00','Lunes a domingo','Menu3.jpg','2026-01-01','2026-12-31',1);
 /*!40000 ALTER TABLE `menu` ENABLE KEYS */;
 UNLOCK TABLES;
 

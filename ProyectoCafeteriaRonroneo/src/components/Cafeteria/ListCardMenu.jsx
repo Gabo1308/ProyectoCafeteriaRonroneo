@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import { CalendarMonth, Info } from '@mui/icons-material';
+import { CalendarMonth, CheckCircle, Cancel, Info } from '@mui/icons-material';
 import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 
@@ -20,11 +20,31 @@ ListCardMenu.propTypes = {
 export function ListCardMenu({ data }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
+  const estaDisponiblePorHorario = (horaInicio, horaFin) => {
+    if (!horaInicio || !horaFin) return true;
+
+    const ahora = new Date();
+    const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes();
+    const [inicioHora, inicioMinuto] = horaInicio.split(':').map(Number);
+    const [finHora, finMinuto] = horaFin.split(':').map(Number);
+    const minutosInicio = inicioHora * 60 + inicioMinuto;
+    const minutosFin = finHora * 60 + finMinuto;
+
+    if (minutosInicio <= minutosFin) {
+      return minutosActuales >= minutosInicio && minutosActuales <= minutosFin;
+    }
+
+    return minutosActuales >= minutosInicio || minutosActuales <= minutosFin;
+  };
+
   return (
     <Grid container sx={{ p: { xs: 2, md: 4 } }} spacing={3}>
       {data &&
-        data.map((item) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.IdMenu}>
+        data.map((item) => {
+          const disponiblePorHorario = estaDisponiblePorHorario(item.HoraInicio, item.HoraFin);
+
+          return (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.IdMenu}>
             <Card
               sx={{
                 height: '100%',
@@ -72,7 +92,16 @@ export function ListCardMenu({ data }) {
                     Dias: {item.DiasDisponibles}
                   </Typography>
                 )}
-                <Chip label={item.Estado ? 'Activo' : 'Inactivo'} color={item.Estado ? 'success' : 'error'} size="small" sx={{ mt: 2 }} />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+                  <Chip label={item.Estado ? 'Activo' : 'Inactivo'} color={item.Estado ? 'success' : 'error'} size="small" />
+                  <Chip
+                    icon={disponiblePorHorario ? <CheckCircle /> : <Cancel />}
+                    label={disponiblePorHorario ? 'Menu disponible por horario' : 'Menu no disponible por horario'}
+                    color={disponiblePorHorario ? 'success' : 'default'}
+                    variant={disponiblePorHorario ? 'filled' : 'outlined'}
+                    size="small"
+                  />
+                </Box>
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>
                 <Button
@@ -80,14 +109,15 @@ export function ListCardMenu({ data }) {
                   variant="outlined"
                   startIcon={<Info />}
                   component={Link}
-                  to="/menu-disponible/"
+                  to={`/menu/${item.IdMenu}`}
                 >
-                  Ver menu disponible
+                  Ver menu
                 </Button>
               </CardActions>
             </Card>
           </Grid>
-        ))}
+          );
+        })}
     </Grid>
   );
 }

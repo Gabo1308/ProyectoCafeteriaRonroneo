@@ -10,16 +10,19 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import { Info, LocalCafe } from '@mui/icons-material';
+import { Info } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
 ListCardProductos.propTypes = {
   data: PropTypes.array,
-  isShopping: PropTypes.bool.isRequired,
 };
 
-export function ListCardProductos({ data, isShopping }) {
+export function ListCardProductos({ data }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
+  const resumir = (texto = '', limite = 82) => {
+    if (!texto || texto.length <= limite) return texto;
+    return `${texto.slice(0, limite).trim()}...`;
+  };
 
   return (
     <Grid container sx={{ p: { xs: 2, md: 4 } }} spacing={3}>
@@ -45,9 +48,7 @@ export function ListCardProductos({ data, isShopping }) {
                 }}
                 style={{ textAlign: 'center' }}
                 title={item.Nombre}
-                subheader={item.Categoria}
                 titleTypographyProps={{ variant: 'h6' }}
-                subheaderTypographyProps={{ color: 'common.white' }}
               />
               <CardMedia
                 component="img"
@@ -57,25 +58,22 @@ export function ListCardProductos({ data, isShopping }) {
               />
               <CardContent sx={{ flexGrow: 1 }}>
                 <Chip
-                  icon={<LocalCafe />}
                   label={item.Categoria}
                   size="small"
                   color="secondary"
                   sx={{ mb: 1 }}
                 />
                 <Typography variant="body2" color="text.secondary" sx={{ minHeight: 42 }}>
-                  {item.Descripcion}
+                  {resumir(item.Descripcion)}
                 </Typography>
-                {isShopping && (
-                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="caption" color="text.secondary">
-                      Precio
-                    </Typography>
-                    <Typography variant="h6" color="primary.main">
-                      &cent;{item.Precio}
-                    </Typography>
-                  </Box>
-                )}
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Precio
+                  </Typography>
+                  <Typography variant="h6" color="primary.main">
+                    &cent;{item.Precio}
+                  </Typography>
+                </Box>
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>
                 <Button

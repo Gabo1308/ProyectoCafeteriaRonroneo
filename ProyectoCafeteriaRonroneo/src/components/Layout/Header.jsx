@@ -1,3 +1,6 @@
+export { default } from "./HeaderRonroneo";
+
+/*
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 import AppBar from "@mui/material/AppBar";
@@ -7,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Menu, MenuItem } from "@mui/material";
+import { Divider, Menu, MenuItem } from "@mui/material";
 import { Link } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -16,12 +19,16 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import CoffeeIcon from "@mui/icons-material/Coffee";
 import Tooltip from "@mui/material/Tooltip";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function Header() {
   const [anchorElUser, setAnchorEl] = React.useState(null);
   const [mobileOpcionesAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMobileOpcionesMenuOpen = Boolean(mobileOpcionesAnchorEl);
   const [anchorElPrincipal, setAnchorElPrincipal] = React.useState(null);
+  const [anchorElMantenimientos, setAnchorElMantenimientos] = React.useState(null);
+  const isMantenimientosOpen = Boolean(anchorElMantenimientos);
 
   const handleUserMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,6 +42,12 @@ export default function Header() {
   };
   const handleClosePrincipalMenu = () => {
     setAnchorElPrincipal(null);
+  };
+  const handleOpenMantenimientos = (event) => {
+    setAnchorElMantenimientos(event.currentTarget);
+  };
+  const handleCloseMantenimientos = () => {
+    setAnchorElMantenimientos(null);
   };
   const handleOpcionesMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
@@ -55,9 +68,9 @@ export default function Header() {
     { name: "Menú", link: "/catalog-menu/" },
     { name: "Menú disponible", link: "/menu-disponible/" },
     { name: "Preparación", link: "/catalog-preparacion/" },
-    { name: "CRUD Productos", link: "/admin/productos/" },
-    { name: "CRUD Combos", link: "/admin/combos/" },
-    { name: "CRUD Menús", link: "/admin/menus/" },
+    { name: "Mantenimiento de Productos", link: "/admin/productos/" },
+    { name: "Mantenimiento de Combos", link: "/admin/combos/" },
+    { name: "Mantenimiento de Menus", link: "/admin/menus/" },
   ];
 
   const menuIdPrincipal = "menu-appbar";
@@ -230,3 +243,4 @@ export default function Header() {
     </Box>
   );
 }
+*/

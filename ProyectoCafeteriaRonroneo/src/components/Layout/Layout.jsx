@@ -2,7 +2,7 @@
 import React from 'react'; 
 import PropTypes from 'prop-types'; 
 import { Container } from '@mui/material'; 
-import Header from './Header'; 
+import Header from './HeaderRonroneo'; 
 import { Footer } from './Footer'; 
 import { Toaster } from 'react-hot-toast';
  
@@ -10,16 +10,20 @@ Layout.propTypes = { children: PropTypes.node.isRequired };
  
 export function Layout({ children }) { 
   return ( 
-    <> 
+    <Container
+      disableGutters
+      maxWidth={false}
+      sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+    >
       <Header /> 
       <Container 
         maxWidth="xl" 
-        style={{ paddingTop: '1rem', paddingBottom: '4.5rem' }} 
+        sx={{ py: 2, flexGrow: 1 }}
       > 
       <Toaster position='bottom-right' />
         {children} 
       </Container> 
       <Footer /> 
-    </> 
+    </Container>
   ); 
 } 

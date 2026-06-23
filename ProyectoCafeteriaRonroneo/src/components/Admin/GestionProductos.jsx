@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
@@ -124,7 +129,7 @@ export function GestionProductos() {
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        CRUD de productos
+        Mantenimiento de productos
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
         Administra productos, categorias, imagenes, ingredientes y precios.
@@ -212,42 +217,55 @@ export function GestionProductos() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 8 }}>
-          <Grid container spacing={2}>
-            {productos.map((producto) => (
-              <Grid size={{ xs: 12, sm: 6 }} key={producto.IdProducto}>
-                <Card sx={{ height: '100%', borderRadius: 2, overflow: 'hidden' }}>
-                  <CardMedia
-                    component="img"
-                    image={`${BASE_URL}/${producto.Imagen}`}
-                    alt={producto.Nombre}
-                    sx={{ height: 165, objectFit: 'cover' }}
-                  />
-                  <CardContent>
-                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
-                      <Box>
-                        <Typography variant="h6">{producto.Nombre}</Typography>
-                        <Chip label={producto.Categoria} size="small" color="secondary" sx={{ mt: 1 }} />
-                      </Box>
-                      <Typography variant="h6" color="primary.main">
-                        &cent;{producto.Precio}
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
+                  <TableCell>Imagen</TableCell>
+                  <TableCell>Producto</TableCell>
+                  <TableCell>Categoria</TableCell>
+                  <TableCell align="right">Precio</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {productos.map((producto) => (
+                  <TableRow key={producto.IdProducto} hover>
+                    <TableCell sx={{ width: 88 }}>
+                      <Box
+                        component="img"
+                        src={`${BASE_URL}/${producto.Imagen}`}
+                        alt={producto.Nombre}
+                        sx={{ width: 64, height: 48, objectFit: 'cover', borderRadius: 1 }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">{producto.Nombre}</Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', maxWidth: 260 }}>
+                        {producto.Descripcion}
                       </Typography>
-                    </Stack>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                      {producto.Descripcion}
-                    </Typography>
-                  </CardContent>
-                  <CardActions sx={{ px: 2, pb: 2 }}>
-                    <Button variant="outlined" startIcon={<EditIcon />} onClick={() => editarProducto(producto)}>
-                      Editar
-                    </Button>
-                    <Button color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarProducto(producto.IdProducto)}>
-                      Eliminar
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                    </TableCell>
+                    <TableCell>{producto.Categoria}</TableCell>
+                    <TableCell align="right">&cent;{producto.Precio}</TableCell>
+                    <TableCell>
+                      <Chip label={producto.Estado ? 'Activo' : 'Inactivo'} size="small" color={producto.Estado ? 'success' : 'default'} />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => editarProducto(producto)}>
+                          Editar
+                        </Button>
+                        <Button size="small" color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarProducto(producto.IdProducto)}>
+                          Eliminar
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
       </Grid>
     </Box>

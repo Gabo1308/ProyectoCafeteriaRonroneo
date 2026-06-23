@@ -15,12 +15,13 @@ class MenuModel
     public function all()
     {
         try {
-            $vSql = "SELECT *,
-                            CASE
+            $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
+                            FechaInicio, FechaFin, Estado,
+                            COALESCE(NULLIF(Imagen, ''), CASE
                                 WHEN IdMenu = 3 THEN 'Menu3.jpg'
                                 WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
                                 ELSE 'menu1.jpg'
-                            END AS Imagen
+                            END) AS Imagen
                      FROM menu
                      WHERE Estado = 1
                      ORDER BY FechaInicio ASC, HoraInicio ASC, IdMenu ASC;";
@@ -33,12 +34,13 @@ class MenuModel
     public function get($id)
     {
         try {
-            $vSql = "SELECT *,
-                            CASE
+            $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
+                            FechaInicio, FechaFin, Estado,
+                            COALESCE(NULLIF(Imagen, ''), CASE
                                 WHEN IdMenu = 3 THEN 'Menu3.jpg'
                                 WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
                                 ELSE 'menu1.jpg'
-                            END AS Imagen
+                            END) AS Imagen
                      FROM menu
                      WHERE IdMenu=$id;";
             $result = $this->enlace->ExecuteSQL($vSql);
@@ -51,12 +53,13 @@ class MenuModel
     public function getDisponible()
     {
         try {
-            $vSql = "SELECT *,
-                            CASE
+            $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
+                            FechaInicio, FechaFin, Estado,
+                            COALESCE(NULLIF(Imagen, ''), CASE
                                 WHEN IdMenu = 3 THEN 'Menu3.jpg'
                                 WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
                                 ELSE 'menu1.jpg'
-                            END AS Imagen
+                            END) AS Imagen
                      FROM menu
                      WHERE FechaInicio <= CURDATE()
                        AND FechaFin >= CURDATE()
@@ -79,8 +82,8 @@ class MenuModel
     public function getCombos($idMenu)
     {
         try {
-            $vSql = "SELECT *,
-                            CONCAT('Combo', ((IdCombo - 1) MOD 3) + 1, '.jpg') AS Imagen
+            $vSql = "SELECT IdCombo, IdMenu, Nombre, Descripcion, Precio, Estado,
+                            COALESCE(NULLIF(Imagen, ''), CONCAT('Combo', ((IdCombo - 1) MOD 3) + 1, '.jpg')) AS Imagen
                      FROM combos
                      WHERE IdMenu=$idMenu
                        AND Estado = 1;";
@@ -125,6 +128,22 @@ class MenuModel
         }
     }
 
+    private function guardarCombos($idMenu, $combos)
+    {
+        $idMenu = (int) $idMenu;
+
+        if (!empty($combos) && is_array($combos)) {
+            foreach ($combos as $idCombo) {
+                $comboId = is_object($idCombo) ? (int) ($idCombo->IdCombo ?? 0) : (int) $idCombo;
+                if ($comboId > 0) {
+                    $this->enlace->executeSQL_DML(
+                        "UPDATE combos SET IdMenu=$idMenu WHERE IdCombo=$comboId;"
+                    );
+                }
+            }
+        }
+    }
+
     public function create($objeto)
     {
         try {
@@ -133,14 +152,16 @@ class MenuModel
             $horaInicio = $this->limpiar($objeto->HoraInicio ?? '00:00:00');
             $horaFin = $this->limpiar($objeto->HoraFin ?? '00:00:00');
             $diasDisponibles = $this->limpiar($objeto->DiasDisponibles ?? 'Lunes a domingo');
+            $imagen = $this->limpiar($objeto->Imagen ?? '');
             $fechaInicio = $this->limpiar($objeto->FechaInicio ?? date('Y-m-d'));
             $fechaFin = $this->limpiar($objeto->FechaFin ?? date('Y-m-d'));
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
 
-            $vSql = "INSERT INTO menu (Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles, FechaInicio, FechaFin, Estado)
-                     VALUES ('$nombre', '$descripcion', '$horaInicio', '$horaFin', '$diasDisponibles', '$fechaInicio', '$fechaFin', $estado);";
+            $vSql = "INSERT INTO menu (Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles, Imagen, FechaInicio, FechaFin, Estado)
+                     VALUES ('$nombre', '$descripcion', '$horaInicio', '$horaFin', '$diasDisponibles', '$imagen', '$fechaInicio', '$fechaFin', $estado);";
             $idMenu = $this->enlace->executeSQL_DML_last($vSql);
             $this->guardarProductos($idMenu, $objeto->productos ?? []);
+            $this->guardarCombos($idMenu, $objeto->combos ?? []);
             return $this->get($idMenu);
         } catch (Exception $e) {
             handleException($e);
@@ -156,6 +177,7 @@ class MenuModel
             $horaInicio = $this->limpiar($objeto->HoraInicio ?? '00:00:00');
             $horaFin = $this->limpiar($objeto->HoraFin ?? '00:00:00');
             $diasDisponibles = $this->limpiar($objeto->DiasDisponibles ?? 'Lunes a domingo');
+            $imagen = $this->limpiar($objeto->Imagen ?? '');
             $fechaInicio = $this->limpiar($objeto->FechaInicio ?? date('Y-m-d'));
             $fechaFin = $this->limpiar($objeto->FechaFin ?? date('Y-m-d'));
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
@@ -166,12 +188,14 @@ class MenuModel
                         HoraInicio='$horaInicio',
                         HoraFin='$horaFin',
                         DiasDisponibles='$diasDisponibles',
+                        Imagen='$imagen',
                         FechaInicio='$fechaInicio',
                         FechaFin='$fechaFin',
                         Estado=$estado
                      WHERE IdMenu=$idMenu;";
             $this->enlace->executeSQL_DML($vSql);
             $this->guardarProductos($idMenu, $objeto->productos ?? []);
+            $this->guardarCombos($idMenu, $objeto->combos ?? []);
             return $this->get($idMenu);
         } catch (Exception $e) {
             handleException($e);
