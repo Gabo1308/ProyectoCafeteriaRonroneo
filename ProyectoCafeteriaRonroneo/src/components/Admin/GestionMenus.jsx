@@ -83,10 +83,9 @@ export function GestionMenus() {
   const subirImagen = (event) => {
     const archivo = event.target.files?.[0];
     if (!archivo) return;
-
     setSubiendoImagen(true);
     MenuService.uploadImagenMenu(archivo)
-      .then((response) => {
+      .then(async (response) => {
         setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
         toast.success('Imagen copiada en uploads');
       })

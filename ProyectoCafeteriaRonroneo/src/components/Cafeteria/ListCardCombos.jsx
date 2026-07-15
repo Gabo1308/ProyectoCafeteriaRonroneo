@@ -63,12 +63,9 @@ export function ListCardCombos({ data }) {
                 <Typography variant="body2" color="text.secondary" sx={{ minHeight: 42 }}>
                   {item.Descripcion}
                 </Typography>
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="caption" color="text.secondary">
-                    Precio especial
-                  </Typography>
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Typography variant="h6" color="primary.main">
-                    &cent;{item.Precio}
+                    &cent;{parseFloat(item.Precio).toFixed(0)}
                   </Typography>
                 </Box>
               </CardContent>

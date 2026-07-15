@@ -44,10 +44,6 @@ const rutas = createBrowserRouter(
           element: <CatalogMenu />,
         },
         {
-          path: '/menu-disponible/',
-          element: <MenuDisponible />,
-        },
-        {
           path: '/catalog-preparacion/',
           element: <CatalogPreparacion />,
         },

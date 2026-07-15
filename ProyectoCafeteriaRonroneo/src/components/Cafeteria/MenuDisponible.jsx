@@ -3,6 +3,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -11,6 +12,8 @@ import Stack from '@mui/material/Stack';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import MenuService from '../../services/MenuServices';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
 export function MenuDisponible() {
   const [menu, setMenu] = useState(null);
@@ -67,7 +70,7 @@ export function MenuDisponible() {
       {!menu && (
         <Box sx={{ textAlign: 'center', p: 4 }}>
           <Typography variant="h5" color="primary.main">
-            No hay un menu disponible para hoy.
+            No hay un menú disponible para hoy.
           </Typography>
         </Box>
       )}
@@ -120,6 +123,12 @@ export function MenuDisponible() {
               {items.map((producto) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={producto.IdProducto}>
                   <Card variant="outlined" sx={{ height: '100%', borderRadius: 2 }}>
+                    <CardMedia
+                      component="img"
+                      image={`${BASE_URL}/${producto.Imagen}`}
+                      alt={producto.Nombre}
+                      sx={{ width: '100%', height: 140, objectFit: 'contain', backgroundColor: 'primaryLight.main' }}
+                    />
                     <CardContent>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <Box>
@@ -129,7 +138,7 @@ export function MenuDisponible() {
                           </Typography>
                         </Box>
                         <Typography variant="h6" color="primary.main" sx={{ whiteSpace: 'nowrap' }}>
-                          &cent;{producto.Precio}
+                          &cent;{parseFloat(producto.Precio).toFixed(0)}
                         </Typography>
                       </Box>
                     </CardContent>
@@ -148,6 +157,12 @@ export function MenuDisponible() {
             {combos.map((combo) => (
               <Grid size={{ xs: 12, sm: 6 }} key={combo.IdCombo}>
                 <Card variant="outlined" sx={{ height: '100%', borderRadius: 2 }}>
+                  <CardMedia
+                    component="img"
+                    image={`${BASE_URL}/${combo.Imagen}`}
+                    alt={combo.Nombre}
+                    sx={{ width: '100%', height: 140, objectFit: 'contain', backgroundColor: 'primaryLight.main' }}
+                  />
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                       <Box>
@@ -157,7 +172,7 @@ export function MenuDisponible() {
                         </Typography>
                       </Box>
                       <Typography variant="h6" color="primary.main" sx={{ whiteSpace: 'nowrap' }}>
-                        &cent;{combo.Precio}
+                        &cent;{parseFloat(combo.Precio).toFixed(0)}
                       </Typography>
                     </Box>
                   </CardContent>

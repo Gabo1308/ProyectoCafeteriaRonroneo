@@ -76,7 +76,7 @@ export function GestionProductos() {
 
     setSubiendoImagen(true);
     ProductoService.uploadImagenProducto(archivo)
-      .then((response) => {
+      .then(async(response) => {
         setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
         toast.success('Imagen copiada en uploads');
       })

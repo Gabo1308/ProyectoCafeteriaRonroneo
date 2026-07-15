@@ -11,7 +11,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Logo from "../../assets/Logo_cafeteria.png";
+import Logo from "../../assets/Logo_cafeteria.jpeg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -27,21 +27,20 @@ export default function HeaderRonroneo() {
   const navItems = [
     { name: "Productos", link: "/catalog-productos/" },
     { name: "Combos", link: "/catalog-combos/" },
-    { name: "Menus", link: "/catalog-menu/" },
-    { name: "Disponible", link: "/menu-disponible/" },
-    { name: "Preparacion", link: "/catalog-preparacion/" },
+    { name: "Menús", link: "/catalog-menu/" },
+    { name: "Preparación", link: "/catalog-preparacion/" },
   ];
 
   const mantenimientosItems = [
     { name: "Productos", link: "/admin/productos/" },
     { name: "Combos", link: "/admin/combos/" },
-    { name: "Menus", link: "/admin/menus/" },
+    { name: "Menús", link: "/admin/menus/" },
   ];
 
   const userItems = [
-    { name: "Iniciar Sesion", link: "/user/login" },
+    { name: "Iniciar Sesión", link: "/user/login" },
     { name: "Registrarse", link: "/user/create" },
-    { name: "Cerrar Sesion", link: "/user/logout" },
+    { name: "Cerrar Sesión", link: "/user/logout" },
   ];
 
   const cerrarMenus = () => {

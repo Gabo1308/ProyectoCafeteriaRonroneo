@@ -37,6 +37,20 @@ export function ListCardMenu({ data }) {
     return minutosActuales >= minutosInicio || minutosActuales <= minutosFin;
   };
 
+  const formatoFecha = (fecha) => {
+  if (!fecha) return '';
+  const [anio, mes, dia] = fecha.split('-');
+  return `${dia}-${mes}-${anio}`;
+};
+
+const formatoHora = (hora) => {
+  if (!hora) return '';
+  const [h, m] = hora.split(':').map(Number);
+  const periodo = h < 12 ? 'a.m.' : 'p.m.';
+  const hora12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hora12}:${String(m).padStart(2, '0')} ${periodo}`;
+};
+
   return (
     <Grid container sx={{ p: { xs: 2, md: 4 } }} spacing={3}>
       {data &&
@@ -79,16 +93,16 @@ export function ListCardMenu({ data }) {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
                   <CalendarMonth fontSize="small" color="primary" />
                   <Typography variant="caption">
-                    {item.FechaInicio} - {item.FechaFin}
+                    {formatoFecha(item.FechaInicio)} - {formatoFecha(item.FechaFin)}
                   </Typography>
                 </Box>
                 {item.HoraInicio && item.HoraFin && (
                   <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-                    Horario: {item.HoraInicio} - {item.HoraFin}
+                    Horario: {formatoHora(item.HoraInicio)} - {formatoHora(item.HoraFin)}
                   </Typography>
                 )}
                 {item.DiasDisponibles && (
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography variant="caption" color="text.secondary" component="div" sx={{ mt: 0.5 }}>
                     Dias: {item.DiasDisponibles}
                   </Typography>
                 )}

@@ -66,10 +66,7 @@ export function ListCardProductos({ data }) {
                 <Typography variant="body2" color="text.secondary" sx={{ minHeight: 42 }}>
                   {resumir(item.Descripcion)}
                 </Typography>
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="caption" color="text.secondary">
-                    Precio
-                  </Typography>
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Typography variant="h6" color="primary.main">
                     &cent;{item.Precio}
                   </Typography>

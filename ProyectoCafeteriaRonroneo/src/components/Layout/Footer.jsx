@@ -29,7 +29,7 @@ export function Footer() {
               <Box>
                 <Typography variant="h6">Cafeteria Ronroneo</Typography>
                 <Typography variant="body2" sx={{ opacity: 0.85 }}>
-                  Cafe, postres, combos y menus por horario.
+                  Café, postres, combos y menús por horario.
                 </Typography>
               </Box>
             </Stack>
@@ -67,6 +67,12 @@ export function Footer() {
                 </Link>
               </Stack>
             </Stack>
+          </Grid>
+
+          <Grid size={12}>
+            <Typography align="center" variant="body2" sx={{ opacity: 0.85 }}>
+              Desarrolladores: Gabriel Leitón Araya / Angelo Pérez González
+            </Typography>
           </Grid>
 
           <Grid size={12}>
