@@ -4,6 +4,9 @@ class ProductosServices {
   getProductos() {
     return axios.get(BASE_URL);
   }
+  getProductosDesactivados() {
+    return axios.get(BASE_URL + "/getDesactivados");
+  }
   getProductoById(ProductoId) {
     return axios.get(BASE_URL + '/' + ProductoId);
   }
@@ -18,6 +21,9 @@ class ProductosServices {
   }
   deleteProducto(ProductoId) {
     return axios.delete(BASE_URL + '/' + ProductoId);
+  }
+  restoreProducto(ProductoId) {
+    return axios.put(BASE_URL + "/restore/" + ProductoId);
   }
   uploadImagenProducto(archivo) {
     const formData = new FormData();

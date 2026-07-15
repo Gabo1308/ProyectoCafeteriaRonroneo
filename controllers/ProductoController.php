@@ -25,6 +25,18 @@ class producto
         }
     }
 
+    public function getDesactivados()
+{
+    try {
+        $response = new Response();
+        $producto = new ProductoModel();
+        $result = $producto->getDesactivados();
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
     public function getByCategoria($param)
     {
         try {
@@ -76,6 +88,18 @@ class producto
             handleException($e);
         }
     }
+
+    public function restore($param)
+{
+    try {
+        $response = new Response();
+        $producto = new ProductoModel();
+        $result = $producto->restore($param);
+        $response->toJSON($result);
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
 
     public function uploadImage()
     {

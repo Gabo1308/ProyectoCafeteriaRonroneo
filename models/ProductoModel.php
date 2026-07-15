@@ -39,6 +39,23 @@ class ProductoModel
         }
     }
 
+    public function getDesactivados(){
+    try {
+        $vSql = "SELECT p.*, c.Nombre AS Categoria
+                 FROM productos p
+                 INNER JOIN categoria c
+                    ON p.IdCategoria = c.IdCategoria
+                 WHERE p.Estado = 0;";
+
+        $vResultado = $this->enlace->ExecuteSQL($vSql);
+
+        return $vResultado;
+
+    } catch (Exception $e) {
+        handleException($e);
+    }
+}
+
     public function getByCategoria($idCategoria)
     {
         try {
@@ -112,6 +129,27 @@ class ProductoModel
                 "IdProducto" => $idProducto,
                 "Eliminado" => true
             ];
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($id){
+        try {
+            $idProducto = (int)$id;
+
+            $vSql = "UPDATE productos
+                    SET Estado = 1
+                    WHERE IdProducto = $idProducto;";
+
+            $this->enlace->executeSQL_DML($vSql);
+
+            return [
+                "IdProducto" => $idProducto,
+                "Estado" => 1,
+                "Mensaje" => "Producto restaurado correctamente."
+            ];
+
         } catch (Exception $e) {
             handleException($e);
         }

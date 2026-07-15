@@ -42,12 +42,14 @@ export function GestionProductos() {
   const [form, setForm] = useState(productoVacio);
   const [loaded, setLoaded] = useState(false);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
+  const [productosEliminados, setProductosEliminados] = useState([]);
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
   const cargarDatos = () => {
-    Promise.all([ProductoService.getProductos(), CategoriaService.getCategorias()])
-      .then(([productosResponse, categoriasResponse]) => {
+    Promise.all([ProductoService.getProductos(), ProductoService.getProductosDesactivados(), CategoriaService.getCategorias()])
+      .then(([productosResponse, desactivadosResponse, categoriasResponse]) => {
         setProductos(productosResponse.data || []);
+        setProductosEliminados(desactivadosResponse.data || []);
         setCategorias(categoriasResponse.data || []);
         setLoaded(true);
       })
@@ -123,6 +125,19 @@ export function GestionProductos() {
       })
       .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
   };
+
+  const restaurarProducto = (idProducto) => {
+
+    ProductoService.restoreProducto(idProducto)
+        .then(() => {
+            toast.success("Producto restaurado");
+            cargarDatos();
+        })
+        .catch((err) =>
+            toast.error(`No se pudo restaurar: ${err.message}`)
+        );
+
+};
 
   if (!loaded) return <p>Cargando...</p>;
 
@@ -260,6 +275,85 @@ export function GestionProductos() {
                           Eliminar
                         </Button>
                       </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            
+          </TableContainer>
+          <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
+            Productos desactivados
+          </Typography>
+
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "primaryLight.main" }}>
+                  <TableCell>Imagen</TableCell>
+                  <TableCell>Producto</TableCell>
+                  <TableCell>Categoría</TableCell>
+                  <TableCell align="right">Precio</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {productosEliminados.map((producto) => (
+                  <TableRow key={producto.IdProducto} hover>
+                    <TableCell sx={{ width: 88 }}>
+                      <Box
+                        component="img"
+                        src={`${BASE_URL}/${producto.Imagen}`}
+                        alt={producto.Nombre}
+                        sx={{
+                          width: 64,
+                          height: 48,
+                          objectFit: "cover",
+                          borderRadius: 1,
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {producto.Nombre}
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        noWrap
+                        sx={{ display: "block", maxWidth: 260 }}
+                      >
+                        {producto.Descripcion}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>{producto.Categoria}</TableCell>
+
+                    <TableCell align="right">
+                      &cent;{producto.Precio}
+                    </TableCell>
+
+                    <TableCell>
+                      <Chip
+                        label="Inactivo"
+                        size="small"
+                        color="default"
+                      />
+                    </TableCell>
+
+                    <TableCell align="right">
+                      <Button
+                        size="small"
+                        color="success"
+                        variant="contained"
+                        onClick={() => restaurarProducto(producto.IdProducto)}
+                      >
+                        Restaurar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

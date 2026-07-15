@@ -137,21 +137,25 @@ class RoutesController
 
                                 case 'PUT':
                                 case 'PATCH':
-                                    if ($param1) {
-                                        $response->update($param1);
-                                    } elseif ($action) {
-                                        if (method_exists($controller, $action)) {
-                                            $response->$action();
+
+                                    if ($action && method_exists($response, $action)) {
+
+                                        if ($param1) {
+                                            $response->$action($param1);
                                         } else {
-                                            $json = array(
-                                                'status' => 404,
-                                                'result' => 'Acción no encontrada'
-                                            );
-                                            echo json_encode($json, http_response_code($json["status"]));
+                                            $response->$action();
                                         }
+
+                                    } else if ($param1) {
+
+                                        $response->update($param1);
+
                                     } else {
+
                                         $response->update();
+
                                     }
+
                                     break;
 
                                 case 'DELETE':
