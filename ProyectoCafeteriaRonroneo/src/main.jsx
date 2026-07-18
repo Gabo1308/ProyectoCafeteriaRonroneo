@@ -13,12 +13,12 @@ import { CatalogPreparacion } from "./components/Cafeteria/CatalogPreparacion.js
 import { DetalleProductos } from './components/Cafeteria/DetalleProductos.jsx';
 import { DetalleCombos } from './components/Cafeteria/DetalleCombos.jsx';
 import { DetalleMenu } from './components/Cafeteria/DetalleMenu.jsx';
-import { MenuDisponible } from './components/Cafeteria/MenuDisponible.jsx';
 import { DetallePreparacion } from './components/Cafeteria/DetallePreparacion.jsx';
 import { GestionProductos } from './components/Admin/GestionProductos.jsx';
 import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
 import { Login } from "./components/Layout/Login";
+import { Registrar } from "./components/Layout/Registrar";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -79,6 +79,10 @@ const rutas = createBrowserRouter(
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/create",
+          element: <Registrar />,
         },
       ], 
     }, 

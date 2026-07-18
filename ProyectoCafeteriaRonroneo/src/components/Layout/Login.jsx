@@ -32,7 +32,7 @@ export function Login() {
       .catch((error) => {
         console.log(error);
         
-        alert("Correo o contraseña incorrectos");
+        toast.error("Correo o contraseña incorrectos");
       });
   };
 
