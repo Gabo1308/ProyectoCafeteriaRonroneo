@@ -127,17 +127,16 @@ export function GestionProductos() {
   };
 
   const restaurarProducto = (idProducto) => {
-
     ProductoService.restoreProducto(idProducto)
-        .then(() => {
-            toast.success("Producto restaurado");
-            cargarDatos();
-        })
-        .catch((err) =>
-            toast.error(`No se pudo restaurar: ${err.message}`)
-        );
+      .then(() => {
+          toast.success("Producto restaurado");
+          cargarDatos();
+      })
+      .catch((err) =>
+          toast.error(`No se pudo restaurar: ${err.message}`)
+      );
 
-};
+  };
 
   if (!loaded) return <p>Cargando...</p>;
 

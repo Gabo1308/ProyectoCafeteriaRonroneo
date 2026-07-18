@@ -22,9 +22,9 @@ export function Footer() {
       }}
     >
       <Container maxWidth="xl">
-        <Grid container spacing={3} alignItems="center">
+        <Grid container spacing={3} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 4 }}>
-            <Stack direction="row" spacing={1.5} alignItems="center">
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
               <CoffeeIcon />
               <Box>
                 <Typography variant="h6">Cafeteria Ronroneo</Typography>
@@ -37,7 +37,7 @@ export function Footer() {
 
           <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={0.5}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <AccessTimeIcon fontSize="small" />
                 <Typography variant="body2">Desayuno 7:00 a. m. - 12:00 m.</Typography>
               </Stack>
@@ -49,11 +49,11 @@ export function Footer() {
 
           <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={0.5} alignItems={{ xs: "flex-start", md: "flex-end" }}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <PhoneIcon fontSize="small" />
                 <Typography variant="body2">8888-0000</Typography>
               </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <AlternateEmailIcon fontSize="small" />
                 <Typography variant="body2">contacto@ronroneo.com</Typography>
               </Stack>

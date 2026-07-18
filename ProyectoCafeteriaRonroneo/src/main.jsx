@@ -18,6 +18,7 @@ import { DetallePreparacion } from './components/Cafeteria/DetallePreparacion.js
 import { GestionProductos } from './components/Admin/GestionProductos.jsx';
 import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
+import { Login } from "./components/Layout/Login";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -74,6 +75,10 @@ const rutas = createBrowserRouter(
         {
           path: '/admin/menus/',
           element: <GestionMenus />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
         },
       ], 
     }, 

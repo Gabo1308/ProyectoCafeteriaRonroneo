@@ -17,12 +17,35 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 export default function HeaderRonroneo() {
   const [anchorElPrincipal, setAnchorElPrincipal] = React.useState(null);
   const [anchorElMantenimientos, setAnchorElMantenimientos] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null); 
+  const [logoutDialogOpen, setLogoutDialogOpen] = React.useState(false);
+
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  let usuario = null;
+
+  try {
+    if (token) {
+      usuario = jwtDecode(token);
+      console.log("JWT:", usuario);
+    }
+  } catch (error) {
+    console.error("Token inválido:", error);
+    localStorage.removeItem("token");
+  }
 
   const navItems = [
     { name: "Productos", link: "/catalog-productos/" },
@@ -37,16 +60,36 @@ export default function HeaderRonroneo() {
     { name: "Menús", link: "/admin/menus/" },
   ];
 
-  const userItems = [
-    { name: "Iniciar Sesión", link: "/user/login" },
-    { name: "Registrarse", link: "/user/create" },
-    { name: "Cerrar Sesión", link: "/user/logout" },
-  ];
+  let userItems = [];
+
+  if (usuario) {
+    userItems = [{ name: "Cerrar Sesión", link: "/logout" }];
+  } else {
+    userItems = [
+      { name: "Iniciar Sesión", link: "/login" },
+      { name: "Registrarse", link: "/create" },
+    ];
+  }
 
   const cerrarMenus = () => {
     setAnchorElPrincipal(null);
     setAnchorElMantenimientos(null);
     setAnchorElUser(null);
+  };
+
+  const abrirDialogoLogout = () => {
+    cerrarMenus();
+    setLogoutDialogOpen(true);
+  };
+
+  const cancelarLogout = () => {
+    setLogoutDialogOpen(false);
+  };
+
+  const confirmarLogout = () => {
+    localStorage.removeItem("token");
+    setLogoutDialogOpen(false);
+    window.location.href = "/";
   };
 
   return (
@@ -103,16 +146,18 @@ export default function HeaderRonroneo() {
             </Button>
           ))}
 
-          <Button
-            color="primary"
-            size="small"
-            startIcon={<SettingsIcon />}
-            endIcon={<ExpandMoreIcon />}
-            onClick={(event) => setAnchorElMantenimientos(event.currentTarget)}
-            sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-          >
-            Mantenimientos
-          </Button>
+          {usuario?.Rol === "Administrador" && (
+            <Button
+              color="primary"
+              size="small"
+              startIcon={<SettingsIcon />}
+              endIcon={<ExpandMoreIcon />}
+              onClick={(event) => setAnchorElMantenimientos(event.currentTarget)}
+              sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+            >
+              Mantenimientos
+            </Button>
+          )}
         </Box>
 
         <Menu
@@ -138,15 +183,19 @@ export default function HeaderRonroneo() {
               {item.name}
             </MenuItem>
           ))}
-          <Divider />
-          <MenuItem disabled>
-            <Typography variant="caption">Mantenimientos</Typography>
-          </MenuItem>
-          {mantenimientosItems.map((item) => (
-            <MenuItem key={item.link} component={Link} to={item.link} onClick={cerrarMenus}>
-              {item.name}
-            </MenuItem>
-          ))}
+          {usuario?.Rol === "Administrador" && (
+            <>
+              <Divider />
+              <MenuItem disabled>
+                <Typography variant="caption">Mantenimientos</Typography>
+              </MenuItem>
+              {mantenimientosItems.map((item) => (
+                <MenuItem key={item.link} component={Link} to={item.link} onClick={cerrarMenus}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </>
+          )}
         </Menu>
 
         <Box sx={{ flexGrow: 1 }} />
@@ -167,7 +216,6 @@ export default function HeaderRonroneo() {
             </IconButton>
           </Tooltip>
         </Box>
-
         <IconButton
           size="large"
           aria-label="cuenta de usuario"
@@ -180,12 +228,34 @@ export default function HeaderRonroneo() {
           <MenuItem disabled>
             <Typography variant="subtitle2">Usuario</Typography>
           </MenuItem>
-          {userItems.map((item) => (
-            <MenuItem key={item.link} component={Link} to={item.link} onClick={cerrarMenus}>
-              {item.name}
-            </MenuItem>
-          ))}
+          {userItems.map((item) =>
+            item.link === "/logout" ? (
+              <MenuItem key={item.link} onClick={abrirDialogoLogout}>
+                {item.name}
+              </MenuItem>
+            ) : (
+              <MenuItem key={item.link} component={Link} to={item.link} onClick={cerrarMenus}>
+                {item.name}
+              </MenuItem>
+            )
+          )}
         </Menu>
+        <Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
+          <DialogTitle>Cerrar sesión</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Estás seguro de que deseas cerrar sesión?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={cancelarLogout} color="inherit">
+              Cancelar
+            </Button>
+            <Button onClick={confirmarLogout} color="primary" variant="contained">
+              Cerrar sesión
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Toolbar>
     </AppBar>
   );
