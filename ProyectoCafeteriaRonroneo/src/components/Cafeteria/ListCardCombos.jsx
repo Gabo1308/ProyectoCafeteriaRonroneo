@@ -10,15 +10,18 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import { Info, LocalOffer } from '@mui/icons-material';
+import { Info, LocalOffer, AddShoppingCart } from '@mui/icons-material';
 import PropTypes from 'prop-types';
+import { useCart } from '../../hooks/useCart';
 
 ListCardCombos.propTypes = {
   data: PropTypes.array,
+  isShopping: PropTypes.bool,
 };
 
-export function ListCardCombos({ data }) {
+export function ListCardCombos({ data, isShopping = false }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
+  const { addItem } = useCart();
 
   return (
     <Grid container sx={{ p: { xs: 2, md: 4 } }} spacing={3}>
@@ -69,16 +72,26 @@ export function ListCardCombos({ data }) {
                   </Typography>
                 </Box>
               </CardContent>
-              <CardActions sx={{ p: 2, pt: 0 }}>
+              <CardActions sx={{ p: 2, pt: 0, gap: 1 }}>
                 <Button
                   fullWidth
-                  variant="contained"
+                  variant="outlined"
                   startIcon={<Info />}
                   component={Link}
                   to={`/combo/${item.IdCombo}`}
                 >
                   Ver detalle
                 </Button>
+                {isShopping && (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    startIcon={<AddShoppingCart />}
+                    onClick={() => addItem(item, 'combo')}
+                  >
+                    Ordenar
+                  </Button>
+                )}
               </CardActions>
             </Card>
           </Grid>

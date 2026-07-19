@@ -17,6 +17,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useCart } from "../../hooks/useCart";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Dialog from "@mui/material/Dialog";
@@ -34,6 +35,8 @@ export default function HeaderRonroneo() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+
+  const { getCantidadItems } = useCart();
 
   let usuario = null;
 
@@ -201,13 +204,15 @@ export default function HeaderRonroneo() {
         <Box sx={{ flexGrow: 1 }} />
 
         <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
-          <Tooltip title="Carrito">
-            <IconButton size="large" color="inherit">
-              <Badge badgeContent={0} color="primary">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
+          {usuario && (
+            <Tooltip title="Carrito">
+              <IconButton size="large" color="inherit" component={Link} to="/carrito">
+                <Badge badgeContent={getCantidadItems()} color="primary">
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title="Notificaciones">
             <IconButton size="large" color="inherit">
               <Badge badgeContent={0} color="primary">

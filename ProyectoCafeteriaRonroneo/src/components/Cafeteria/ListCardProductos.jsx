@@ -10,19 +10,26 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import { Info } from '@mui/icons-material';
+import { Info, AddShoppingCart } from '@mui/icons-material';
 import PropTypes from 'prop-types';
+import { useCart } from '../../hooks/useCart';
 
 ListCardProductos.propTypes = {
   data: PropTypes.array,
+  isShopping: PropTypes.bool,
 };
 
-export function ListCardProductos({ data }) {
+
+export function ListCardProductos({ data, isShopping = false }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
   const resumir = (texto = '', limite = 82) => {
     if (!texto || texto.length <= limite) return texto;
     return `${texto.slice(0, limite).trim()}...`;
+
+    
   };
+
+const { addItem } = useCart();
 
   return (
     <Grid container sx={{ p: { xs: 2, md: 4 } }} spacing={3}>
@@ -72,16 +79,26 @@ export function ListCardProductos({ data }) {
                   </Typography>
                 </Box>
               </CardContent>
-              <CardActions sx={{ p: 2, pt: 0 }}>
+               <CardActions sx={{ p: 2, pt: 0, gap: 1 }}>
                 <Button
                   fullWidth
-                  variant="contained"
+                  variant="outlined"
                   startIcon={<Info />}
                   component={Link}
                   to={`/producto/${item.IdProducto}`}
                 >
                   Ver detalle
                 </Button>
+                {isShopping && (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    startIcon={<AddShoppingCart />}
+                    onClick={() => addItem(item, 'producto')}
+                  >
+                    Ordenar
+                  </Button>
+                )}
               </CardActions>
             </Card>
           </Grid>

@@ -19,6 +19,7 @@ import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
+import { Cart } from "./components/Cafeteria/Cart";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -83,6 +84,10 @@ const rutas = createBrowserRouter(
         {
           path: "/create",
           element: <Registrar />,
+        },
+        {
+          path: "/carrito",
+          element: <Cart />,
         },
       ], 
     }, 

@@ -9,6 +9,10 @@ export function CatalogProductos() {
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
 
+
+  const token = localStorage.getItem('token');
+  const isShopping = Boolean(token);
+
   useEffect(() => {
     ProductoService.getProductos()
       .then((response) => {
@@ -28,6 +32,6 @@ export function CatalogProductos() {
   if(!loaded) return <p>Cargando..</p>
   if(error) return <p>Error: {error.message}</p>
   return <>
-    {data && <ListCardProductos data={data} isShopping={true} />}
+    {data && <ListCardProductos data={data} isShopping={isShopping} />}
   </>
 }
