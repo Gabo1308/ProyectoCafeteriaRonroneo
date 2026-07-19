@@ -25,6 +25,12 @@ class MenuServices {
   deleteMenu(MenuId) {
     return axios.delete(BASE_URL + '/' + MenuId);
   }
+  getMenusDesactivados() {
+    return axios.get(BASE_URL + "/getDesactivados");
+  }
+  restoreMenu(MenuId) {
+    return axios.put(BASE_URL + "/restore/" + MenuId);
+  }
   uploadImagenMenu(archivo) {
     const formData = new FormData();
     formData.append('imagen', archivo);

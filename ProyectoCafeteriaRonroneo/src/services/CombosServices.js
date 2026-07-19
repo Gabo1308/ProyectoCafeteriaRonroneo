@@ -19,6 +19,12 @@ class ComboServices {
   deleteCombo(ComboId) {
     return axios.delete(BASE_URL + '/' + ComboId);
   }
+  getCombosDesactivados() {
+    return axios.get(BASE_URL + "/getDesactivados");
+  }
+  restoreCombo(ComboId) {
+    return axios.put(BASE_URL + "/restore/" + ComboId);
+  }
   uploadImagenCombo(archivo) {
     const formData = new FormData();
     formData.append('imagen', archivo);

@@ -40,6 +40,7 @@ const comboVacio = {
 
 export function GestionCombos() {
   const [combos, setCombos] = useState([]);
+  const [combosEliminados, setCombosEliminados] = useState([]);
   const [menus, setMenus] = useState([]);
   const [productos, setProductos] = useState([]);
   const [form, setForm] = useState(comboVacio);
@@ -49,9 +50,11 @@ export function GestionCombos() {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
   const cargarDatos = () => {
-    Promise.all([ComboService.getCombos(), MenuService.getMenus(), ProductoService.getProductos()])
-      .then(([combosResponse, menusResponse, productosResponse]) => {
+    Promise.all([
+      ComboService.getCombos(), ComboService.getCombosDesactivados(), MenuService.getMenus(), ProductoService.getProductos(),])
+      .then(([combosResponse, desactivadosResponse, menusResponse, productosResponse]) => {
         setCombos(combosResponse.data || []);
+        setCombosEliminados(desactivadosResponse.data || []);
         setMenus(menusResponse.data || []);
         setProductos(productosResponse.data || []);
         setLoaded(true);
@@ -153,6 +156,15 @@ export function GestionCombos() {
         cargarDatos();
       })
       .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+  };
+
+  const restaurarCombo = (idCombo) => {
+    ComboService.restoreCombo(idCombo)
+      .then(() => {
+        toast.success('Combo restaurado');
+        cargarDatos();
+      })
+      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
   };
 
   if (!loaded) return <p>Cargando...</p>;
@@ -282,6 +294,50 @@ export function GestionCombos() {
                           Eliminar
                         </Button>
                       </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+               </TableBody>
+            </Table>
+          </TableContainer>
+
+          <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
+            Combos desactivados
+          </Typography>
+
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
+                  <TableCell>Imagen</TableCell>
+                  <TableCell>Combo</TableCell>
+                  <TableCell>Menu</TableCell>
+                  <TableCell align="right">Precio</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {combosEliminados.map((combo) => (
+                  <TableRow key={combo.IdCombo} hover>
+                    <TableCell sx={{ width: 88 }}>
+                      <Box component="img" src={`${BASE_URL}/${combo.Imagen}`} alt={combo.Nombre} sx={{ width: 64, height: 48, objectFit: 'cover', borderRadius: 1 }} />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">{combo.Nombre}</Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', maxWidth: 260 }}>
+                        {combo.Descripcion}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{combo.MenuNombre}</TableCell>
+                    <TableCell align="right">&cent;{combo.Precio}</TableCell>
+                    <TableCell>
+                      <Chip label="Inactivo" size="small" color="default" />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button size="small" color="success" variant="contained" onClick={() => restaurarCombo(combo.IdCombo)}>
+                        Restaurar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

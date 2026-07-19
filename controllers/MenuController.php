@@ -133,6 +133,30 @@ class menu
         }
     }
 
+     public function getDesactivados()
+    {
+        try {
+            $response = new Response();
+            $model = new MenuModel();
+            $result = $model->getDesactivados();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($param)
+    {
+        try {
+            $response = new Response();
+            $model = new MenuModel();
+            $result = $model->restore($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
     public function uploadImage()
     {
         try {

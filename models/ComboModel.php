@@ -136,4 +136,31 @@ class ComboModel
             handleException($e);
         }
     }
+    
+    public function getDesactivados()
+    {
+        try {
+            $vSql = "SELECT c.IdCombo, c.IdMenu, c.Nombre, c.Descripcion, c.Precio, c.Estado,
+                            m.Nombre AS MenuNombre,
+                            COALESCE(NULLIF(c.Imagen, ''), CONCAT('Combo', ((c.IdCombo - 1) MOD 3) + 1, '.jpg')) AS Imagen
+                     FROM combos c
+                     INNER JOIN menu m ON c.IdMenu = m.IdMenu
+                     WHERE c.Estado = 0;";
+            return $this->enlace->ExecuteSQL($vSql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            $idCombo = (int) $id;
+            $vSql = "UPDATE combos SET Estado=1 WHERE IdCombo=$idCombo;";
+            $this->enlace->executeSQL_DML($vSql);
+            return $this->get($idCombo);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

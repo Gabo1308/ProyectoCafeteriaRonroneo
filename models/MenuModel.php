@@ -207,11 +207,40 @@ class MenuModel
         try {
             $idMenu = (int) $id;
             $this->enlace->executeSQL_DML("UPDATE menu SET Estado=0 WHERE IdMenu=$idMenu;");
-            $this->enlace->executeSQL_DML("UPDATE combos SET Estado=0 WHERE IdMenu=$idMenu;");
             return [
                 "IdMenu" => $idMenu,
                 "Eliminado" => true
             ];
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function getDesactivados()
+    {
+        try {
+            $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
+                            FechaInicio, FechaFin, Estado,
+                            COALESCE(NULLIF(Imagen, ''), CASE
+                                WHEN IdMenu = 3 THEN 'Menu3.jpg'
+                                WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
+                                ELSE 'menu1.jpg'
+                            END) AS Imagen
+                     FROM menu
+                     WHERE Estado = 0
+                     ORDER BY FechaInicio ASC, HoraInicio ASC, IdMenu ASC;";
+            return $this->enlace->ExecuteSQL($vSql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            $idMenu = (int) $id;
+            $this->enlace->executeSQL_DML("UPDATE menu SET Estado=1 WHERE IdMenu=$idMenu;");
+            return $this->get($idMenu);
         } catch (Exception $e) {
             handleException($e);
         }

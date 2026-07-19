@@ -109,6 +109,30 @@ class combo
         }
     }
 
+    public function getDesactivados()
+    {
+        try {
+            $response = new Response();
+            $model = new ComboModel();
+            $result = $model->getDesactivados();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($param)
+    {
+        try {
+            $response = new Response();
+            $model = new ComboModel();
+            $result = $model->restore($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
     public function uploadImage()
     {
         try {

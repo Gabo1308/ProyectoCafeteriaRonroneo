@@ -42,6 +42,7 @@ const menuVacio = {
 
 export function GestionMenus() {
   const [menus, setMenus] = useState([]);
+  const [menusEliminados, setMenusEliminados] = useState([]);
   const [productos, setProductos] = useState([]);
   const [combos, setCombos] = useState([]);
   const [form, setForm] = useState(menuVacio);
@@ -52,9 +53,11 @@ export function GestionMenus() {
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
   const cargarDatos = () => {
-    Promise.all([MenuService.getMenus(), ProductoService.getProductos(), ComboService.getCombos()])
-      .then(([menusResponse, productosResponse, combosResponse]) => {
+    Promise.all([MenuService.getMenus(), MenuService.getMenusDesactivados(), ProductoService.getProductos(), ComboService.getCombos(),
+    ])
+      .then(([menusResponse, desactivadosResponse, productosResponse, combosResponse]) => {
         setMenus(menusResponse.data || []);
+        setMenusEliminados(desactivadosResponse.data || []);
         setProductos(productosResponse.data || []);
         setCombos(combosResponse.data || []);
         setLoaded(true);
@@ -149,6 +152,15 @@ export function GestionMenus() {
         cargarDatos();
       })
       .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+  };
+
+  const restaurarMenu = (idMenu) => {
+    MenuService.restoreMenu(idMenu)
+      .then(() => {
+        toast.success('Menu restaurado');
+        cargarDatos();
+      })
+      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
   };
 
   if (!loaded) return <p>Cargando...</p>;
@@ -291,6 +303,50 @@ export function GestionMenus() {
                           Eliminar
                         </Button>
                       </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
+            Menus desactivados
+          </Typography>
+
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
+                  <TableCell>Imagen</TableCell>
+                  <TableCell>Menu</TableCell>
+                  <TableCell>Horario</TableCell>
+                  <TableCell>Vigencia</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {menusEliminados.map((menu) => (
+                  <TableRow key={menu.IdMenu} hover>
+                    <TableCell sx={{ width: 88 }}>
+                      <Box component="img" src={`${BASE_URL}/${menu.Imagen}`} alt={menu.Nombre} sx={{ width: 64, height: 48, objectFit: 'cover', borderRadius: 1 }} />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">{menu.Nombre}</Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', maxWidth: 260 }}>
+                        {menu.Descripcion}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{menu.HoraInicio} - {menu.HoraFin}</TableCell>
+                    <TableCell>{menu.FechaInicio} / {menu.FechaFin}</TableCell>
+                    <TableCell>
+                      <Chip label="Inactivo" size="small" color="default" />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button size="small" color="success" variant="contained" onClick={() => restaurarMenu(menu.IdMenu)}>
+                        Restaurar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
