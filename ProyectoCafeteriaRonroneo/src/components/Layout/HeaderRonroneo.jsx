@@ -61,6 +61,7 @@ export default function HeaderRonroneo() {
     { name: "Productos", link: "/admin/productos/" },
     { name: "Combos", link: "/admin/combos/" },
     { name: "Menús", link: "/admin/menus/" },
+    { name: "Preparación", link: "/admin/preparacion/" },
   ];
 
   let userItems = [];
@@ -207,7 +208,7 @@ export default function HeaderRonroneo() {
           {usuario && (
             <Tooltip title="Carrito">
               <IconButton size="large" color="inherit" component={Link} to="/carrito">
-                <Badge badgeContent={getCantidadItems()} color="primary">
+                <Badge badgeContent={getCantidadItems()} color="error">
                   <ShoppingCartIcon />
                 </Badge>
               </IconButton>

@@ -93,8 +93,10 @@ const { addItem } = useCart();
                   <Button
                     fullWidth
                     variant="contained"
+                    color="secondary"
                     startIcon={<AddShoppingCart />}
                     onClick={() => addItem(item, 'producto')}
+                    sx={{ fontWeight: 700 }}
                   >
                     Ordenar
                   </Button>

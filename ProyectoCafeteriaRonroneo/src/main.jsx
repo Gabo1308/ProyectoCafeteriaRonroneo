@@ -17,6 +17,7 @@ import { DetallePreparacion } from './components/Cafeteria/DetallePreparacion.js
 import { GestionProductos } from './components/Admin/GestionProductos.jsx';
 import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
+import { GestionPreparacion } from './components/Admin/GestionPreparacion.jsx';
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
 import { Cart } from "./components/Cafeteria/Cart";
@@ -76,6 +77,10 @@ const rutas = createBrowserRouter(
         {
           path: '/admin/menus/',
           element: <GestionMenus />,
+        },
+        {
+          path: '/admin/preparacion/',
+          element: <GestionPreparacion />,
         },
         {
           path: "/login",

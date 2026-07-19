@@ -7,5 +7,22 @@ class PreparacionServices {
   getPreparacionById(PreparacionId) {
     return axios.get(BASE_URL + '/' + PreparacionId);
   }
+  getEstaciones() {
+    return axios.get(BASE_URL + '/getEstaciones');
+  }
+  guardarPreparacion(Preparacion) {
+    return Preparacion.esNueva
+      ? axios.post(BASE_URL, JSON.stringify(Preparacion))
+      : axios.put(BASE_URL, JSON.stringify(Preparacion));
+  }
+  deletePreparacion(IdProducto) {
+    return axios.delete(BASE_URL + '/' + IdProducto);
+  }
+  getPreparacionesDesactivadas() {
+    return axios.get(BASE_URL + '/getDesactivadas');
+  }
+  restorePreparacion(IdProducto) {
+    return axios.put(BASE_URL + '/restore/' + IdProducto);
+  }
 }
 export default new PreparacionServices();
