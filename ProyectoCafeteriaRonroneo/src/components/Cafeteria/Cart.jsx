@@ -18,7 +18,6 @@ import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -108,9 +107,9 @@ export function Cart() {
   const cerrarPago = () => setPagoAbierto(false);
 
   const confirmarPedido = () => {
-    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
 
-    if (!token) {
+    if (!userStr || userStr === "undefined") {
       toast.error("Debes iniciar sesion para completar el pedido");
       navigate("/login");
       return;
@@ -121,7 +120,13 @@ export function Cart() {
       return;
     }
 
-    const usuario = jwtDecode(token);
+    let usuario;
+    try {
+      usuario = JSON.parse(userStr);
+    } catch (error) {
+      toast.error("Error al leer sesión");
+      return;
+    }
 
     const items = cart.map((item) => ({
       IdProducto: item.Tipo === "producto" ? item.Id : null,
