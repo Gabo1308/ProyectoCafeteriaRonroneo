@@ -4,8 +4,8 @@ import ComboService from '../../services/CombosServices';
 import { ListCardCombos } from './ListCardCombos';
 
 export function CatalogCombos() {
-  const token = localStorage.getItem('token');
-  const isShopping = Boolean(token);
+  const userStr = localStorage.getItem('user');
+  const isShopping = Boolean(userStr && userStr !== "undefined");
 
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
