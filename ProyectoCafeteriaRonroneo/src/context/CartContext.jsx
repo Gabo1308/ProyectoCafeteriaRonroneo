@@ -59,7 +59,7 @@ export function CartProvider({ children }) {
   };
 
   const getTotal = (listaCarrito = cart) => {
-    return listaCarrito.reduce((total, item) => total + item.Precio * item.Cantidad, 0).toFixed(2);
+    return Math.round(listaCarrito.reduce((total, item) => total + item.Precio * item.Cantidad, 0));
   };
 
   const getCantidadItems = () => {

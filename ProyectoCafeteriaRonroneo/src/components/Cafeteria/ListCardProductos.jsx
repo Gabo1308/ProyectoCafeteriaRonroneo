@@ -75,7 +75,7 @@ const { addItem } = useCart();
                 </Typography>
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Typography variant="h6" color="primary.main">
-                    &cent;{item.Precio}
+                    ₡{item.Precio}
                   </Typography>
                 </Box>
               </CardContent>

@@ -156,7 +156,7 @@ export function DetalleMenu() {
                         {producto.Categoria}
                       </Typography>
                       <Typography variant="h6" color="primary.main" sx={{ mt: 1 }}>
-                        &cent;{producto.Precio}
+                        ₡{producto.Precio}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -183,7 +183,7 @@ export function DetalleMenu() {
                       {combo.Descripcion}
                     </Typography>
                     <Typography variant="h6" color="primary.main" sx={{ mt: 1 }}>
-                      &cent;{combo.Precio}
+                      ₡{combo.Precio}
                     </Typography>
                   </CardContent>
                 </Card>

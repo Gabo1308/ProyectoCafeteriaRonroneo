@@ -281,7 +281,7 @@ export function GestionCombos() {
                       </Typography>
                     </TableCell>
                     <TableCell>{combo.MenuNombre}</TableCell>
-                    <TableCell align="right">&cent;{combo.Precio}</TableCell>
+                    <TableCell align="right">₡{Math.round(combo.Precio)}</TableCell>
                     <TableCell>
                       <Chip label={combo.Estado ? 'Activo' : 'Inactivo'} size="small" color={combo.Estado ? 'success' : 'default'} />
                     </TableCell>
@@ -330,7 +330,7 @@ export function GestionCombos() {
                       </Typography>
                     </TableCell>
                     <TableCell>{combo.MenuNombre}</TableCell>
-                    <TableCell align="right">&cent;{combo.Precio}</TableCell>
+                    <TableCell align="right">₡{Math.round(combo.Precio)}</TableCell>
                     <TableCell>
                       <Chip label="Inactivo" size="small" color="default" />
                     </TableCell>

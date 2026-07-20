@@ -67,7 +67,7 @@ export function DetalleProductos() {
               {data.Descripcion}
             </Typography>
             <Typography variant="h5" gutterBottom color="primary.main">
-               &cent;{data.Precio}
+               ₡{data.Precio}
             </Typography>
             {ingredientes && (
               <Card variant="outlined" sx={{ mt: 2, borderRadius: 2 }}>

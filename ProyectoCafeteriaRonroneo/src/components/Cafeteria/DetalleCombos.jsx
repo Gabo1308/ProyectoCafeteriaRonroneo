@@ -64,7 +64,7 @@ export function DetalleCombos() {
               Menu: {combo.MenuNombre}
             </Typography>
             <Typography variant="h5" gutterBottom color="primary.main">
-              Precio: &cent;{combo.Precio}
+              Precio: ₡{Math.round(combo.Precio)}
             </Typography>
             <Card variant="outlined" sx={{ mt: 2, borderRadius: 2 }}>
               <CardContent>
@@ -83,7 +83,7 @@ export function DetalleCombos() {
                       }}
                     >
                       <Typography>{producto.Cantidad} x {producto.Nombre}</Typography>
-                      <Typography color="text.secondary">&cent;{producto.Precio}</Typography>
+                      <Typography color="text.secondary">₡{producto.Precio}</Typography>
                     </Box>
                   ))}
                 </Stack>

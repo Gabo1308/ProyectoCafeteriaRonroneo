@@ -27,6 +27,13 @@ import MenuService from '../../services/MenuServices';
 import ProductoService from '../../services/ProductosServices';
 import ComboService from '../../services/CombosServices';
 
+const formatoHora = (hora) => {
+  if (!hora) return '';
+  const [h, m] = hora.split(':').map(Number);
+  const periodo = h < 12 ? 'a.m.' : 'p.m.';
+  const hora2 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hora2}:${String(m).padStart(2, '0')} ${periodo}`;
+};
 const menuVacio = {
   IdMenu: null,
   Nombre: '',
@@ -133,6 +140,16 @@ export function GestionMenus() {
 
   const guardarMenu = (event) => {
     event.preventDefault();
+
+    if (form.FechaInicio > form.FechaFin) {
+      toast.error('La fecha de inicio no puede ser mayor que la fecha de fin');
+      return;
+    }
+    if (form.HoraInicio >= form.HoraFin) {
+      toast.error('La hora de inicio debe ser menor que la hora de fin');
+      return;
+    }
+
     const payload = { ...form, productos: productosMenu, combos: combosMenu };
     const accion = form.IdMenu ? MenuService.updateMenu(payload) : MenuService.createMenu(payload);
 
@@ -289,8 +306,10 @@ export function GestionMenus() {
                         {menu.Descripcion}
                       </Typography>
                     </TableCell>
-                    <TableCell>{menu.HoraInicio} - {menu.HoraFin}</TableCell>
-                    <TableCell>{menu.FechaInicio} / {menu.FechaFin}</TableCell>
+                    <TableCell>{formatoHora(menu.HoraInicio)} - {formatoHora(menu.HoraFin)}</TableCell>
+                    <TableCell>
+                      {new Date(menu.FechaInicio).toLocaleDateString('es-CR')} / {new Date(menu.FechaFin).toLocaleDateString('es-CR')}
+                    </TableCell>
                     <TableCell>
                       <Chip label={menu.Estado ? 'Activo' : 'Inactivo'} size="small" color={menu.Estado ? 'success' : 'default'} />
                     </TableCell>

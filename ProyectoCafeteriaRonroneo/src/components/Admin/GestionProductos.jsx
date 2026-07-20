@@ -261,7 +261,7 @@ export function GestionProductos() {
                       </Typography>
                     </TableCell>
                     <TableCell>{producto.Categoria}</TableCell>
-                    <TableCell align="right">&cent;{producto.Precio}</TableCell>
+                    <TableCell align="right">₡{producto.Precio}</TableCell>
                     <TableCell>
                       <Chip label={producto.Estado ? 'Activo' : 'Inactivo'} size="small" color={producto.Estado ? 'success' : 'default'} />
                     </TableCell>
@@ -333,7 +333,7 @@ export function GestionProductos() {
                     <TableCell>{producto.Categoria}</TableCell>
 
                     <TableCell align="right">
-                      &cent;{producto.Precio}
+                      ₡{producto.Precio}
                     </TableCell>
 
                     <TableCell>

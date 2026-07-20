@@ -68,7 +68,7 @@ export function ListCardCombos({ data, isShopping = false }) {
                 </Typography>
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Typography variant="h6" color="primary.main">
-                    &cent;{parseFloat(item.Precio).toFixed(0)}
+                    ₡{Math.round(item.Precio)}
                   </Typography>
                 </Box>
               </CardContent>

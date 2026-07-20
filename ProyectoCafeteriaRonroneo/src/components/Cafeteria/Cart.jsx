@@ -41,7 +41,7 @@ CartItem.propTypes = {
 const celdaCuerpo = { fontSize: 14 };
 
 function CartItem({ item, removeItem, updateCantidad }) {
-  const subtotal = (item.Precio * item.Cantidad).toFixed(2);
+  const subtotal = Math.round(item.Precio * item.Cantidad);
 
   return (
     <TableRow
@@ -56,7 +56,7 @@ function CartItem({ item, removeItem, updateCantidad }) {
           {item.Tipo === "producto" ? "Producto" : "Combo"}
         </Typography>
       </TableCell>
-      <TableCell sx={celdaCuerpo}>&cent;{item.Precio.toFixed(2)}</TableCell>
+      <TableCell sx={celdaCuerpo}>₡{item.Precio}</TableCell>
       <TableCell sx={celdaCuerpo}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           <IconButton

@@ -73,6 +73,8 @@ class ProductoModel
 
     public function create($objeto)
     {
+        
+
         try {
             $idCategoria = (int) $objeto->IdCategoria;
             $nombre = $this->limpiar($objeto->Nombre ?? '');
@@ -81,6 +83,12 @@ class ProductoModel
             $imagen = $this->limpiar($objeto->Imagen ?? '');
             $precio = (float) ($objeto->Precio ?? 0);
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
+            
+            $existe = $this->enlace->ExecuteSQL("SELECT IdProducto FROM productos WHERE Nombre='$nombre' AND Estado=1;");
+            
+            if ($existe) {
+                throw new Exception('Ya existe un producto con ese nombre');
+            }
 
             $vSql = "INSERT INTO productos (IdCategoria, Nombre, Descripcion, ingredientes, Imagen, Precio, Estado)
                     VALUES ($idCategoria, '$nombre', '$descripcion', '$ingredientes', '$imagen', $precio, $estado);";
@@ -102,6 +110,13 @@ class ProductoModel
             $imagen = $this->limpiar($objeto->Imagen ?? '');
             $precio = (float) ($objeto->Precio ?? 0);
             $estado = isset($objeto->Estado) ? (int) $objeto->Estado : 1;
+
+            $existe = $this->enlace->ExecuteSQL(
+                "SELECT IdProducto FROM productos WHERE Nombre='$nombre' AND Estado=1 AND IdProducto != $idProducto;"
+            );
+            if ($existe) {
+                throw new Exception('Ya existe otro producto con ese nombre');
+            }
 
             $vSql = "UPDATE productos SET
                         IdCategoria=$idCategoria,

@@ -138,7 +138,7 @@ export function MenuDisponible() {
                           </Typography>
                         </Box>
                         <Typography variant="h6" color="primary.main" sx={{ whiteSpace: 'nowrap' }}>
-                          &cent;{parseFloat(producto.Precio).toFixed(0)}
+                          ₡{Math.round(producto.Precio)}
                         </Typography>
                       </Box>
                     </CardContent>
@@ -172,7 +172,7 @@ export function MenuDisponible() {
                         </Typography>
                       </Box>
                       <Typography variant="h6" color="primary.main" sx={{ whiteSpace: 'nowrap' }}>
-                        &cent;{parseFloat(combo.Precio).toFixed(0)}
+                        ₡{Math.round(combo.Precio)}
                       </Typography>
                     </Box>
                   </CardContent>
