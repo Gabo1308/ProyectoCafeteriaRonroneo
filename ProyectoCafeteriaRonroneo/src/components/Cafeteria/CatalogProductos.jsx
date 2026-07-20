@@ -10,8 +10,8 @@ export function CatalogProductos() {
   const [loaded, setLoaded] = useState(false);
 
 
-  const token = localStorage.getItem('token');
-  const isShopping = Boolean(token);
+  const userStr = localStorage.getItem('user');
+  const isShopping = Boolean(userStr && userStr !== "undefined");
 
   useEffect(() => {
     ProductoService.getProductos()
