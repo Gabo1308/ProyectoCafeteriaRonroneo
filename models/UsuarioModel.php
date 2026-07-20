@@ -1,4 +1,5 @@
 <?php
+
 use Firebase\JWT\JWT;
 
 class UsuarioModel
@@ -66,7 +67,7 @@ class UsuarioModel
                 throw new Exception('Ya existe una cuenta registrada con ese correo');
             }
 
-            $contrasena = password_hash($objeto->Contrasena, PASSWORD_BCRYPT);
+            $contrasena = $objeto->Contrasena;
 
             $vSql = "INSERT INTO usuarios (IdRol, Nombre, Apellido, Correo, Contrasena, Estado)
                     VALUES ($idRol, '$nombre', '$apellido', '$correo', '$contrasena', 1);";
@@ -92,7 +93,7 @@ class UsuarioModel
 
             $usuario = $vResultado[0];
 
-            if (!password_verify($contrasenaEnviada, $usuario->Contrasena)) {
+            if ($contrasenaEnviada !== $usuario->Contrasena) {
                 return false;
             }
 
@@ -101,20 +102,7 @@ class UsuarioModel
                 return false;
             }
 
-            $data = [
-                'IdUsuario' => $usuarioCompleto->IdUsuario,
-                'Nombre' => $usuarioCompleto->Nombre,
-                'Apellido' => $usuarioCompleto->Apellido,
-                'Correo' => $usuarioCompleto->Correo,
-                'Rol' => $usuarioCompleto->Rol,
-                'iat' => time(),
-                'exp' => time() + (3600 * 8) 
-            ];
-
-            $jwt_token = JWT::encode($data, Config::get('SECRET_KEY'), 'HS256');
-
             return [
-                'token' => $jwt_token,
                 'usuario' => $usuarioCompleto
             ];
         } catch (Exception $e) {

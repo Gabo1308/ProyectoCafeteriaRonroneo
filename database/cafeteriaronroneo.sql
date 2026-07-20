@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-07-2026 a las 01:18:48
+-- Tiempo de generación: 20-07-2026 a las 03:55:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -33,13 +33,6 @@ CREATE TABLE `carritocombos` (
   `Cantidad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `carritocombos`
---
-
-INSERT INTO `carritocombos` (`IdCarrito`, `IdCombo`, `Cantidad`) VALUES
-(1, 3, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -51,6 +44,13 @@ CREATE TABLE `carritoproductos` (
   `IdProducto` int(11) NOT NULL,
   `Cantidad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `carritoproductos`
+--
+
+INSERT INTO `carritoproductos` (`IdCarrito`, `IdProducto`, `Cantidad`) VALUES
+(3, 21, 1);
 
 -- --------------------------------------------------------
 
@@ -70,7 +70,7 @@ CREATE TABLE `carritos` (
 --
 
 INSERT INTO `carritos` (`IdCarrito`, `IdCliente`, `FechaCreacion`, `Estado`) VALUES
-(1, 4, '2026-07-19', 1);
+(3, 6, '2026-07-19', 1);
 
 -- --------------------------------------------------------
 
@@ -116,10 +116,7 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`IdCliente`, `Nombre`, `Telefono`, `Correo`, `Direccion`, `FechaRegistro`, `IdUsuario`) VALUES
-(1, 'Cliente Uno', '8888-1111', 'cliente1@ronroneo.com', 'San José', '2026-06-01', 2),
-(2, 'Cliente Dos', '8888-2222', 'cliente2@ronroneo.com', 'Heredia', '2026-06-01', 3),
-(3, 'Cliente Tres', '8888-3333', 'cliente3@ronroneo.com', 'Alajuela', '2026-06-01', 4),
-(4, 'Admin Ronroneo', '60583478', 'admin@ronroneo.com', 'San Pablo', '2026-07-19', 1);
+(6, 'Admin Ronroneo', '90651278', 'admin@ronroneo.com', 'Heredia', '2026-07-19', 6);
 
 -- --------------------------------------------------------
 
@@ -211,8 +208,7 @@ CREATE TABLE `detallepedidos` (
 --
 
 INSERT INTO `detallepedidos` (`IdDetalle`, `IdPedido`, `IdProducto`, `IdCombo`, `Cantidad`, `PrecioUnitario`, `Subtotal`) VALUES
-(4, 4, 21, NULL, 1, 4200, 4200),
-(5, 5, NULL, 3, 1, 4000, 4000);
+(8, 7, 21, NULL, 1, 4200, 4200);
 
 -- --------------------------------------------------------
 
@@ -320,10 +316,7 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`IdPago`, `IdPedido`, `MetodoPago`, `Monto`, `FechaPago`, `Estado`) VALUES
-(1, 1, 'Efectivo', 3800, '2026-06-10', 1),
-(2, 2, 'Tarjeta', 4200, '2026-06-11', 1),
-(3, 4, 'Tarjeta', 4200, '2026-07-19', 1),
-(4, 5, 'Tarjeta', 4000, '2026-07-19', 1);
+(6, 7, 'Efectivo', 4200, '2026-07-19', 1);
 
 -- --------------------------------------------------------
 
@@ -346,11 +339,7 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`IdPedido`, `IdCliente`, `IdUsuario`, `IdCarrito`, `FechaPedido`, `Estado`, `Total`) VALUES
-(1, 1, 1, NULL, '2026-06-10', 1, 3800),
-(2, 2, 1, NULL, '2026-06-11', 1, 4200),
-(3, 3, 1, NULL, '2026-06-12', 0, 5500),
-(4, 4, 1, NULL, '2026-07-19', 1, 4200),
-(5, 4, 1, 1, '2026-07-19', 1, 4000);
+(7, 6, 6, 3, '2026-07-19', 1, 4200);
 
 -- --------------------------------------------------------
 
@@ -366,15 +355,6 @@ CREATE TABLE `preparacion` (
   `HoraFin` time DEFAULT NULL,
   `Observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `preparacion`
---
-
-INSERT INTO `preparacion` (`IdPreparacion`, `IdPedido`, `Estado`, `HoraInicio`, `HoraFin`, `Observaciones`) VALUES
-(1, 1, 1, '08:00:00', '08:10:00', 'Preparación de Cappuccino y Croissant'),
-(2, 2, 1, '10:30:00', '10:40:00', 'Preparación de Cheesecake y Limonada'),
-(3, 3, 0, '12:00:00', NULL, 'Pendiente: Batido y Wrap en preparación');
 
 -- --------------------------------------------------------
 
@@ -518,11 +498,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `IdRol`, `Nombre`, `Apellido`, `Correo`, `Contrasena`, `Estado`) VALUES
-(1, 1, 'Admin', 'Ronroneo', 'admin@ronroneo.com', '$2y$10$9PPRikTAwaEVluiqpmgY3e/Q5bZkQOmjP.rVuL29BbwN6sseBdxF6', 1),
-(2, 2, 'Cliente', 'Uno', 'cliente1@ronroneo.com', '$2y$10$9PPRikTAwaEVluiqpmgY3e/Q5bZkQOmjP.rVuL29BbwN6sseBdxF6', 1),
-(3, 2, 'Cliente', 'Dos', 'cliente2@ronroneo.com', '$2y$10$9PPRikTAwaEVluiqpmgY3e/Q5bZkQOmjP.rVuL29BbwN6sseBdxF6', 1),
-(4, 2, 'Cliente', 'Tres', 'cliente3@ronroneo.com', '$2y$10$9PPRikTAwaEVluiqpmgY3e/Q5bZkQOmjP.rVuL29BbwN6sseBdxF6', 1),
-(5, 2, 'Gabriel', 'Leitón', 'gaboleitona@gmail.com', '$2y$10$eMPgKGdMF0Ns16fU3xp9b.dRHPJO9ZiHEABI1iGwTnslN9Y4UVUtO', 1);
+(6, 1, 'Admin', 'Ronroneo', 'admin@ronroneo.com', 'Eladmindellugar+', 1);
 
 --
 -- Índices para tablas volcadas
@@ -662,7 +638,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `carritos`
 --
 ALTER TABLE `carritos`
-  MODIFY `IdCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `IdCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
@@ -674,7 +650,7 @@ ALTER TABLE `categoria`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `IdCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `combos`
@@ -686,7 +662,7 @@ ALTER TABLE `combos`
 -- AUTO_INCREMENT de la tabla `detallepedidos`
 --
 ALTER TABLE `detallepedidos`
-  MODIFY `IdDetalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IdDetalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `estaciones`
@@ -704,13 +680,13 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `IdPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `IdPedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IdPedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `preparacion`
@@ -734,7 +710,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `IdUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IdUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas

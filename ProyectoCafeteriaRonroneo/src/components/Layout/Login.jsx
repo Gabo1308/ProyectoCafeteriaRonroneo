@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UsuarioService from "../../services/UsuarioServices";
+import toast from "react-hot-toast";
 
 export function Login() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export function Login() {
 
     UsuarioService.login(usuario)
       .then((response) => {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.usuario));
 
         window.location.href = "/";
       })
