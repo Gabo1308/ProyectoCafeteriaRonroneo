@@ -19,7 +19,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../hooks/useCart";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -34,20 +33,19 @@ export default function HeaderRonroneo() {
 
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
   const { getCantidadItems } = useCart();
 
   let usuario = null;
-
+  const userStr = localStorage.getItem("user");
   try {
-    if (token) {
-      usuario = jwtDecode(token);
-      console.log("JWT:", usuario);
+    if (userStr && userStr !== "undefined") {
+      usuario = JSON.parse(userStr);
+    } else if (userStr === "undefined") {
+      localStorage.removeItem("user");
     }
   } catch (error) {
-    console.error("Token inválido:", error);
-    localStorage.removeItem("token");
+    console.error("Error parsing user:", error);
+    localStorage.removeItem("user");
   }
 
   const navItems = [
@@ -91,7 +89,7 @@ export default function HeaderRonroneo() {
   };
 
   const confirmarLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setLogoutDialogOpen(false);
     window.location.href = "/";
   };
