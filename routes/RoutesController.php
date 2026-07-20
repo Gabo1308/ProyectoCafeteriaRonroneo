@@ -69,11 +69,16 @@ class RoutesController
                 http_response_code(200);
                 exit();
             }
-            $routesArray = explode("/", $_SERVER['REQUEST_URI']);
-            // Eliminar elementos vacíos del array
-            $routesArray = array_filter($routesArray);
+            // Remove the backend installation directory from the request URL.
+            $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+            if ($basePath !== '' && str_starts_with($requestPath, $basePath)) {
+                $requestPath = substr($requestPath, strlen($basePath));
+            }
 
-            if (count($routesArray) < 2) {
+            $routesArray = array_values(array_filter(explode('/', $requestPath)));
+
+            if (count($routesArray) < 1) {
                 $json = array(
                     'status' => 404,
                     'result' => 'Controlador no especificado'
@@ -83,10 +88,10 @@ class RoutesController
             }
 
             if (isset($_SERVER['REQUEST_METHOD'])) {
-                $controller = $routesArray[2] ?? null;
-                $action = $routesArray[3] ?? null;
-                $param1 = $routesArray[4] ?? null;
-                $param2 = $routesArray[5] ?? null;
+                $controller = $routesArray[0] ?? null;
+                $action = $routesArray[1] ?? null;
+                $param1 = $routesArray[2] ?? null;
+                $param2 = $routesArray[3] ?? null;
                 if ($controller) {
                     try {
                         if (class_exists($controller)) {
@@ -104,7 +109,7 @@ class RoutesController
                                     } elseif ($action) {
                                         if (method_exists($controller, $action)) {
                                             $response->$action();
-                                        } elseif (count($routesArray) == 3) {
+                                        } elseif (count($routesArray) == 2) {
                                             $response->get($action);
                                         } else {
                                             $json = array(
@@ -164,7 +169,7 @@ class RoutesController
                                     } elseif ($action) {
                                         if (method_exists($controller, $action)) {
                                             $response->$action();
-                                        } elseif (count($routesArray) == 3) {
+                                        } elseif (count($routesArray) == 2) {
                                             $response->delete($action);
                                         } else {
                                             $json = array(

@@ -93,7 +93,7 @@ class UsuarioModel
 
             $usuario = $vResultado[0];
 
-            if ($contrasenaEnviada !== $usuario->Contrasena) {
+            if (!password_verify($contrasenaEnviada, $usuario->Contrasena)) {
                 return false;
             }
 

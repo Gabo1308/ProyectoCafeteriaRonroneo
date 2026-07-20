@@ -58,6 +58,10 @@ class producto
             $producto = new ProductoModel();
             $result = $producto->create($inputJSON);
             $response->toJSON($result);
+        } catch (InvalidArgumentException $e) {
+            (new Response())->status(422)->toJSON([
+                'mensaje' => $e->getMessage()
+            ]);
         } catch (Exception $e) {
             handleException($e);
         }
@@ -72,6 +76,10 @@ class producto
             $producto = new ProductoModel();
             $result = $producto->update($inputJSON);
             $response->toJSON($result);
+        } catch (InvalidArgumentException $e) {
+            (new Response())->status(422)->toJSON([
+                'mensaje' => $e->getMessage()
+            ]);
         } catch (Exception $e) {
             handleException($e);
         }

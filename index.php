@@ -20,6 +20,7 @@ require_once "controllers/core/Response.php";
 
 /***--- Agregar todos los modelos*/
 require_once "models/ProductoModel.php";
+require_once "models/IngredienteModel.php";
 require_once "models/CategoriaModel.php";
 require_once "models/ComboModel.php";
 require_once "models/MenuModel.php";
@@ -30,6 +31,7 @@ require_once "models/PedidoModel.php";
 
 /***--- Agregar todos los controladores*/
 require_once "controllers/ProductoController.php";
+require_once "controllers/IngredienteController.php";
 require_once "controllers/CategoriaController.php";
 require_once "controllers/ComboController.php";
 require_once "controllers/MenuController.php";

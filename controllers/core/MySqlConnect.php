@@ -117,4 +117,24 @@ class MySqlConnect {
 			handleException($e);
 		}
 	}
+
+	/**
+	 * Ejecuta varias operaciones sobre una misma conexion y confirma todos los
+	 * cambios juntos. El callback recibe la instancia activa de mysqli.
+	 */
+	public function transaction(callable $operation) {
+		$this->connect();
+		$this->link->begin_transaction();
+
+		try {
+			$result = $operation($this->link);
+			$this->link->commit();
+			return $result;
+		} catch (Throwable $e) {
+			$this->link->rollback();
+			throw $e;
+		} finally {
+			$this->link->close();
+		}
+	}
 }
