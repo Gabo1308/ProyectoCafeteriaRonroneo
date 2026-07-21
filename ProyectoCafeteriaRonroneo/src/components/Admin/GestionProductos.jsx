@@ -332,8 +332,10 @@ export function GestionProductos() {
                   <Button
                     type="submit"
                     variant="contained"
+                    color="secondary"
                     startIcon={<SaveIcon />}
                     fullWidth
+                    sx={{ fontWeight: 700 }}
                   >
                     Guardar
                   </Button>

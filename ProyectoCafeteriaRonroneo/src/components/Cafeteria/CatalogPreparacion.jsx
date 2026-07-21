@@ -62,16 +62,18 @@ export function CatalogPreparacion() {
                     icon={<Timer />}
                     label={`${item.CantidadPasos} pasos`}
                     color="secondary"
-                    variant="outlined"
+                    sx={{ fontWeight: 700 }}
                   />
                 </CardContent>
                 <CardActions sx={{ p: 2, pt: 0 }}>
                   <Button
                     fullWidth
                     variant="contained"
+                    color="secondary"
                     startIcon={<Info />}
                     component={Link}
                     to={`/preparacion/${item.IdPreparacion}`}
+                    sx={{ fontWeight: 700 }}
                   >
                     Ver estaciones
                   </Button>

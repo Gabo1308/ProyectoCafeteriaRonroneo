@@ -237,7 +237,7 @@ export function GestionPreparacion() {
                 </Button>
 
                 <Stack direction="row" spacing={1}>
-                  <Button type="submit" variant="contained" startIcon={<SaveIcon />} fullWidth>
+                  <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
                     Guardar
                   </Button>
                   <Button variant="outlined" onClick={limpiarFormulario} fullWidth>

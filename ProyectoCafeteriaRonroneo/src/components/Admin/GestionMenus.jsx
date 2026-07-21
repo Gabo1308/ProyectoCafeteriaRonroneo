@@ -269,7 +269,7 @@ export function GestionMenus() {
                   renderInput={(params) => <TextField {...params} label="Buscar combos por nombre" />}
                 />
                 <Stack direction="row" spacing={1}>
-                  <Button type="submit" variant="contained" startIcon={<SaveIcon />} fullWidth>
+                  <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
                     Guardar
                   </Button>
                   <Button variant="outlined" startIcon={<AddIcon />} onClick={limpiarFormulario} fullWidth>

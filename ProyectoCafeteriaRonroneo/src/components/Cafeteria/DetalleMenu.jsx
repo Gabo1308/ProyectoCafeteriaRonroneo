@@ -141,7 +141,7 @@ export function DetalleMenu() {
         {Object.entries(productosPorCategoria).map(([categoria, items]) => (
           <Box key={categoria}>
             <Divider sx={{ mb: 2 }}>
-              <Chip label={categoria} color="primary" />
+              <Chip label={categoria} color="primary" sx={{ fontWeight: 700, fontSize: '0.9rem', px: 1 }} />
             </Divider>
             <Grid container spacing={2}>
               {items.map((producto) => (

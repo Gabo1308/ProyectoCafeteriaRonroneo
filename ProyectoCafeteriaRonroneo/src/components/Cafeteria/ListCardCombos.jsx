@@ -86,8 +86,10 @@ export function ListCardCombos({ data, isShopping = false }) {
                   <Button
                     fullWidth
                     variant="contained"
+                    color="secondary"
                     startIcon={<AddShoppingCart />}
                     onClick={() => addItem(item, 'combo')}
+                    sx={{ fontWeight: 700 }}
                   >
                     Ordenar
                   </Button>

@@ -128,8 +128,8 @@ export default function HeaderRonroneo() {
 
         <Typography
           variant="subtitle1"
-          color="primary.main"
-          sx={{ fontWeight: 700, whiteSpace: "nowrap", mr: { xs: 0, md: 1 } }}
+          color="primary.dark"
+          sx={{ fontWeight: 800, whiteSpace: "nowrap", mr: { xs: 0, md: 1 } }}
         >
           Ronroneo
         </Typography>
@@ -140,9 +140,14 @@ export default function HeaderRonroneo() {
               key={item.link}
               component={Link}
               to={item.link}
-              color="primary"
               size="small"
-              sx={{ textTransform: "none", whiteSpace: "nowrap", minWidth: "auto" }}
+              sx={{
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: "auto",
+                fontWeight: 700,
+                color: "primary.dark",
+              }}
             >
               {item.name}
             </Button>
@@ -155,7 +160,7 @@ export default function HeaderRonroneo() {
               startIcon={<SettingsIcon />}
               endIcon={<ExpandMoreIcon />}
               onClick={(event) => setAnchorElMantenimientos(event.currentTarget)}
-              sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+              sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
             >
               Mantenimientos
             </Button>
