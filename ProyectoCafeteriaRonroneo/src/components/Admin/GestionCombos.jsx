@@ -175,7 +175,7 @@ export function GestionCombos() {
         Mantenimiento de combos
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Crea combos con productos, cantidades, menu asociado y precio especial.
+        Crea combos con productos, cantidades, menú asociado y precio especial.
       </Typography>
 
       <Grid container spacing={3}>

@@ -199,7 +199,7 @@ export function GestionProductos() {
         Mantenimiento de productos
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Administra productos, categorias, imagenes, ingredientes y precios.
+        Administra productos, categorías, imágenes, ingredientes y precios.
       </Typography>
 
       <Grid container spacing={3}>
