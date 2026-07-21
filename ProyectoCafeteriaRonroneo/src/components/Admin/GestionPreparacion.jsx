@@ -120,6 +120,14 @@ export function GestionPreparacion() {
       return;
     }
 
+    const idsEstaciones = form.Estaciones.map((fila) => fila.IdEstacion);
+    const hayDuplicados = idsEstaciones.some((id, index) => idsEstaciones.indexOf(id) !== index);
+    
+    if (hayDuplicados) {
+      toast.error('No puede repetir la misma estación dentro del mismo proceso de preparación');
+      return;
+    }
+
     PreparacionService.guardarPreparacion(form)
       .then(() => {
         toast.success('Preparacion guardada');

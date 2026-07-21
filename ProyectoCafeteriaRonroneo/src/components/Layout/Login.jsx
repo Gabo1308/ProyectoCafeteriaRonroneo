@@ -31,9 +31,13 @@ export function Login() {
         window.location.href = "/";
       })
       .catch((error) => {
-        console.log(error);
-        
-        toast.error("Correo o contraseña incorrectos");
+        console.error(error);
+
+        if (error.response) {
+          toast.error(error.response.data.message || "Correo o contraseña incorrectos");
+        } else {
+          toast.error("Error al conectar con el servidor");
+        }
       });
   };
 
