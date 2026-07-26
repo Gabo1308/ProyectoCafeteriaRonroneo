@@ -22,7 +22,7 @@ export function MenuDisponible() {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+  const cargarMenuDisponible = () => {
     MenuService.getMenuDisponible()
       .then((menuResponse) => {
         const menuActual = menuResponse.data;
@@ -51,6 +51,16 @@ export function MenuDisponible() {
         setError(err);
         setLoaded(true);
       });
+  };
+
+  useEffect(() => {
+    cargarMenuDisponible();
+
+    const intervalo = setInterval(() => {
+      cargarMenuDisponible();
+    }, 60000);
+
+    return () => clearInterval(intervalo);
   }, []);
 
   const productosPorCategoria = useMemo(() => {

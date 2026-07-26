@@ -61,16 +61,8 @@ class MenuModel
                                 ELSE 'menu1.jpg'
                             END) AS Imagen
                      FROM menu
-                     WHERE FechaInicio <= CURDATE()
-                       AND FechaFin >= CURDATE()
+                     WHERE EnCurso = 1
                        AND Estado = 1
-                       AND (
-                            HoraInicio IS NULL
-                            OR HoraFin IS NULL
-                            OR (HoraInicio <= HoraFin AND CURTIME() BETWEEN HoraInicio AND HoraFin)
-                            OR (HoraInicio > HoraFin AND (CURTIME() >= HoraInicio OR CURTIME() <= HoraFin))
-                       )
-                     ORDER BY FechaInicio DESC
                      LIMIT 1;";
             $result = $this->enlace->ExecuteSQL($vSql);
             return $result ? $result[0] : null;
