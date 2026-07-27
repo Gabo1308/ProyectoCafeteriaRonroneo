@@ -38,10 +38,10 @@ async function miTarea() {
 }
 
 function iniciarSincronizado() {
-  const ahora = Date.now();
-  const msHastaProximoMinuto = 60000 - (ahora % 60000);
+  const horaActual = Date.now();
+  const siguienteConsulta = 60000 - (horaActual % 60000);
 
-  console.log(`Sincronizando... primera ejecución en ${Math.round(msHastaProximoMinuto / 1000)}s`);
+  console.log(`Sincronizando... primera ejecución en ${Math.round(siguienteConsulta / 1000)}s`);
 
   setTimeout(() => {
     miTarea();
@@ -49,7 +49,7 @@ function iniciarSincronizado() {
       console.log('Ejecutando tarea programada');
       miTarea();
     }, 60000);
-  }, msHastaProximoMinuto);
+  }, siguienteConsulta);
 }
 
 miTarea(); 
