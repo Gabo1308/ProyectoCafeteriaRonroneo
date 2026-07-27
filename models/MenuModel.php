@@ -51,25 +51,20 @@ class MenuModel
     }
 
     public function getDisponible()
-    {
-        try {
-            $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
-                            FechaInicio, FechaFin, Estado,
-                            COALESCE(NULLIF(Imagen, ''), CASE
-                                WHEN IdMenu = 3 THEN 'Menu3.jpg'
-                                WHEN IdMenu BETWEEN 1 AND 2 THEN CONCAT('menu', IdMenu, '.jpg')
-                                ELSE 'menu1.jpg'
-                            END) AS Imagen
-                     FROM menu
-                     WHERE EnCurso = 1
-                       AND Estado = 1
-                     LIMIT 1;";
-            $result = $this->enlace->ExecuteSQL($vSql);
-            return $result ? $result[0] : null;
-        } catch (Exception $e) {
-            handleException($e);
-        }
+{
+    try {
+        $vSql = "SELECT IdMenu, Nombre, Descripcion, HoraInicio, HoraFin, DiasDisponibles,
+                        FechaInicio, FechaFin, Estado, Imagen
+                 FROM menu
+                 WHERE EnCurso = 1
+                   AND Estado = 1
+                 LIMIT 1;";
+        $result = $this->enlace->ExecuteSQL($vSql);
+        return $result ? $result[0] : null;
+    } catch (Exception $e) {
+        handleException($e);
     }
+}
 
     public function getCombos($idMenu)
     {
