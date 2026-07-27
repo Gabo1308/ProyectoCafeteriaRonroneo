@@ -37,9 +37,20 @@ async function miTarea() {
   await conexion.end();
 }
 
-setInterval(() => {
-  console.log('Ejecutando tarea programada');
-  miTarea();
-}, 60000); 
+function iniciarSincronizado() {
+  const ahora = Date.now();
+  const msHastaProximoMinuto = 60000 - (ahora % 60000);
+
+  console.log(`Sincronizando... primera ejecución en ${Math.round(msHastaProximoMinuto / 1000)}s`);
+
+  setTimeout(() => {
+    miTarea();
+    setInterval(() => {
+      console.log('Ejecutando tarea programada');
+      miTarea();
+    }, 60000);
+  }, msHastaProximoMinuto);
+}
 
 miTarea(); 
+iniciarSincronizado();

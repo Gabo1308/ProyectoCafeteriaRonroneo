@@ -56,11 +56,21 @@ export function MenuDisponible() {
   useEffect(() => {
     cargarMenuDisponible();
 
-    const intervalo = setInterval(() => {
-      cargarMenuDisponible();
-    }, 60000);
+    const COLCHON_MS = 5000; 
+    const ahora = Date.now();
+    const msHastaProximaConsulta = 60000 - (ahora % 60000) + COLCHON_MS;
 
-    return () => clearInterval(intervalo);
+    const timeoutInicial = setTimeout(() => {
+      cargarMenuDisponible();
+
+      const intervalo = setInterval(() => {
+        cargarMenuDisponible();
+      }, 60000);
+
+      return () => clearInterval(intervalo);
+    }, msHastaProximaConsulta);
+
+    return () => clearTimeout(timeoutInicial);
   }, []);
 
   const productosPorCategoria = useMemo(() => {
