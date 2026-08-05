@@ -21,6 +21,8 @@ import { GestionPreparacion } from './components/Admin/GestionPreparacion.jsx';
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
 import { Cart } from "./components/Cafeteria/Cart";
+import { HistorialPedidos } from "./components/Cafeteria/HistorialPedidos";
+import { DetallePedido } from "./components/Cafeteria/DetallePedido";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -93,6 +95,14 @@ const rutas = createBrowserRouter(
         {
           path: "/carrito",
           element: <Cart />,
+        }
+        ,{
+          path: "/pedidos",
+          element: <HistorialPedidos />,
+        },
+        {
+          path: "/pedido/:id",
+          element: <DetallePedido />,
         },
       ], 
     }, 
