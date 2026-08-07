@@ -62,4 +62,16 @@ class pedido
             handleException($e);
         }
     }
+    
+    public function getClientePropio($param)
+    {
+        try {
+            $response = new Response();
+            $model = new PedidoModel();
+            $result = $model->getClientePropio($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

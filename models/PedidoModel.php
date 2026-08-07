@@ -32,6 +32,15 @@ class PedidoModel
         return $resultado ? $resultado[0] : null;
     }
 
+    public function getClientePropio($idUsuario)
+    {
+        try {
+            return $this->obtenerClientePorUsuario($idUsuario);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
     private function obtenerOCrearCliente($idUsuario, $nombre, $telefono, $correo, $direccion)
     {
         $idUsuario = (int) $idUsuario;

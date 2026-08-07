@@ -17,6 +17,9 @@ class PedidoServices {
   getClientes() {
     return axios.get(BASE_URL + '/getClientes');
   }
+  getClientePropio(idUsuario) {
+    return axios.get(BASE_URL + '/getClientePropio/' + idUsuario);
+  }
 }
 
 export default new PedidoServices();

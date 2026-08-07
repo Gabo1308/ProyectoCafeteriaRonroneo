@@ -22,6 +22,7 @@ export function CartProvider({ children }) {
       Precio: parseFloat(producto.Precio),
       Imagen: producto.Imagen,
       Cantidad: 1,
+      Observaciones: "",
     };
 
     setCart((actual) => {
@@ -46,11 +47,22 @@ export function CartProvider({ children }) {
   };
 
   const updateCantidad = (itemBuscado, nuevaCantidad) => {
-    if (nuevaCantidad < 1) return;
-
     const key = generarKey(itemBuscado);
+
+    if (nuevaCantidad === 0) {
+      removeItem(itemBuscado);
+      return;
+    }
+
     setCart((actual) =>
       actual.map((item) => (generarKey(item) === key ? { ...item, Cantidad: nuevaCantidad } : item))
+    );
+  };
+
+  const updateObservaciones = (itemBuscado, observaciones) => {
+    const key = generarKey(itemBuscado);
+    setCart((actual) =>
+      actual.map((item) => (generarKey(item) === key ? { ...item, Observaciones: observaciones } : item))
     );
   };
 
@@ -73,6 +85,7 @@ export function CartProvider({ children }) {
         addItem,
         removeItem,
         updateCantidad,
+        updateObservaciones,
         cleanCart,
         getTotal,
         getCantidadItems,
