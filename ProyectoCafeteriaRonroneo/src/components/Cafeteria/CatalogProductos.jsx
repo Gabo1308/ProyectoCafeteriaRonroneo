@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { ListCardProductos } from './ListCardProductos';
 
 export function CatalogProductos() {
+
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
@@ -31,6 +32,7 @@ export function CatalogProductos() {
 
   if(!loaded) return <p>Cargando..</p>
   if(error) return <p>Error: {error.message}</p>
+  
   return <>
     {data && <ListCardProductos data={data} isShopping={isShopping} />}
   </>
