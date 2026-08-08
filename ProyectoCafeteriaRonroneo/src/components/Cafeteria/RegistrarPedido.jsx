@@ -133,3 +133,90 @@ export function RegistrarPedido() {
         .catch((err) => toast.error(`No se pudieron cargar tus datos: ${err.message}`));
     }
   }, []);
+
+const totales = useMemo(() => {
+    let totalSinImpuesto = 0;
+    let totalImpuestos = 0;
+
+    cart.forEach((item) => {
+      const subtotal = item.Precio * item.Cantidad;
+      totalSinImpuesto += subtotal;
+      totalImpuestos += Math.round(subtotal * Impuesto);
+    });
+
+    const costoEnvio = metodoEntrega === 'Entrega a domicilio' ? CostoEnvio : 0;
+    const totalFinal = totalSinImpuesto + totalImpuestos + costoEnvio;
+
+    return { totalSinImpuesto, totalImpuestos, costoEnvio, totalFinal };
+  }, [cart, metodoEntrega]);
+
+  const vuelto = useMemo(() => {
+    const recibido = Number(montoRecibido);
+    if (metodoPago !== 'Efectivo' || !montoRecibido || Number.isNaN(recibido)) return null;
+    return recibido - totales.totalFinal;
+  }, [montoRecibido, metodoPago, totales.totalFinal]);
+
+  const registrarPedido = () => {
+    if (!usuario) {
+      toast.error('Debes iniciar sesión');
+      navigate('/login');
+      return;
+    }
+    if (cart.length === 0) {
+      toast.error('Se debe agregar un producto o un combo antes de registrar el pedido');
+      return;
+    }
+    if (esEncargadoOAdmin && !idClienteSeleccionado) {
+      toast.error('Debe seleccionar un cliente');
+      return;
+    }
+    if (metodoEntrega === 'Entrega a domicilio' && !direccionEntrega.trim()) {
+      toast.error('Debe indicar la dirección de entrega');
+      return;
+    }
+    if (metodoPago === 'Tarjeta' && (!numeroTarjeta || !fechaExpiracion || !cvv)) {
+      toast.error('Por favor complete los datos de la tarjeta');
+      return;
+    }
+    if (metodoPago === 'Efectivo') {
+      const recibido = Number(montoRecibido);
+      if (!montoRecibido || Number.isNaN(recibido) || recibido < totales.totalFinal) {
+        toast.error('El monto recibido insuficiente');
+        return;
+      }
+    }
+
+    const items = cart.map((item) => ({
+      IdProducto: item.Tipo === 'producto' ? item.Id : null,
+      IdCombo: item.Tipo === 'combo' ? item.Id : null,
+      Cantidad: item.Cantidad,
+      PrecioUnitario: item.Precio,
+      Observaciones: item.Observaciones || '',
+    }));
+
+    const payload = {
+      IdUsuario: usuario.IdUsuario,
+      EsEncargado: esEncargadoOAdmin,
+      IdClienteSeleccionado: esEncargadoOAdmin ? Number(idClienteSeleccionado) : undefined,
+      Nombre: usuario.Nombre,
+      Correo: usuario.Correo,
+      Telefono: clientePropio?.Telefono || '',
+      Direccion: clientePropio?.Direccion || '',
+      MetodoEntrega: metodoEntrega,
+      DireccionEntrega: metodoEntrega === 'Entrega a domicilio' ? direccionEntrega : '',
+      CostoEnvio: totales.costoEnvio,
+      MetodoPago: metodoPago,
+      MontoRecibido: metodoPago === 'Efectivo' ? Number(montoRecibido) : null,
+      items,
+    };
+
+    setEnviando(true);
+    PedidoService.crearPedido(payload)
+      .then((response) => {
+        toast.success('Pedido registrado con éxito');
+        cleanCart();
+        navigate(`/pedido/${response.data.IdPedido}`);
+      })
+      .catch((err) => toast.error(`No se pudo registrar el pedido: ${err.message}`))
+      .finally(() => setEnviando(false));
+  };
