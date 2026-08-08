@@ -96,3 +96,40 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
   );
   
 }
+
+export function RegistrarPedido() {
+  const { cart, removeItem, updateCantidad, updateObservaciones, cleanCart } = useCart();
+  const navigate = useNavigate();
+
+  const userStr = localStorage.getItem('user');
+  const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
+  const esEncargadoOAdmin = usuario?.Rol === 'Encargado' || usuario?.Rol === 'Administrador';
+
+  const [clientes, setClientes] = useState([]);
+  const [idClienteSeleccionado, setIdClienteSeleccionado] = useState('');
+  const [clientePropio, setClientePropio] = useState(null);
+
+  const [metodoEntrega, setMetodoEntrega] = useState('Recogida en tienda');
+  const [direccionEntrega, setDireccionEntrega] = useState('');
+
+  const [metodoPago, setMetodoPago] = useState('Efectivo');
+  const [montoRecibido, setMontoRecibido] = useState('');
+  const [numeroTarjeta, setNumeroTarjeta] = useState('');
+  const [fechaExpiracion, setFechaExpiracion] = useState('');
+  const [cvv, setCvv] = useState('');
+
+  const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    if (esEncargadoOAdmin) {
+      PedidoService.getClientes()
+        .then((response) => setClientes(response.data || []))
+        .catch((err) => toast.error(`No se pudo cargar la lista de clientes: ${err.message}`));
+    } else {
+      PedidoService.getClientePropio(usuario.IdUsuario)
+        .then((response) => setClientePropio(response.data))
+        .catch((err) => toast.error(`No se pudieron cargar tus datos: ${err.message}`));
+    }
+  }, []);
