@@ -1,11 +1,25 @@
 import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BASE_URL + 'pedido';
+
 class PedidoServices {
   crearPedido(pedido) {
     return axios.post(BASE_URL, JSON.stringify(pedido));
   }
-  getPedidosByUsuario(IdUsuario) {
-    return axios.get(BASE_URL + '/getByUsuario/' + IdUsuario);
+  getPedido(idPedido) {
+    return axios.get(BASE_URL + '/get/' + idPedido);
+  }
+  getHistorialCliente(idUsuario, filtros = {}) {
+    return axios.get(BASE_URL + '/getByCliente/' + idUsuario, { params: filtros });
+  }
+  getHistorialTodos(filtros = {}) {
+    return axios.get(BASE_URL + '/getAll', { params: filtros });
+  }
+  getClientes() {
+    return axios.get(BASE_URL + '/getClientes');
+  }
+  getClientePropio(idUsuario) {
+    return axios.get(BASE_URL + '/getClientePropio/' + idUsuario);
   }
 }
+
 export default new PedidoServices();

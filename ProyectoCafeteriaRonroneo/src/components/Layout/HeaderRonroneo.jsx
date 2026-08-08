@@ -53,6 +53,7 @@ export default function HeaderRonroneo() {
     { name: "Combos", link: "/catalog-combos/" },
     { name: "Menús", link: "/catalog-menu/" },
     { name: "Preparación", link: "/catalog-preparacion/" },
+    { name: "Mis pedidos", link: "/pedidos" },
   ];
 
   const mantenimientosItems = [
