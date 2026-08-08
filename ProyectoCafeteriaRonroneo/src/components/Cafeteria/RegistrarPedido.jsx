@@ -220,3 +220,88 @@ const totales = useMemo(() => {
       .catch((err) => toast.error(`No se pudo registrar el pedido: ${err.message}`))
       .finally(() => setEnviando(false));
   };
+
+  if (!usuario) {
+    return (
+      <Box sx={{ py: 4 }}>
+        <Typography color="text.secondary">Debes iniciar sesión para registrar un pedido.</Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ py: 2 }}>
+      <Typography variant="h4" color="primary.main" gutterBottom>
+        Registrar pedido
+      </Typography>
+
+      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, mb: 3 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField label="Fecha" value={formatoFechaHoy()} fullWidth disabled />
+          </Grid>
+
+          {esEncargadoOAdmin ? (
+            <Grid size={{ xs: 12, sm: 6, md: 5 }}>
+              <TextField
+                label="Cliente"
+                select
+                fullWidth
+                required
+                value={idClienteSeleccionado}
+                onChange={(e) => setIdClienteSeleccionado(e.target.value)}
+              >
+                {clientes.map((cliente) => (
+                  <MenuItem key={cliente.IdCliente} value={cliente.IdCliente}>
+                    {cliente.Nombre} — {cliente.Correo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          ) : (
+            <Grid size={{ xs: 12, sm: 6, md: 5 }}>
+              <TextField
+                label="Cliente"
+                value={clientePropio ? `${clientePropio.Nombre} — ${clientePropio.Correo}` : `${usuario.Nombre} — ${usuario.Correo}`}
+                fullWidth
+                disabled
+              />
+            </Grid>
+          )}
+
+          {esEncargadoOAdmin && (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField label="Encargado" value={`${usuario.Nombre} ${usuario.Apellido || ''}`} fullWidth disabled />
+            </Grid>
+          )}
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <TextField
+              label="Método de entrega"
+              select
+              fullWidth
+              value={metodoEntrega}
+              onChange={(e) => setMetodoEntrega(e.target.value)}
+            >
+              <MenuItem value="Recogida en tienda">Recogida en tienda</MenuItem>
+              <MenuItem value="Entrega a domicilio">Entrega a domicilio (+₡{CostoEnvio})</MenuItem>
+            </TextField>
+          </Grid>
+
+          {metodoEntrega === 'Entrega a domicilio' && (
+            <Grid size={{ xs: 12, sm: 8, md: 5 }}>
+              <TextField
+                label="Dirección de entrega"
+                fullWidth
+                required
+                value={direccionEntrega}
+                onChange={(e) => setDireccionEntrega(e.target.value)}
+              />
+            </Grid>
+          )}
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <TextField label="Estado" value="Pendiente de pago" fullWidth disabled />
+          </Grid>
+        </Grid>
+      </Paper>
