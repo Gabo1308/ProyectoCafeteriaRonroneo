@@ -23,6 +23,7 @@ import { Registrar } from "./components/Layout/Registrar";
 import { Cart } from "./components/Cafeteria/Cart";
 import { HistorialPedidos } from "./components/Cafeteria/HistorialPedidos";
 import { DetallePedido } from "./components/Cafeteria/DetallePedido";
+import { RegistrarPedido } from "./components/Cafeteria/RegistrarPedido";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -99,6 +100,10 @@ const rutas = createBrowserRouter(
         ,{
           path: "/pedidos",
           element: <HistorialPedidos />,
+        },
+        {
+        path: "/registrar-pedido",
+        element: <RegistrarPedido />,
         },
         {
           path: "/pedido/:id",
