@@ -96,14 +96,25 @@ export function HistorialPedidos() {
 
       {esEncargadoOAdmin && (
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3, mt: 2 }}>
-          <TextField
-            label="Filtrar por fecha"
-            type="date"
-            size="small"
-            value={fechaFiltro}
-            onChange={(e) => setFechaFiltro(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
+          <Box sx={{ minWidth: 204 }}>
+            <Typography
+              component="label"
+              htmlFor="filtro-fecha"
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: 'block', mb: 0.5 }}
+            >
+              Filtrar por fecha
+            </Typography>
+            <TextField
+              id="filtro-fecha"
+              type="date"
+              size="small"
+              fullWidth
+              value={fechaFiltro}
+              onChange={(e) => setFechaFiltro(e.target.value)}
+            />
+          </Box>
           <TextField
             label="Filtrar por estado"
             select

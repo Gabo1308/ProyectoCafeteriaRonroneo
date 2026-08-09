@@ -18,14 +18,25 @@ export function Login() {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
 
-  const login = () => {
+  const login = (event) => {
+    event?.preventDefault();
+
+    if (!correo.trim() || !contrasena) {
+      toast.error("Ingresa el correo y la contraseña");
+      return;
+    }
+
     const usuario = {
-      Correo: correo,
+      Correo: correo.trim(),
       Contrasena: contrasena,
     };
 
     UsuarioService.login(usuario)
       .then((response) => {
+        if (!response.data?.usuario) {
+          throw new Error("El servidor no devolvió los datos del usuario");
+        }
+
         localStorage.setItem("user", JSON.stringify(response.data.usuario));
 
         window.location.href = "/";
@@ -34,7 +45,9 @@ export function Login() {
         console.error(error);
 
         if (error.response) {
-          toast.error(error.response.data.message || "Correo o contraseña incorrectos");
+          toast.error(error.response.data.mensaje || error.response.data.message || "Correo o contraseña incorrectos");
+        } else if (error.message) {
+          toast.error(error.message);
         } else {
           toast.error("Error al conectar con el servidor");
         }
@@ -66,7 +79,7 @@ export function Login() {
             Iniciar Sesión
           </Typography>
 
-          <Stack spacing={3}>
+          <Stack component="form" spacing={3} onSubmit={login}>
             <TextField
               label="Correo"
               fullWidth
@@ -83,8 +96,8 @@ export function Login() {
             />
 
             <Button
+              type="submit"
               variant="contained"
-              onClick={login}
             >
               Ingresar
             </Button>

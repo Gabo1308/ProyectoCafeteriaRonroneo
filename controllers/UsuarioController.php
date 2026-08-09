@@ -59,4 +59,68 @@ class usuario
             handleException($e);
         }
     }
+
+     public function getDesactivados()
+    {
+        try {
+            $response = new Response();
+            $model = new UsuarioModel();
+            $result = $model->getDesactivados();
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function crearUsuarioMantenimiento()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $inputJSON = $request->getJSON();
+            $model = new UsuarioModel();
+            $result = $model->crearUsuarioMantenimiento($inputJSON);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function actualizarUsuario()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $inputJSON = $request->getJSON();
+            $model = new UsuarioModel();
+            $result = $model->actualizarUsuario($inputJSON);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function delete($param)
+    {
+        try {
+            $response = new Response();
+            $model = new UsuarioModel();
+            $result = $model->delete($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function restore($param)
+    {
+        try {
+            $response = new Response();
+            $model = new UsuarioModel();
+            $result = $model->restore($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

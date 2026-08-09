@@ -61,6 +61,7 @@ export default function HeaderRonroneo() {
     { name: "Combos", link: "/admin/combos/" },
     { name: "Menús", link: "/admin/menus/" },
     { name: "Preparación", link: "/admin/preparacion/" },
+    { name: "Usuarios", link: "/admin/usuarios/" },
   ];
 
   let userItems = [];

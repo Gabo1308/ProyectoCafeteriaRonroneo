@@ -15,6 +15,21 @@ class UsuarioServices {
   login(Credenciales) {
     return axios.post(BASE_URL + '/login', JSON.stringify(Credenciales));
   }
+  getUsuariosDesactivados() {
+    return axios.get(BASE_URL + '/getDesactivados');
+  }
+  crearUsuario(usuario) {
+    return axios.post(BASE_URL + '/crearUsuarioMantenimiento', JSON.stringify(usuario));
+  }
+  actualizarUsuario(usuario) {
+    return axios.put(BASE_URL + '/actualizarUsuario', JSON.stringify(usuario));
+  }
+  deleteUsuario(idUsuario) {
+    return axios.delete(BASE_URL + '/' + idUsuario);
+  }
+  restoreUsuario(idUsuario) {
+    return axios.put(BASE_URL + '/restore/' + idUsuario);
+  }
 }
 
 export default new UsuarioServices();

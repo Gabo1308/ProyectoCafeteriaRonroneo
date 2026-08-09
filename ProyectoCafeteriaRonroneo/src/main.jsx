@@ -18,11 +18,13 @@ import { GestionProductos } from './components/Admin/GestionProductos.jsx';
 import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
 import { GestionPreparacion } from './components/Admin/GestionPreparacion.jsx';
+import { GestionUsuarios } from './components/Admin/GestionUsuarios.jsx';
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
 import { Cart } from "./components/Cafeteria/Cart";
 import { HistorialPedidos } from "./components/Cafeteria/HistorialPedidos";
 import { DetallePedido } from "./components/Cafeteria/DetallePedido";
+import { RegistrarPedido } from "./components/Cafeteria/RegistrarPedido";
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -85,6 +87,10 @@ const rutas = createBrowserRouter(
           element: <GestionPreparacion />,
         },
         {
+          path: '/admin/usuarios/',
+          element: <GestionUsuarios />,
+        },
+        {
           path: "/login",
           element: <Login />,
         },
@@ -103,6 +109,10 @@ const rutas = createBrowserRouter(
         {
           path: "/pedido/:id",
           element: <DetallePedido />,
+        },
+        {
+          path: "/registrar-pedido",
+          element: <RegistrarPedido />,
         },
       ], 
     }, 
