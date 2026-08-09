@@ -1,0 +1,36 @@
+{
+  "header": {
+    "products": "Products",
+    "combos": "Combos",
+    "menus": "Menus",
+    "preparation": "Preparation",
+    "myOrders": "My orders",
+    "maintenance": "Maintenance",
+    "users": "Users",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "user": "User",
+    "cart": "Cart",
+    "notifications": "Notifications",
+    "language": "Language",
+    "openNavigation": "Open navigation",
+    "userAccount": "User account",
+    "logoutQuestion": "Are you sure you want to log out?",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "price": "Price",
+    "description": "Description",
+    "category": "Category",
+    "details": "View details",
+    "addToCart": "Add to cart"
+  }
+}
