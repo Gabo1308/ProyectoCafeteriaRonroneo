@@ -21,4 +21,37 @@ export function SelectorIdioma() {
     document.documentElement.lang = nuevoIdioma;
   };
 
+  return (
+    <Tooltip title={t("header.language")}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.5,
+          mr: 1,
+        }}
+      >
+        <LanguageIcon color="primary" />
+
+        <FormControl size="small">
+          <Select
+            value={idiomaActual}
+            onChange={cambiarIdioma}
+            inputProps={{
+              "aria-label": t("header.language"),
+            }}
+            sx={{
+              minWidth: 72,
+              height: 36,
+              color: "primary.dark",
+              fontWeight: 700,
+            }}
+          >
+            <MenuItem value="es">ES</MenuItem>
+            <MenuItem value="en">EN</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+    </Tooltip>
+  );
 }
