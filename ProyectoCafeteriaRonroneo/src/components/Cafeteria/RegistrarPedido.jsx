@@ -305,3 +305,130 @@ const totales = useMemo(() => {
           </Grid>
         </Grid>
       </Paper>
+       {cart.length === 0 ? (
+        <Typography color="text.secondary" sx={{ mb: 3 }}>
+          No hay productos en el pedido. Agrega algún producto o combo del catálogo.
+        </Typography>
+      ) : (
+        <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, mb: 3 }}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
+                <TableCell>Producto / Combo</TableCell>
+                <TableCell align="right">Precio</TableCell>
+                <TableCell align="center">Cantidad</TableCell>
+                <TableCell align="right">Subtotal</TableCell>
+                <TableCell align="right">Impuesto</TableCell>
+                <TableCell>Observaciones</TableCell>
+                <TableCell align="right">Quitar</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {cart.map((item) => (
+                <FilaDetalle
+                  key={`${item.Tipo}-${item.Id}`}
+                  item={item}
+                  onCantidadCommit={updateCantidad}
+                  onEliminar={removeItem}
+                  onObservaciones={updateObservaciones}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Pago
+            </Typography>
+            <Stack spacing={2}>
+              <TextField label="Método de pago" select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
+                <MenuItem value="Efectivo">Efectivo</MenuItem>
+                <MenuItem value="Tarjeta">Tarjeta</MenuItem>
+              </TextField>
+
+              {metodoPago === 'Tarjeta' ? (
+                <>
+                  <TextField
+                    label="Número de tarjeta"
+                    value={numeroTarjeta}
+                    onChange={(e) => setNumeroTarjeta(e.target.value)}
+                    placeholder="•••• •••• •••• ••••"
+                  />
+                  <Stack direction="row" spacing={2}>
+                    <TextField
+                      label="Fecha de expiración"
+                      value={fechaExpiracion}
+                      onChange={(e) => setFechaExpiracion(e.target.value)}
+                      placeholder="MM/AA"
+                      fullWidth
+                    />
+                    <TextField label="CVV" value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="123" fullWidth />
+                  </Stack>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    label="Monto recibido"
+                    type="number"
+                    value={montoRecibido}
+                    onChange={(e) => setMontoRecibido(e.target.value)}
+                  />
+                  {vuelto !== null && (
+                    <Typography color={vuelto < 0 ? 'error' : 'text.primary'}>
+                      Vuelto: ₡{Math.round(vuelto)}
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Stack>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Resumen
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+              <Typography>Total sin impuesto</Typography>
+              <Typography>₡{Math.round(totales.totalSinImpuesto)}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+              <Typography>Impuestos (13%)</Typography>
+              <Typography>₡{Math.round(totales.totalImpuestos)}</Typography>
+            </Box>
+            {totales.costoEnvio > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography>Costo de envío</Typography>
+                <Typography>₡{totales.costoEnvio}</Typography>
+              </Box>
+            )}
+            <Divider sx={{ my: 1 }} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+              <Typography variant="h6">Total</Typography>
+              <Typography variant="h6" color="primary.main">
+                ₡{Math.round(totales.totalFinal)}
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              fullWidth
+              startIcon={<ReceiptLongIcon />}
+              disabled={enviando || cart.length === 0}
+              onClick={registrarPedido}
+              sx={{ fontWeight: 700 }}
+            >
+              {enviando ? 'Registrando...' : 'Registrar pedido'}
+            </Button>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}
