@@ -1,5 +1,5 @@
 {
-     "header": {
+  "header": {
     "products": "Productos",
     "combos": "Combos",
     "menus": "Menús",
@@ -18,5 +18,19 @@
     "userAccount": "Cuenta de usuario",
     "logoutQuestion": "¿Estás seguro de que deseas cerrar sesión?",
     "cancel": "Cancelar"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "price": "Precio",
+    "description": "Descripción",
+    "category": "Categoría",
+    "details": "Ver detalle",
+    "addToCart": "Agregar al carrito"
   }
 }
