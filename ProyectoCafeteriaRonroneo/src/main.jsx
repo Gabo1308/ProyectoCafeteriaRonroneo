@@ -107,6 +107,10 @@ const rutas = createBrowserRouter(
           element: <HistorialPedidos />,
         },
         {
+        path: "/registrar-pedido",
+        element: <RegistrarPedido />,
+        },
+        {
           path: "/pedido/:id",
           element: <DetallePedido />,
         },
