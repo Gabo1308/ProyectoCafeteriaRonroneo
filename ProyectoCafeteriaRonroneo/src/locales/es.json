@@ -1,0 +1,22 @@
+{
+     "header": {
+    "products": "Productos",
+    "combos": "Combos",
+    "menus": "Menús",
+    "preparation": "Preparación",
+    "myOrders": "Mis pedidos",
+    "maintenance": "Mantenimientos",
+    "users": "Usuarios",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "user": "Usuario",
+    "cart": "Carrito",
+    "notifications": "Notificaciones",
+    "language": "Idioma",
+    "openNavigation": "Abrir navegación",
+    "userAccount": "Cuenta de usuario",
+    "logoutQuestion": "¿Estás seguro de que deseas cerrar sesión?",
+    "cancel": "Cancelar"
+  }
+}
