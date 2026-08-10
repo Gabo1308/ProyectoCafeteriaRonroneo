@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { Info, AddShoppingCart } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { useCart } from '../../hooks/useCart';
+import { useTranslation } from "react-i18next";
 
 ListCardProductos.propTypes = {
   data: PropTypes.array,
@@ -21,6 +22,8 @@ ListCardProductos.propTypes = {
 
 
 export function ListCardProductos({ data, isShopping = false }) {
+  const { t } = useTranslation();
+
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
   const resumir = (texto = '', limite = 82) => {
     if (!texto || texto.length <= limite) return texto;
@@ -87,7 +90,7 @@ const { addItem } = useCart();
                   component={Link}
                   to={`/producto/${item.IdProducto}`}
                 >
-                  Ver detalle
+                  {t("common.details")}
                 </Button>
                 {isShopping && (
                   <Button
@@ -98,7 +101,7 @@ const { addItem } = useCart();
                     onClick={() => addItem(item, 'producto')}
                     sx={{ fontWeight: 700 }}
                   >
-                    Ordenar
+                    {t("common.order")}
                   </Button>
                 )}
               </CardActions>

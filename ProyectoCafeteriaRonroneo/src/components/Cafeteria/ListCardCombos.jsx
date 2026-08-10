@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { Info, LocalOffer, AddShoppingCart } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { useCart } from '../../hooks/useCart';
+import { useTranslation } from "react-i18next";
 
 ListCardCombos.propTypes = {
   data: PropTypes.array,
@@ -20,6 +21,8 @@ ListCardCombos.propTypes = {
 };
 
 export function ListCardCombos({ data, isShopping = false }) {
+  const { t } = useTranslation();
+
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
   const { addItem } = useCart();
 
@@ -58,7 +61,7 @@ export function ListCardCombos({ data, isShopping = false }) {
               <CardContent sx={{ flexGrow: 1 }}>
                 <Chip
                   icon={<LocalOffer />}
-                  label="Combo"
+                  label={t("cards.combo")}
                   size="small"
                   color="secondary"
                   sx={{ mb: 1 }}
@@ -80,7 +83,7 @@ export function ListCardCombos({ data, isShopping = false }) {
                   component={Link}
                   to={`/combo/${item.IdCombo}`}
                 >
-                  Ver detalle
+                  {t("common.details")}
                 </Button>
                 {isShopping && (
                   <Button
@@ -91,7 +94,7 @@ export function ListCardCombos({ data, isShopping = false }) {
                     onClick={() => addItem(item, 'combo')}
                     sx={{ fontWeight: 700 }}
                   >
-                    Ordenar
+                    {t("common.order")}
                   </Button>
                 )}
               </CardActions>

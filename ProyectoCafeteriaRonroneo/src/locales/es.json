@@ -31,7 +31,8 @@
     "description": "Descripción",
     "category": "Categoría",
     "details": "Ver detalle",
-    "addToCart": "Agregar al carrito"
+    "addToCart": "Agregar al carrito",
+    "order": "Ordenar"
   },
   "home": {
     "title": "Cafetería Ronroneo",
@@ -44,5 +45,23 @@
     "otherHours": "Almuerzo 1:00 p. m. - 6:00 p. m. | Cena 7:00 p. m. - 12:00 a. m.",
     "developers": "Desarrolladores: Gabriel Leitón Araya / Angelo Pérez González",
     "rights": "{{year}} Cafetería Ronroneo. Todos los derechos reservados."
+  },
+  "cards": {
+    "combo": "Combo",
+    "order": "Ordenar",
+    "schedule": "Horario: {{start}} - {{end}}",
+    "days": "Días: {{days}}",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "menuAvailable": "Menú disponible por horario",
+    "menuUnavailable": "Menú no disponible por horario",
+    "viewMenu": "Ver menú"
+  },
+  "preparation": {
+    "title": "Procesos de preparación",
+    "description": "Cada producto tiene una ruta de estaciones para completar su preparación.",
+    "steps_one": "{{count}} paso",
+    "steps_other": "{{count}} pasos",
+    "viewStations": "Ver estaciones"
   }
 }

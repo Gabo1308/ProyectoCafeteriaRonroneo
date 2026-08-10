@@ -11,8 +11,11 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import { Info, Kitchen, Timer } from '@mui/icons-material';
+import { useTranslation } from "react-i18next";
 
 export function CatalogPreparacion() {
+  const { t } = useTranslation();
+
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
@@ -30,16 +33,16 @@ export function CatalogPreparacion() {
       });
   }, []);
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p> {t("common.loading")} </p>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Procesos de preparacion
+        {t("preparation.title")}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Cada producto tiene una ruta de estaciones para completar su preparacion.
+        {t("preparation.description")}
       </Typography>
       <Grid container spacing={3}>
         {data &&
@@ -60,7 +63,7 @@ export function CatalogPreparacion() {
                   </Box>
                   <Chip
                     icon={<Timer />}
-                    label={`${item.CantidadPasos} pasos`}
+                    label={t("preparation.steps", {count: Number(item.CantidadPasos),})}
                     color="secondary"
                     sx={{ fontWeight: 700 }}
                   />
@@ -75,7 +78,7 @@ export function CatalogPreparacion() {
                     to={`/preparacion/${item.IdPreparacion}`}
                     sx={{ fontWeight: 700 }}
                   >
-                    Ver estaciones
+                    {t("preparation.viewStations")}
                   </Button>
                 </CardActions>
               </Card>

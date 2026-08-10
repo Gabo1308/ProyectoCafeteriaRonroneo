@@ -12,12 +12,15 @@ import { Link } from 'react-router-dom';
 import { CalendarMonth, CheckCircle, Cancel, Info } from '@mui/icons-material';
 import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
+import { useTranslation } from "react-i18next";
 
 ListCardMenu.propTypes = {
   data: PropTypes.array,
 };
 
 export function ListCardMenu({ data }) {
+  const { t } = useTranslation();
+
   const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
   const estaDisponiblePorHorario = (horaInicio, horaFin) => {
@@ -98,19 +101,19 @@ const formatoHora = (hora) => {
                 </Box>
                 {item.HoraInicio && item.HoraFin && (
                   <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-                    Horario: {formatoHora(item.HoraInicio)} - {formatoHora(item.HoraFin)}
+                    {t("cards.schedule", {start: formatoHora(item.HoraInicio), end: formatoHora(item.HoraFin),})}
                   </Typography>
                 )}
                 {item.DiasDisponibles && (
                   <Typography variant="caption" color="text.secondary" component="div" sx={{ mt: 0.5 }}>
-                    Dias: {item.DiasDisponibles}
+                    {t("cards.days", { days: item.DiasDisponibles,})}
                   </Typography>
                 )}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
-                  <Chip label={item.Estado ? 'Activo' : 'Inactivo'} color={item.Estado ? 'success' : 'error'} size="small" />
+                  <Chip label={ item.Estado ? t("cards.active") : t("cards.inactive") } color={item.Estado ? "success" : "error"} size="small" />
                   <Chip
                     icon={disponiblePorHorario ? <CheckCircle /> : <Cancel />}
-                    label={disponiblePorHorario ? 'Menu disponible por horario' : 'Menu no disponible por horario'}
+                    label={disponiblePorHorario ? t("cards.menuAvailable") : t("cards.menuUnavailable")}
                     color={disponiblePorHorario ? 'success' : 'default'}
                     variant={disponiblePorHorario ? 'filled' : 'outlined'}
                     size="small"
@@ -125,7 +128,7 @@ const formatoHora = (hora) => {
                   component={Link}
                   to={`/menu/${item.IdMenu}`}
                 >
-                  Ver menu
+                  {t("cards.viewMenu")}
                 </Button>
               </CardActions>
             </Card>
