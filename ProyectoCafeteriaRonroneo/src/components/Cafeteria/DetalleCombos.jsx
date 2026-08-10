@@ -12,8 +12,11 @@ import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ComboService from '../../services/CombosServices';
+import { useTranslation } from "react-i18next";
 
 export function DetalleCombos() {
+  const { t } = useTranslation();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [combo, setCombo] = useState(null);
@@ -37,8 +40,8 @@ export function DetalleCombos() {
       });
   }, [id]);
 
-  if (!loaded) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (!loaded) return <p> {t("common.loading")} </p>;
+  if (error) return <p> {t("common.error")}: {error.message} </p>;
 
   return (
     <Container component="main" sx={{ mt: 6, mb: 5 }}>
@@ -53,7 +56,7 @@ export function DetalleCombos() {
             />
           </Grid>
           <Grid size={{ xs: 12, md: 7 }}>
-            <Chip icon={<LocalOfferIcon />} label="Combo especial" color="secondary" sx={{ mb: 2 }} />
+            <Chip icon={<LocalOfferIcon />} label={t("comboDetail.specialCombo")} color="secondary" sx={{ mb: 2 }} />
             <Typography variant="h4" component="h1" gutterBottom color="primary.main">
               {combo.Nombre}
             </Typography>
@@ -61,14 +64,14 @@ export function DetalleCombos() {
               {combo.Descripcion}
             </Typography>
             <Typography variant="subtitle1" gutterBottom>
-              Menu: {combo.MenuNombre}
+              {t("comboDetail.menu")}: {combo.MenuNombre}
             </Typography>
             <Typography variant="h5" gutterBottom color="primary.main">
-              Precio: ₡{Math.round(combo.Precio)}
+              {t("common.price")}: ₡{Math.round(combo.Precio)}
             </Typography>
             <Card variant="outlined" sx={{ mt: 2, borderRadius: 2 }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom>Productos del combo</Typography>
+                <Typography variant="h6" gutterBottom> {t("comboDetail.comboProducts")} </Typography>
                 <Stack spacing={1}>
                   {productos.map((producto) => (
                     <Box
@@ -94,7 +97,7 @@ export function DetalleCombos() {
       )}
       <Box sx={{ mt: 4, textAlign: 'center' }}>
         <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>
-          Regresar
+          {t("common.back")}
         </Button>
       </Box>
     </Container>

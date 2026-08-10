@@ -32,7 +32,8 @@
     "category": "Categoría",
     "details": "Ver detalle",
     "addToCart": "Agregar al carrito",
-    "order": "Ordenar"
+    "order": "Ordenar",
+    "back": "Regresar"
   },
   "home": {
     "title": "Cafetería Ronroneo",
@@ -63,5 +64,13 @@
     "steps_one": "{{count}} paso",
     "steps_other": "{{count}} pasos",
     "viewStations": "Ver estaciones"
+  },
+    "productDetail": {
+    "ingredients": "Ingredientes"
+  },
+  "comboDetail": {
+    "specialCombo": "Combo especial",
+    "menu": "Menú",
+    "comboProducts": "Productos del combo"
   }
 }

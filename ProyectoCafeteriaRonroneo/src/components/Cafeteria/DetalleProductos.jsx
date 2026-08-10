@@ -14,8 +14,11 @@ import Stack from "@mui/material/Stack";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocalCafeIcon from "@mui/icons-material/LocalCafe";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
+import { useTranslation } from "react-i18next";
 
 export function DetalleProductos() {
+  const { t } = useTranslation();
+
   const routeParams = useParams();
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_BASE_URL + "uploads";
@@ -36,8 +39,8 @@ export function DetalleProductos() {
       });
   }, [routeParams.id]);
 
-  if (!loaded) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (!loaded) return <p>{t("common.loading")}</p>;
+  if (error) return <p> {t("common.error")}: {error.message}</p>;
 
   const ingredientes = Array.isArray(data?.Ingredientes)
     ? data.Ingredientes
@@ -85,7 +88,7 @@ export function DetalleProductos() {
               <Card variant="outlined" sx={{ mt: 2, borderRadius: 2 }}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
-                    Ingredientes
+                    {t("productDetail.ingredients")}
                   </Typography>
                   <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                     {ingredientes.map((ingrediente) => (
@@ -117,7 +120,7 @@ export function DetalleProductos() {
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate(-1)}
         >
-          Regresar
+          {t("common.back")}
         </Button>
       </Box>
     </Container>

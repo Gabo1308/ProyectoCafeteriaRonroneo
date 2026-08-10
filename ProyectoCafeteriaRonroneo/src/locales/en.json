@@ -32,7 +32,8 @@
     "category": "Category",
     "details": "View details",
     "addToCart": "Add to cart",
-    "order": "Order"
+    "order": "Order",
+    "back": "Back"
   },
   "home": {
     "title": "Ronroneo Coffee Shop",
@@ -63,5 +64,13 @@
     "steps_one": "{{count}} step",
     "steps_other": "{{count}} steps",
     "viewStations": "View stations"
+  },
+    "productDetail": {
+    "ingredients": "Ingredients"
+  },
+  "comboDetail": {
+    "specialCombo": "Special combo",
+    "menu": "Menu",
+    "comboProducts": "Combo products"
   }
 }
