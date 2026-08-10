@@ -32,5 +32,17 @@
     "category": "Category",
     "details": "View details",
     "addToCart": "Add to cart"
+  },
+  "home": {
+    "title": "Ronroneo Coffee Shop",
+    "subtitle": "Enjoy a delicious meal"
+  },
+  "footer": {
+    "brand": "Ronroneo Coffee Shop",
+    "description": "Coffee, desserts, combos and scheduled menus.",
+    "breakfastHours": "Breakfast 7:00 a.m. - 12:00 p.m.",
+    "otherHours": "Lunch 1:00 p.m. - 6:00 p.m. | Dinner 7:00 p.m. - 12:00 a.m.",
+    "developers": "Developers: Gabriel Leitón Araya / Angelo Pérez González",
+    "rights": "{{year}} Ronroneo Coffee Shop. All rights reserved."
   }
 }

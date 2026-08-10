@@ -32,5 +32,17 @@
     "category": "Categoría",
     "details": "Ver detalle",
     "addToCart": "Agregar al carrito"
+  },
+  "home": {
+    "title": "Cafetería Ronroneo",
+    "subtitle": "Disfrute de una buena comida"
+  },
+  "footer": {
+    "brand": "Cafetería Ronroneo",
+    "description": "Café, postres, combos y menús por horario.",
+    "breakfastHours": "Desayuno 7:00 a. m. - 12:00 m.",
+    "otherHours": "Almuerzo 1:00 p. m. - 6:00 p. m. | Cena 7:00 p. m. - 12:00 a. m.",
+    "developers": "Desarrolladores: Gabriel Leitón Araya / Angelo Pérez González",
+    "rights": "{{year}} Cafetería Ronroneo. Todos los derechos reservados."
   }
 }

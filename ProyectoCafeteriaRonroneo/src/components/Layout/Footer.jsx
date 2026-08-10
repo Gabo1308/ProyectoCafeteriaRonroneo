@@ -9,8 +9,11 @@ import CoffeeIcon from "@mui/icons-material/Coffee";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import PhoneIcon from "@mui/icons-material/Phone";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <Box
       component="footer"
@@ -27,9 +30,9 @@ export function Footer() {
             <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
               <CoffeeIcon />
               <Box>
-                <Typography variant="h6">Cafeteria Ronroneo</Typography>
+                <Typography variant="h6"> {t("footer.brand")} </Typography>
                 <Typography variant="body2" sx={{ opacity: 0.85 }}>
-                  Café, postres, combos y menús por horario.
+                  {t("footer.description")}
                 </Typography>
               </Box>
             </Stack>
@@ -39,10 +42,10 @@ export function Footer() {
             <Stack spacing={0.5}>
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <AccessTimeIcon fontSize="small" />
-                <Typography variant="body2">Desayuno 7:00 a. m. - 12:00 m.</Typography>
+                <Typography variant="body2"> {t("footer.breakfastHours")} </Typography>
               </Stack>
               <Typography variant="body2" sx={{ pl: 4, opacity: 0.85 }}>
-                Almuerzo 1:00 p. m. - 6:00 p. m. | Cena 7:00 p. m. - 12:00 a. m.
+                {t("footer.otherHours")}
               </Typography>
             </Stack>
           </Grid>
@@ -71,13 +74,13 @@ export function Footer() {
 
           <Grid size={12}>
             <Typography align="center" variant="body2" sx={{ opacity: 0.85 }}>
-              Desarrolladores: Gabriel Leitón Araya / Angelo Pérez González
+              {t("footer.developers")}
             </Typography>
           </Grid>
 
           <Grid size={12}>
             <Typography align="center" variant="caption" sx={{ display: "block", opacity: 0.8 }}>
-              {new Date().getFullYear()} Cafeteria Ronroneo. Todos los derechos reservados.
+              { t("footer.rights", { year: new Date().getFullYear(),}) }
             </Typography>
           </Grid>
         </Grid>
