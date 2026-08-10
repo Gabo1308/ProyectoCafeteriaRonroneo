@@ -24,8 +24,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import { useTranslation } from "react-i18next";
+import { SelectorIdioma } from "./SelectorIdioma";
 
 export default function HeaderRonroneo() {
+  const { t } = useTranslation();
+
   const [anchorElPrincipal, setAnchorElPrincipal] = React.useState(null);
   const [anchorElMantenimientos, setAnchorElMantenimientos] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null); 
@@ -48,23 +52,37 @@ export default function HeaderRonroneo() {
     localStorage.removeItem("user");
   }
 
-  const navItems = [
+  /*const navItems = [
     { name: "Productos", link: "/catalog-productos/" },
     { name: "Combos", link: "/catalog-combos/" },
     { name: "Menús", link: "/catalog-menu/" },
     { name: "Preparación", link: "/catalog-preparacion/" },
     { name: "Mis pedidos", link: "/pedidos" },
+  ];*/
+  const navItems = [
+  { name: t("header.products"), link: "/catalog-productos/" },
+  { name: t("header.combos"), link: "/catalog-combos/" },
+  { name: t("header.menus"), link: "/catalog-menu/" },
+  { name: t("header.preparation"), link: "/catalog-preparacion/" },
+  { name: t("header.myOrders"), link: "/pedidos" },
   ];
 
-  const mantenimientosItems = [
+  /*const mantenimientosItems = [
     { name: "Productos", link: "/admin/productos/" },
     { name: "Combos", link: "/admin/combos/" },
     { name: "Menús", link: "/admin/menus/" },
     { name: "Preparación", link: "/admin/preparacion/" },
     { name: "Usuarios", link: "/admin/usuarios/" },
+  ];*/
+  const mantenimientosItems = [
+  { name: t("header.products"), link: "/admin/productos/" },
+  { name: t("header.combos"), link: "/admin/combos/" },
+  { name: t("header.menus"), link: "/admin/menus/" },
+  { name: t("header.preparation"), link: "/admin/preparacion/" },
+  { name: t("header.users"), link: "/admin/usuarios/" },
   ];
 
-  let userItems = [];
+  /*let userItems = [];
 
   if (usuario) {
     userItems = [{ name: "Cerrar Sesión", link: "/logout" }];
@@ -72,6 +90,27 @@ export default function HeaderRonroneo() {
     userItems = [
       { name: "Iniciar Sesión", link: "/login" },
       { name: "Registrarse", link: "/create" },
+    ];
+  }*/
+  let userItems = [];
+
+  if (usuario) {
+    userItems = [
+      {
+        name: t("header.logout"),
+        link: "/logout",
+      },
+    ];
+  } else {
+    userItems = [
+      {
+        name: t("header.login"),
+        link: "/login",
+      },
+      {
+        name: t("header.register"),
+        link: "/create",
+      },
     ];
   }
 
@@ -102,7 +141,8 @@ export default function HeaderRonroneo() {
         <IconButton
           size="large"
           color="primary"
-          aria-label="abrir navegacion"
+          /*aria-label="abrir navegacion"*/
+          aria-label={t("header.openNavigation")}
           onClick={(event) => setAnchorElPrincipal(event.currentTarget)}
           sx={{ display: { xs: "inline-flex", md: "none" } }}
         >
@@ -164,7 +204,7 @@ export default function HeaderRonroneo() {
               onClick={(event) => setAnchorElMantenimientos(event.currentTarget)}
               sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
             >
-              Mantenimientos
+              {t("header.maintenance")}
             </Button>
           )}
         </Box>
@@ -196,7 +236,8 @@ export default function HeaderRonroneo() {
             <>
               <Divider />
               <MenuItem disabled>
-                <Typography variant="caption">Mantenimientos</Typography>
+                {/*<Typography variant="caption">Mantenimientos</Typography>*/}
+                <Typography variant="caption"> {t("header.maintenance")} </Typography>
               </MenuItem>
               {mantenimientosItems.map((item) => (
                 <MenuItem key={item.link} component={Link} to={item.link} onClick={cerrarMenus}>
@@ -209,9 +250,12 @@ export default function HeaderRonroneo() {
 
         <Box sx={{ flexGrow: 1 }} />
 
+        <SelectorIdioma /> 
+
         <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
           {usuario && (
-            <Tooltip title="Carrito">
+            /*<Tooltip title="Carrito">*/
+            <Tooltip title={t("header.cart")}>
               <IconButton size="large" color="inherit" component={Link} to="/carrito">
                 <Badge badgeContent={getCantidadItems()} color="error">
                   <ShoppingCartIcon />
@@ -219,7 +263,8 @@ export default function HeaderRonroneo() {
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title="Notificaciones">
+          {/*<Tooltip title="Notificaciones">*/}
+          <Tooltip title={t("header.notifications")}>
             <IconButton size="large" color="inherit">
               <Badge badgeContent={0} color="primary">
                 <NotificationsIcon />
@@ -229,7 +274,8 @@ export default function HeaderRonroneo() {
         </Box>
         <IconButton
           size="large"
-          aria-label="cuenta de usuario"
+          /*aria-label="cuenta de usuario"*/
+          aria-label={t("header.userAccount")}
           onClick={(event) => setAnchorElUser(event.currentTarget)}
           color="inherit"
         >
@@ -237,7 +283,8 @@ export default function HeaderRonroneo() {
         </IconButton>
         <Menu anchorEl={anchorElUser} open={Boolean(anchorElUser)} onClose={() => setAnchorElUser(null)}>
           <MenuItem disabled>
-            <Typography variant="subtitle2">Usuario</Typography>
+            {/*<Typography variant="subtitle2">Usuario</Typography>*/}
+            <Typography variant="subtitle2"> {t("header.user")} </Typography>
           </MenuItem>
           {userItems.map((item) =>
             item.link === "/logout" ? (
@@ -251,7 +298,7 @@ export default function HeaderRonroneo() {
             )
           )}
         </Menu>
-        <Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
+        {/*<Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
           <DialogTitle>Cerrar sesión</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -264,6 +311,22 @@ export default function HeaderRonroneo() {
             </Button>
             <Button onClick={confirmarLogout} color="primary" variant="contained">
               Cerrar sesión
+            </Button>
+          </DialogActions>
+        </Dialog>*/}
+        <Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
+          <DialogTitle> {t("header.logout")} </DialogTitle>
+          <DialogContent>
+            <DialogContentText>   
+              {t("header.logoutQuestion")} 
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={cancelarLogout} color="inherit">
+              {t("header.cancel")}
+            </Button>
+            <Button onClick={confirmarLogout} color="primary" variant="contained" >
+              {t("header.logout")}
             </Button>
           </DialogActions>
         </Dialog>
