@@ -12,10 +12,13 @@ import Stack from '@mui/material/Stack';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import MenuService from '../../services/MenuServices';
+import { useTranslation } from "react-i18next";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
 export function MenuDisponible() {
+  const { t } = useTranslation();
+
   const [menu, setMenu] = useState(null);
   const [productos, setProductos] = useState([]);
   const [combos, setCombos] = useState([]);
@@ -86,15 +89,15 @@ export function MenuDisponible() {
     }, {});
   }, [productos]);
 
-  if (!loaded) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (!loaded) return <p>{t("common.loading")}</p>;
+  if (error) return <p>{t("common.error")}: {error.message}</p>;
 
   return (
     <Container sx={{ mt: 5, mb: 6 }}>
       {!menu && (
         <Box sx={{ textAlign: 'center', p: 4 }}>
           <Typography variant="h5" color="primary.main">
-            No hay un menú disponible para hoy.
+            {t("menusPage.noAvailableToday")}
           </Typography>
         </Box>
       )}
@@ -119,19 +122,19 @@ export function MenuDisponible() {
             {menu.Descripcion}
           </Typography>
           <Chip
-            label={`Disponible del ${menu.FechaInicio} al ${menu.FechaFin}`}
+            label={t("menusPage.availableFromTo", { start: menu.FechaInicio, end: menu.FechaFin,})}
             color="primary"
             variant="outlined"
             sx={{ mt: 1 }}
           />
           {menu.HoraInicio && menu.HoraFin && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Horario: {menu.HoraInicio} - {menu.HoraFin}
+              {t("cards.schedule", {start: menu.HoraInicio,end: menu.HoraFin,})}
             </Typography>
           )}
           {menu.DiasDisponibles && (
             <Typography variant="body2" color="text.secondary">
-              Dias: {menu.DiasDisponibles}
+              {t("cards.days", { days: menu.DiasDisponibles,})}
             </Typography>
           )}
         </Box>
@@ -175,7 +178,7 @@ export function MenuDisponible() {
 
         <Box>
           <Divider sx={{ mb: 2 }}>
-            <Chip icon={<LocalOfferIcon />} label="Combos" color="secondary" />
+            <Chip icon={<LocalOfferIcon />} label={t("header.combos")} color="secondary" />
           </Divider>
           <Grid container spacing={2}>
             {combos.map((combo) => (

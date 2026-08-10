@@ -72,5 +72,13 @@
     "specialCombo": "Special combo",
     "menu": "Menu",
     "comboProducts": "Combo products"
+  },
+  "menusPage": {
+  "noAvailableToday": "There is no menu available today.",
+  "availableFromTo": "Available from {{start}} to {{end}}",
+  "allMenus": "All menus",
+  "menuNotFound": "The requested menu was not found.",
+  "backToMenus": "Back to menus",
+  "validity": "Validity: {{start}} - {{end}}"
   }
 }

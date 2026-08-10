@@ -6,8 +6,11 @@ import { MenuDisponible } from './MenuDisponible';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useTranslation } from "react-i18next";
 
 export function CatalogMenu() {
+  const { t } = useTranslation();
+
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
@@ -28,15 +31,15 @@ export function CatalogMenu() {
       });
   }, []);
 
-  if (!loaded) return <p>Cargando..</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (!loaded) return <p>{t("common.loading")}</p>;
+  if (error) return <p>{t("common.error")}: {error.message}</p>;
   return (
     <>
       <MenuDisponible />
       <Divider sx={{ my: 2 }}>
         <Box sx={{ px: 2 }}>
           <Typography variant="h6" color="text.secondary">
-            Todos los menús
+            {t("menusPage.allMenus")}
           </Typography>
         </Box>
       </Divider>
