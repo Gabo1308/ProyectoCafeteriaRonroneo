@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import {
   Box,
   Button,
@@ -13,6 +15,8 @@ import UsuarioService from "../../services/UsuarioServices";
 import toast from "react-hot-toast";
 
 export function Login() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const [correo, setCorreo] = useState("");
@@ -22,7 +26,7 @@ export function Login() {
     event?.preventDefault();
 
     if (!correo.trim() || !contrasena) {
-      toast.error("Ingresa el correo y la contraseña");
+      toast.error(t("auth.enterCredentials"));
       return;
     }
 
@@ -34,7 +38,7 @@ export function Login() {
     UsuarioService.login(usuario)
       .then((response) => {
         if (!response.data?.usuario) {
-          throw new Error("El servidor no devolvió los datos del usuario");
+          throw new Error(t("auth.serverDidNotReturnUser"));
         }
 
         localStorage.setItem("user", JSON.stringify(response.data.usuario));
@@ -45,11 +49,11 @@ export function Login() {
         console.error(error);
 
         if (error.response) {
-          toast.error(error.response.data.mensaje || error.response.data.message || "Correo o contraseña incorrectos");
+          toast.error(t("auth.invalidCredentials"));
         } else if (error.message) {
           toast.error(error.message);
         } else {
-          toast.error("Error al conectar con el servidor");
+          toast.error(t("auth.connectionError"));
         }
       });
   };
@@ -76,19 +80,19 @@ export function Login() {
             align="center"
             gutterBottom
           >
-            Iniciar Sesión
+            {t("auth.loginTitle")}
           </Typography>
 
           <Stack component="form" spacing={3} onSubmit={login}>
             <TextField
-              label="Correo"
+              label={t("auth.email")}
               fullWidth
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
             />
 
             <TextField
-              label="Contraseña"
+              label={t("auth.password")}
               type="password"
               fullWidth
               value={contrasena}
@@ -99,7 +103,7 @@ export function Login() {
               type="submit"
               variant="contained"
             >
-              Ingresar
+              {t("auth.loginButton")}
             </Button>
           </Stack>
         </Paper>

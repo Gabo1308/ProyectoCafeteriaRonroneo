@@ -79,6 +79,29 @@
   "allMenus": "All menus",
   "menuNotFound": "The requested menu was not found.",
   "backToMenus": "Back to menus",
-  "validity": "Validity: {{start}} - {{end}}"
+  "validity": "Validity: {{start}} - {{end}}",
+  "otherCategory": "Other"
+  },
+  "auth": {
+  "loginTitle": "Log in",
+  "registerTitle": "Sign up",
+  "email": "Email",
+  "password": "Password",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "confirmPassword": "Confirm password",
+  "loginButton": "Log in",
+  "createAccount": "Create account",
+  "enterCredentials": "Enter your email and password",
+  "invalidCredentials": "Incorrect email or password",
+  "serverDidNotReturnUser": "The server did not return the user information",
+  "connectionError": "Could not connect to the server",
+  "requiredFields": "All fields are required",
+  "passwordLength": "The password must contain at least 15 characters",
+  "passwordUppercase": "The password must contain at least one uppercase letter",
+  "passwordSymbol": "The password must contain at least one special symbol (+, *, !, @, etc.)",
+  "passwordMismatch": "Passwords do not match",
+  "registrationSuccess": "User registered successfully",
+  "registrationError": "The user could not be registered"
   }
 }

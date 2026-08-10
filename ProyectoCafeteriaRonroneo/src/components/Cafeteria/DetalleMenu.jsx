@@ -17,8 +17,11 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import MenuService from '../../services/MenuServices';
+import { useTranslation } from "react-i18next";
 
 export function DetalleMenu() {
+  const { t } = useTranslation();
+
   const routeParams = useParams();
   const [menu, setMenu] = useState(null);
   const [productos, setProductos] = useState([]);
@@ -64,23 +67,23 @@ export function DetalleMenu() {
 
   const productosPorCategoria = useMemo(() => {
     return productos.reduce((acc, producto) => {
-      const categoria = producto.Categoria || 'Otros';
+      const categoria = producto.Categoria || t("menusPage.otherCategory");
       acc[categoria] = acc[categoria] || [];
       acc[categoria].push(producto);
       return acc;
     }, {});
-  }, [productos]);
+  }, [productos, t]);
 
-  if (!loaded) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  if (!menu) return <p>No se encontro el menu solicitado.</p>;
+  if (!loaded) return <p>{t("common.loading")}</p>;
+  if (error) return <p>{t("common.error")}: {error.message}</p>;
+  if (!menu) return <p>{t("menusPage.menuNotFound")}</p>;
 
   const disponiblePorHorario = estaDisponiblePorHorario(menu.HoraInicio, menu.HoraFin);
 
   return (
     <Container sx={{ mt: 5, mb: 6 }}>
       <Button component={Link} to="/catalog-menu/" startIcon={<ArrowBackIcon />} sx={{ mb: 3 }}>
-        Volver a menus
+        {t("menusPage.backToMenus")}
       </Button>
 
       <Box
@@ -109,25 +112,25 @@ export function DetalleMenu() {
             {menu.Descripcion}
           </Typography>
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-            <Chip label={menu.Estado ? 'Activo' : 'Inactivo'} color={menu.Estado ? 'success' : 'error'} />
+            <Chip label={menu.Estado ? t("cards.active") : t("cards.inactive")} color={menu.Estado ? 'success' : 'error'} />
             <Chip
               icon={disponiblePorHorario ? <CheckCircleIcon /> : <CancelIcon />}
-              label={disponiblePorHorario ? 'Menu disponible por horario' : 'Menu no disponible por horario'}
+              label={disponiblePorHorario ? t("cards.menuAvailable") : t("cards.menuUnavailable")}
               color={disponiblePorHorario ? 'success' : 'default'}
               variant={disponiblePorHorario ? 'filled' : 'outlined'}
             />
           </Stack>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-            Vigencia: {menu.FechaInicio} - {menu.FechaFin}
+            {t("menusPage.validity", {start: menu.FechaInicio,end: menu.FechaFin,})}
           </Typography>
           {menu.HoraInicio && menu.HoraFin && (
             <Typography variant="body2" color="text.secondary">
-              Horario: {menu.HoraInicio} - {menu.HoraFin}
+              {t("cards.schedule", { start: menu.HoraInicio, end: menu.HoraFin,})}
             </Typography>
           )}
           {menu.DiasDisponibles && (
             <Typography variant="body2" color="text.secondary">
-              Dias: {menu.DiasDisponibles}
+              {t("cards.days", { days: menu.DiasDisponibles,})}
             </Typography>
           )}
         </Box>
@@ -168,7 +171,7 @@ export function DetalleMenu() {
 
         <Box>
           <Divider sx={{ mb: 2 }}>
-            <Chip icon={<LocalOfferIcon />} label="Combos" color="secondary" />
+            <Chip icon={<LocalOfferIcon />} label={t("header.combos")} color="secondary" />
           </Divider>
           <Grid container spacing={2}>
             {combos.map((combo) => (

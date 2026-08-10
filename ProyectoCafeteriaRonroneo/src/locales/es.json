@@ -79,6 +79,29 @@
   "allMenus": "Todos los menús",
   "menuNotFound": "No se encontró el menú solicitado.",
   "backToMenus": "Volver a menús",
-  "validity": "Vigencia: {{start}} - {{end}}"
+  "validity": "Vigencia: {{start}} - {{end}}",
+  "otherCategory": "Otros"
+  },
+  "auth": {
+  "loginTitle": "Iniciar sesión",
+  "registerTitle": "Registrarse",
+  "email": "Correo",
+  "password": "Contraseña",
+  "firstName": "Nombre",
+  "lastName": "Apellido",
+  "confirmPassword": "Confirmar contraseña",
+  "loginButton": "Ingresar",
+  "createAccount": "Crear cuenta",
+  "enterCredentials": "Ingresa el correo y la contraseña",
+  "invalidCredentials": "Correo o contraseña incorrectos",
+  "serverDidNotReturnUser": "El servidor no devolvió los datos del usuario",
+  "connectionError": "Error al conectar con el servidor",
+  "requiredFields": "Todos los campos son obligatorios",
+  "passwordLength": "La contraseña debe tener al menos 15 caracteres",
+  "passwordUppercase": "La contraseña debe tener al menos una mayúscula",
+  "passwordSymbol": "La contraseña debe tener al menos un símbolo especial (+, *, !, @, etc.)",
+  "passwordMismatch": "Las contraseñas no coinciden",
+  "registrationSuccess": "Usuario registrado con éxito",
+  "registrationError": "No se pudo registrar el usuario"
   }
 }

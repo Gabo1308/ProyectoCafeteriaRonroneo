@@ -11,8 +11,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import UsuarioService from "../../services/UsuarioServices";
+import { useTranslation } from "react-i18next";
 
 export function Registrar() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [nombre, setNombre] = useState("");
@@ -23,12 +25,12 @@ export function Registrar() {
 
   const registrar = () => {
     if (!nombre || !apellido || !correo || !contrasena) {
-      toast.error("Todos los campos son obligatorios");
+      toast.error(t("auth.requiredFields"));
       return;
     }
 
     if (contrasena.length < 15) {
-      toast.error("La contraseña debe tener al menos 15 caracteres");
+      toast.error(t("auth.passwordLength"));
       return;
     }
 
@@ -51,17 +53,17 @@ export function Registrar() {
     }
 
     if (!tieneMayuscula) {
-      toast.error("La contraseña debe tener al menos una mayúscula");
+      toast.error(t("auth.passwordUppercase"));
       return;
     }
 
     if (!tieneSimbolo) {
-      toast.error("La contraseña debe tener al menos un símbolo especial (+, *, !, @, etc.)");
+      toast.error(t("auth.passwordSymbol"));
       return;
     }
 
     if (contrasena !== confirmarContrasena) {
-      toast.error("Las contraseñas no coinciden");
+      toast.error(t("auth.passwordMismatch"));
       return;
     }
 
@@ -74,7 +76,7 @@ export function Registrar() {
 
     UsuarioService.registrar(usuario)
       .then(() => {
-        toast.success("Usuario registrado con éxito");
+        toast.success(t("auth.registrationSuccess"));
         navigate("/login");
       })
       .catch((error) => {
@@ -82,7 +84,7 @@ export function Registrar() {
         console.log("RESPUESTA:", error.response);
         console.log("DATA:", error.response?.data);
 
-        toast.error("No se pudo registrar el usuario");
+        toast.error(t("auth.registrationError"));
       });
   };
 
@@ -104,33 +106,33 @@ export function Registrar() {
           }}
         >
           <Typography variant="h4" align="center" gutterBottom>
-            Registrarse
+            {t("auth.registerTitle")}
           </Typography>
 
           <Stack spacing={3}>
             <TextField
-              label="Nombre"
+              label={t("auth.firstName")}
               fullWidth
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
             />
 
             <TextField
-              label="Apellido"
+              label={t("auth.lastName")}
               fullWidth
               value={apellido}
               onChange={(e) => setApellido(e.target.value)}
             />
 
             <TextField
-              label="Correo"
+              label={t("auth.email")}
               fullWidth
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
             />
 
             <TextField
-              label="Contraseña"
+              label={t("auth.password")}
               type="password"
               fullWidth
               value={contrasena}
@@ -138,7 +140,7 @@ export function Registrar() {
             />
 
             <TextField
-              label="Confirmar contraseña"
+              label={t("auth.confirmPassword")}
               type="password"
               fullWidth
               value={confirmarContrasena}
@@ -146,7 +148,7 @@ export function Registrar() {
             />
 
             <Button variant="contained" onClick={registrar}>
-              Crear cuenta
+              {t("auth.createAccount")}
             </Button>
           </Stack>
         </Paper>
