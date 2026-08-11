@@ -28,13 +28,30 @@ class UsuarioModel
         }
     }
 
-    public function get($id)
+    /*public function get($id)
     {
         try {
             $idUsuario = (int) $id;
             $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol
                     FROM usuarios u
                     INNER JOIN rol r ON u.IdRol = r.IdRol
+                    WHERE u.IdUsuario=$idUsuario;";
+            $vResultado = $this->enlace->ExecuteSQL($vSql);
+            return $vResultado ? $vResultado[0] : null;
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }*/
+
+    public function get($id)
+    {
+        try {
+            $idUsuario = (int) $id;
+            $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol,
+                            u.IdEstacion, e.Nombre AS EstacionNombre
+                    FROM usuarios u
+                    INNER JOIN rol r ON u.IdRol = r.IdRol
+                    LEFT JOIN estaciones e ON u.IdEstacion = e.IdEstacion
                     WHERE u.IdUsuario=$idUsuario;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             return $vResultado ? $vResultado[0] : null;
