@@ -91,6 +91,31 @@ class PedidoModel
         return $idCarrito;
     }
 
+    private function obtenerEstacionDeLinea($idProducto, $idCombo) 
+    {
+        if (!empty($idProducto)) {
+            $idProducto = (int) $idProducto;
+            $vSql = "SELECT IdEstacion FROM productopreparacion
+                     WHERE IdProducto=$idProducto AND Estado=1
+                     ORDER BY Orden ASC LIMIT 1;";
+            $resultado = $this->enlace->ExecuteSQL($vSql);
+            return $resultado ? (int) $resultado[0]->IdEstacion : null;
+        }
+
+        if (!empty($idCombo)) {
+            $idCombo = (int) $idCombo;
+            $vSql = "SELECT pp.IdEstacion
+                     FROM comboproductos cp
+                     INNER JOIN productopreparacion pp ON cp.IdProducto = pp.IdProducto AND pp.Estado = 1
+                     WHERE cp.IdCombo=$idCombo
+                     ORDER BY pp.Orden ASC LIMIT 1;";
+            $resultado = $this->enlace->ExecuteSQL($vSql);
+            return $resultado ? (int) $resultado[0]->IdEstacion : null;
+        }
+
+        return null;
+    }
+
     public function create($objeto)
     {
         try {
@@ -165,13 +190,15 @@ class PedidoModel
             foreach ($lineasCalculadas as $linea) {
                 $idProductoSql = $linea['IdProducto'] ?? 'NULL';
                 $idComboSql = $linea['IdCombo'] ?? 'NULL';
+                $idEstacion = $this->obtenerEstacionDeLinea($linea['IdProducto'], $linea['IdCombo']);
+                $idEstacionSql = $idEstacion ?? 'NULL';
 
                 $this->enlace->executeSQL_DML(
                     "INSERT INTO detallepedidos
-                        (IdPedido, IdProducto, IdCombo, Cantidad, PrecioUnitario, Subtotal, Impuesto, Observaciones)
+                        (IdPedido, IdProducto, IdCombo, Cantidad, PrecioUnitario, Subtotal, Impuesto, Observaciones, IdEstacion, Completado)
                      VALUES
                         ($idPedido, $idProductoSql, $idComboSql, {$linea['Cantidad']}, {$linea['PrecioUnitario']},
-                         {$linea['Subtotal']}, {$linea['Impuesto']}, '{$linea['Observaciones']}');"
+                         {$linea['Subtotal']}, {$linea['Impuesto']}, '{$linea['Observaciones']}', $idEstacionSql, 0);"
                 );
             }
 
@@ -194,6 +221,7 @@ class PedidoModel
             handleException($e);
         }
     }
+
 
     public function get($id)
     {
@@ -276,4 +304,63 @@ class PedidoModel
             handleException($e);
         }
     }
+
+    public function getPorEstacion($idEstacion)
+    {
+        try {
+            $idEstacion = (int) $idEstacion;
+
+            $vSql = "SELECT dp.IdDetalle, dp.IdPedido, dp.Cantidad, dp.Observaciones, dp.Completado,
+                            COALESCE(pr.Nombre, co.Nombre) AS Nombre,
+                            ped.FechaPedido, ped.Estado AS EstadoPedido,
+                            c.Nombre AS ClienteNombre
+                     FROM detallepedidos dp
+                     INNER JOIN pedidos ped ON dp.IdPedido = ped.IdPedido
+                     INNER JOIN clientes c ON ped.IdCliente = c.IdCliente
+                     LEFT JOIN productos pr ON dp.IdProducto = pr.IdProducto
+                     LEFT JOIN combos co ON dp.IdCombo = co.IdCombo
+                     WHERE dp.IdEstacion = $idEstacion
+                       AND dp.Completado = 0
+                       AND ped.Estado != 'Entregada'
+                     ORDER BY ped.FechaPedido ASC, dp.IdPedido ASC;";
+            return $this->enlace->ExecuteSQL($vSql);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function actualizarLineaEstacion($objeto)
+    {
+        try {
+            $idDetalle = (int) ($objeto->IdDetalle ?? 0);
+            if ($idDetalle <= 0) {
+                throw new Exception('Linea de pedido invalida');
+            }
+
+            $observaciones = $this->limpiar($objeto->Observaciones ?? '');
+            $completado = !empty($objeto->Completado) ? 1 : 0;
+
+            $this->enlace->executeSQL_DML(
+                "UPDATE detallepedidos SET Observaciones='$observaciones', Completado=$completado WHERE IdDetalle=$idDetalle;"
+            );
+
+            $vSqlPedido = "SELECT IdPedido FROM detallepedidos WHERE IdDetalle=$idDetalle;";
+            $resultado = $this->enlace->ExecuteSQL($vSqlPedido);
+            $idPedido = (int) $resultado[0]->IdPedido;
+
+            $vSqlPendientes = "SELECT COUNT(*) AS Pendientes FROM detallepedidos WHERE IdPedido=$idPedido AND Completado=0;";
+            $pendientes = $this->enlace->ExecuteSQL($vSqlPendientes);
+
+            if ((int) $pendientes[0]->Pendientes === 0) {
+                $this->enlace->executeSQL_DML("UPDATE pedidos SET Estado='Entregada' WHERE IdPedido=$idPedido;");
+            } else {
+                $this->enlace->executeSQL_DML("UPDATE pedidos SET Estado='Preparación' WHERE IdPedido=$idPedido AND Estado='Aceptada';");
+            }
+
+            return ["IdDetalle" => $idDetalle, "Actualizado" => true];
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
 }

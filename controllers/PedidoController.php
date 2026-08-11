@@ -74,4 +74,30 @@ class pedido
             handleException($e);
         }
     }
+
+    public function getPorEstacion($param)
+    {
+        try {
+            $response = new Response();
+            $model = new PedidoModel();
+            $result = $model->getPorEstacion($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function actualizarLinea()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $inputJSON = $request->getJSON();
+            $model = new PedidoModel();
+            $result = $model->actualizarLineaEstacion($inputJSON);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }
