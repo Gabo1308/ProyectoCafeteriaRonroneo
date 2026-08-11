@@ -20,6 +20,14 @@ class PedidoServices {
   getClientePropio(idUsuario) {
     return axios.get(BASE_URL + '/getClientePropio/' + idUsuario);
   }
+
+  getPorEstacion(idEstacion) {
+    return axios.get(BASE_URL + '/getPorEstacion/' + idEstacion);
+  }
+  
+  actualizarLinea(datos) {
+    return axios.put(BASE_URL + '/actualizarLinea', JSON.stringify(datos));
+  }
 }
 
 export default new PedidoServices();
