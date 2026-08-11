@@ -197,7 +197,7 @@ export default function HeaderRonroneo() {
                   color: "primary.dark",
                 }}
               >
-                {usuario.Rol === "Administrador" ? "Estaciones" : "Mi estación"}
+                {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
               </Button>
             </>
           )}
@@ -246,7 +246,7 @@ export default function HeaderRonroneo() {
                 Carritos recibidos
               </MenuItem>
               <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
-                {usuario.Rol === "Administrador" ? "Estaciones" : "Mi estación"}
+                {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
               </MenuItem>
             </>
           )}

@@ -17,7 +17,9 @@
     "openNavigation": "Open navigation",
     "userAccount": "User account",
     "logoutQuestion": "Are you sure you want to log out?",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "stations": "Stations",
+    "myStation": "My station"
   },
   "common": {
     "loading": "Loading...",

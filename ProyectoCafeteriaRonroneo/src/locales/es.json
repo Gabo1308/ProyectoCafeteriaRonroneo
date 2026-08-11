@@ -17,7 +17,9 @@
     "openNavigation": "Abrir navegación",
     "userAccount": "Cuenta de usuario",
     "logoutQuestion": "¿Estás seguro de que deseas cerrar sesión?",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "stations": "Estaciones",
+    "myStation": "Mi estación"
   },
   "common": {
     "loading": "Cargando...",
