@@ -20,6 +20,24 @@ class PedidoServices {
   getClientePropio(idUsuario) {
     return axios.get(BASE_URL + '/getClientePropio/' + idUsuario);
   }
+  enviarCarrito(datos) {
+    return axios.post(BASE_URL + '/enviarCarrito', JSON.stringify(datos));
+  }
+  getCarritosPendientes(idUsuario) {
+    return axios.get(BASE_URL + '/getCarritosPendientes/' + idUsuario);
+  }
+  atenderCarrito(datos) {
+    return axios.put(BASE_URL + '/atenderCarrito', JSON.stringify(datos));
+  }
+  getPorEstacion(idEstacion) {
+    return axios.get(BASE_URL + '/getPorEstacion/' + idEstacion);
+  }
+  actualizarLinea(datos) {
+    return axios.put(BASE_URL + '/actualizarLinea', JSON.stringify(datos));
+  }
+  despacharPedido(idPedido) {
+    return axios.put(BASE_URL + '/despachar/' + idPedido);
+  }
 }
 
 export default new PedidoServices();

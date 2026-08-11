@@ -16,9 +16,11 @@ class UsuarioModel
     public function all()
     {
         try {
-            $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol
+           $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol,
+                            u.IdEstacion, e.Nombre AS EstacionNombre
                     FROM usuarios u
                     INNER JOIN rol r ON u.IdRol = r.IdRol
+                    LEFT JOIN estaciones e ON u.IdEstacion = e.IdEstacion
                     WHERE u.Estado = 1
                     ORDER BY u.Nombre;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
@@ -32,9 +34,11 @@ class UsuarioModel
     {
         try {
             $idUsuario = (int) $id;
-            $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol
+            $vSql = "SELECT u.IdUsuario, u.IdRol, u.Nombre, u.Apellido, u.Correo, u.Estado, r.Nombre AS Rol,
+                            u.IdEstacion, e.Nombre AS EstacionNombre
                     FROM usuarios u
                     INNER JOIN rol r ON u.IdRol = r.IdRol
+                    LEFT JOIN estaciones e ON u.IdEstacion = e.IdEstacion
                     WHERE u.IdUsuario=$idUsuario;";
             $vResultado = $this->enlace->ExecuteSQL($vSql);
             return $vResultado ? $vResultado[0] : null;
@@ -174,8 +178,11 @@ class UsuarioModel
                 throw new Exception('No fue posible proteger la contraseña');
             }
 
-            $vSql = "INSERT INTO usuarios (IdRol, Nombre, Apellido, Correo, Contrasena, Estado)
-                    VALUES ($idRol, '$nombre', '$apellido', '$correo', '$contrasena', 1);";
+            $idEstacion = !empty($objeto->IdEstacion) ? (int) $objeto->IdEstacion : null;
+            $idEstacionSql = $idEstacion !== null ? $idEstacion : 'NULL';
+
+            $vSql = "INSERT INTO usuarios (IdRol, Nombre, Apellido, Correo, Contrasena, Estado, IdEstacion)
+                    VALUES ($idRol, '$nombre', '$apellido', '$correo', '$contrasena', 1, $idEstacionSql);";
             $idUsuario = $this->enlace->executeSQL_DML_last($vSql);
             return $this->get($idUsuario);
         } catch (Exception $e) {
@@ -203,7 +210,10 @@ class UsuarioModel
                 throw new Exception('Ya existe otro usuario con ese correo');
             }
 
-            $vSql = "UPDATE usuarios SET IdRol=$idRol, Nombre='$nombre', Apellido='$apellido', Correo='$correo'
+            $idEstacion = !empty($objeto->IdEstacion) ? (int) $objeto->IdEstacion : null;
+            $idEstacionSql = $idEstacion !== null ? $idEstacion : 'NULL';
+
+            $vSql = "UPDATE usuarios SET IdRol=$idRol, Nombre='$nombre', Apellido='$apellido', Correo='$correo', IdEstacion=$idEstacionSql
                      WHERE IdUsuario=$idUsuario;";
             $this->enlace->executeSQL_DML($vSql);
 

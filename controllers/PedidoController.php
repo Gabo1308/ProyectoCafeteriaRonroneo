@@ -74,4 +74,65 @@ class pedido
             handleException($e);
         }
     }
+
+    public function enviarCarrito()
+    {
+        $request = new Request();
+        $response = new Response();
+        $model = new PedidoModel();
+        $response->toJSON($model->enviarCarrito($request->getJSON()));
+    }
+
+    public function getCarritosPendientes($param)
+    {
+        $response = new Response();
+        $model = new PedidoModel();
+        $response->toJSON($model->getCarritosPendientes($param));
+    }
+
+    public function atenderCarrito()
+    {
+        $request = new Request();
+        $response = new Response();
+        $model = new PedidoModel();
+        $response->toJSON($model->atenderCarrito($request->getJSON()));
+    }
+
+    public function getPorEstacion($param)
+    {
+        try {
+            $response = new Response();
+            $model = new PedidoModel();
+            $result = $model->getPorEstacion($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function actualizarLinea()
+    {
+        try {
+            $request = new Request();
+            $response = new Response();
+            $inputJSON = $request->getJSON();
+            $model = new PedidoModel();
+            $result = $model->actualizarLineaEstacion($inputJSON);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
+
+    public function despachar($param)
+    {
+        try {
+            $response = new Response();
+            $model = new PedidoModel();
+            $result = $model->despacharPedido($param);
+            $response->toJSON($result);
+        } catch (Exception $e) {
+            handleException($e);
+        }
+    }
 }

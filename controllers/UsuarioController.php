@@ -7,7 +7,7 @@ class usuario
             $response = new Response();
             $usuarioModel = new UsuarioModel();
             $result = $usuarioModel->all();
-            $response->toJSON($result);
+                $response->toJSON($result);
         } catch (Exception $e) {
             handleException($e);
         }
@@ -51,7 +51,7 @@ class usuario
             if (isset($result) && !empty($result) && $result != false) {
             $response->toJSON($result);
             } else {
-                http_response_code(401);
+                $response->status(401);
                 $response->toJSON(["mensaje" => "Usuario o contraseña incorrectos"]);
             }
 

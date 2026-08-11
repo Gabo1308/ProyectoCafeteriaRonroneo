@@ -10,6 +10,7 @@ CartProvider.propTypes = {
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const [carritoSolicitud, setCarritoSolicitud] = useState(null);
 
 
   const generarKey = (item) => `${item.Tipo}-${item.Id}`;
@@ -68,6 +69,19 @@ export function CartProvider({ children }) {
 
   const cleanCart = () => {
     setCart([]);
+    setCarritoSolicitud(null);
+  };
+
+  const cargarCarrito = (items, solicitud = null) => {
+    setCart(items.map((item) => ({
+      Tipo: item.Tipo,
+      Id: item.Tipo === "producto" ? Number(item.Id) : Number(item.IdCombo),
+      Nombre: item.Nombre,
+      Precio: Number(item.Precio),
+      Cantidad: Number(item.Cantidad),
+      Observaciones: item.Observaciones || "",
+    })));
+    setCarritoSolicitud(solicitud);
   };
 
   const getTotal = (listaCarrito = cart) => {
@@ -82,11 +96,13 @@ export function CartProvider({ children }) {
     <CartContext.Provider
       value={{
         cart,
+        carritoSolicitud,
         addItem,
         removeItem,
         updateCantidad,
         updateObservaciones,
         cleanCart,
+        cargarCarrito,
         getTotal,
         getCantidadItems,
       }}

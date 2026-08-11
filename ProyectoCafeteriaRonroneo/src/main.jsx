@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import './i18n';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'; 
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import { Home } from './components/Home/Home';
 import { PageNotFound } from './components/Home/PageNotFound';
@@ -20,12 +20,30 @@ import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
 import { GestionPreparacion } from './components/Admin/GestionPreparacion.jsx';
 import { GestionUsuarios } from './components/Admin/GestionUsuarios.jsx';
+import { PedidoEstacion } from "./components/Cafeteria/PedidoEstacion";
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
-import { Cart } from "./components/Cafeteria/Cart";
 import { HistorialPedidos } from "./components/Cafeteria/HistorialPedidos";
 import { DetallePedido } from "./components/Cafeteria/DetallePedido";
 import { RegistrarPedido } from "./components/Cafeteria/RegistrarPedido";
+import { Cart } from "./components/Cafeteria/Cart";
+import { CarritosPendientes } from "./components/Cafeteria/CarritosPendientes";
+
+function RegistrarPedidoPersonal() {
+  const userStr = localStorage.getItem('user');
+  const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
+  const esPersonal = usuario?.Rol === 'Encargado' || usuario?.Rol === 'Administrador';
+
+  return esPersonal ? <RegistrarPedido /> : <Navigate to="/carrito" replace />;
+}
+
+function CarritosPendientesPersonal() {
+  const userStr = localStorage.getItem('user');
+  const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
+  const esPersonal = usuario?.Rol === 'Encargado' || usuario?.Rol === 'Administrador';
+
+  return esPersonal ? <CarritosPendientes /> : <Navigate to="/" replace />;
+}
 
 const rutas = createBrowserRouter( 
   [     { 
@@ -99,17 +117,13 @@ const rutas = createBrowserRouter(
           path: "/create",
           element: <Registrar />,
         },
-        {
-          path: "/carrito",
-          element: <Cart />,
-        }
         ,{
           path: "/pedidos",
           element: <HistorialPedidos />,
         },
         {
-        path: "/registrar-pedido",
-        element: <RegistrarPedido />,
+          path: "/carrito",
+          element: <Cart />,
         },
         {
           path: "/pedido/:id",
@@ -117,7 +131,15 @@ const rutas = createBrowserRouter(
         },
         {
           path: "/registrar-pedido",
-          element: <RegistrarPedido />,
+          element: <RegistrarPedidoPersonal />,
+        },
+        {
+          path: "/carritos-pendientes",
+          element: <CarritosPendientesPersonal />,
+        },
+        {
+          path: "/estacion",
+          element: <PedidoEstacion />,
         },
       ], 
     }, 

@@ -1,26 +1,32 @@
-// eslint-disable-next-line no-unused-vars
 import React from "react";
 import PropTypes from "prop-types";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import Header from "./HeaderRonroneo";
 import { Footer } from "./Footer";
 import { Toaster } from "react-hot-toast";
+import FondoRonroneo from '../../assets/fondoRonroneo.png';
 
 Layout.propTypes = { children: PropTypes.node.isRequired };
 
 export function Layout({ children }) {
   return (
-    <Container
-      disableGutters
-      maxWidth={false}
-      sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    <Box
+      sx={{
+        backgroundImage: `url(${FondoRonroneo})`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "260px",
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <Header />
-      <Container maxWidth="xl" sx={{ py: 2, flexGrow: 1 }}>
+      <Container component="main" maxWidth="xl" sx={{ py: 2, flex: 1 }}>
         <Toaster position="top-center" />
         {children}
       </Container>
       <Footer />
-    </Container>
+    </Box>
   );
 }

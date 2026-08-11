@@ -21,26 +21,29 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
 import UsuarioService from '../../services/UsuarioServices';
+import PreparacionService from '../../services/PreparacionServices';
 
-const ROLES = [
+const Roles = [
   { id: 1, nombre: 'Administrador' },
   { id: 2, nombre: 'Cliente' },
   { id: 3, nombre: 'Encargado' },
 ];
 
-const formVacio = { IdUsuario: null, Nombre: '', Apellido: '', Correo: '', IdRol: 3, Contrasena: '' };
+const formVacio = { IdUsuario: null, Nombre: '', Apellido: '', Correo: '', IdRol: 3, Contrasena: '', IdEstacion: '' };
 
 export function GestionUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosEliminados, setUsuariosEliminados] = useState([]);
+  const [estaciones, setEstaciones] = useState([]);
   const [form, setForm] = useState(formVacio);
   const [loaded, setLoaded] = useState(false);
 
   const cargarDatos = () => {
-    Promise.all([UsuarioService.getUsuarios(), UsuarioService.getUsuariosDesactivados()])
-      .then(([activosResponse, desactivadosResponse]) => {
+    Promise.all([UsuarioService.getUsuarios(), UsuarioService.getUsuariosDesactivados(), PreparacionService.getEstaciones()])
+      .then(([activosResponse, desactivadosResponse, estacionesResponse]) => {
         setUsuarios(activosResponse.data || []);
         setUsuariosEliminados(desactivadosResponse.data || []);
+        setEstaciones(estacionesResponse.data || []);
         setLoaded(true);
       })
       .catch((err) => {
@@ -67,6 +70,7 @@ export function GestionUsuarios() {
       Correo: usuario.Correo,
       IdRol: usuario.IdRol,
       Contrasena: '',
+      IdEstacion: usuario.IdEstacion || '',
     });
   };
 
@@ -76,6 +80,28 @@ export function GestionUsuarios() {
     if (!form.IdUsuario && !form.Contrasena) {
       toast.error('La contraseña es obligatoria al crear un usuario');
       return;
+    }
+
+    if (form.Contrasena) {
+      if (form.Contrasena.length < 15) {
+        toast.error('La contraseña debe tener al menos 15 caracteres');
+        return;
+      }
+
+      const simbolos = '!@#$%^&*+-_=?.';
+      let tieneSimbolo = false;
+
+      for (let i = 0; i < form.Contrasena.length; i++) {
+        if (simbolos.includes(form.Contrasena[i])) {
+          tieneSimbolo = true;
+          break;
+        }
+      }
+
+      if (!tieneSimbolo) {
+        toast.error('La contraseña debe tener al menos un carácter especial (+, *, !, @, etc.)');
+        return;
+      }
     }
 
     const accion = form.IdUsuario ? UsuarioService.actualizarUsuario(form) : UsuarioService.crearUsuario(form);
@@ -126,12 +152,30 @@ export function GestionUsuarios() {
                 <TextField label="Apellido" name="Apellido" value={form.Apellido} onChange={actualizarCampo} required fullWidth />
                 <TextField label="Correo" name="Correo" value={form.Correo} onChange={actualizarCampo} required fullWidth />
                 <TextField label="Rol" name="IdRol" select value={form.IdRol} onChange={actualizarCampo} required fullWidth>
-                  {ROLES.map((rol) => (
+                  {Roles.map((rol) => (
                     <MenuItem key={rol.id} value={rol.id}>
                       {rol.nombre}
                     </MenuItem>
                   ))}
                 </TextField>
+
+                {form.IdRol === 3 && (
+                  <TextField
+                    label="Estación asignada"
+                    name="IdEstacion"
+                    select
+                    value={form.IdEstacion}
+                    onChange={actualizarCampo}
+                    required
+                    fullWidth
+                  >
+                    {estaciones.map((estacion) => (
+                      <MenuItem key={estacion.IdEstacion} value={estacion.IdEstacion}>
+                        {estacion.Nombre}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
                 <TextField
                   label={form.IdUsuario ? 'Nueva contraseña (opcional)' : 'Contraseña'}
                   name="Contrasena"
@@ -161,18 +205,18 @@ export function GestionUsuarios() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>Rol</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell align="center">Nombre</TableCell>
+                  <TableCell align="center">Correo</TableCell>
+                  <TableCell align="center">Rol</TableCell>
+                  <TableCell align="center">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {usuarios.map((usuario) => (
                   <TableRow key={usuario.IdUsuario} hover>
-                    <TableCell>{usuario.Nombre} {usuario.Apellido}</TableCell>
-                    <TableCell>{usuario.Correo}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">{usuario.Nombre} {usuario.Apellido}</TableCell>
+                    <TableCell align="center">{usuario.Correo}</TableCell>
+                    <TableCell align="center">
                       <Chip label={usuario.Rol} size="small" color="secondary" />
                     </TableCell>
                     <TableCell align="right">
@@ -199,18 +243,18 @@ export function GestionUsuarios() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>Rol</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell align="center">Nombre</TableCell>
+                  <TableCell align="center">Correo</TableCell>
+                  <TableCell align="center">Rol</TableCell>
+                  <TableCell align="center">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {usuariosEliminados.map((usuario) => (
                   <TableRow key={usuario.IdUsuario} hover>
-                    <TableCell>{usuario.Nombre} {usuario.Apellido}</TableCell>
-                    <TableCell>{usuario.Correo}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">{usuario.Nombre} {usuario.Apellido}</TableCell>
+                    <TableCell align="center">{usuario.Correo}</TableCell>
+                    <TableCell align="center">
                       <Chip label={usuario.Rol} size="small" color="default" />
                     </TableCell>
                     <TableCell align="right">

@@ -96,25 +96,16 @@ export function HistorialPedidos() {
 
       {esEncargadoOAdmin && (
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3, mt: 2 }}>
-          <Box sx={{ minWidth: 204 }}>
-            <Typography
-              component="label"
-              htmlFor="filtro-fecha"
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mb: 0.5 }}
-            >
-              Filtrar por fecha
-            </Typography>
-            <TextField
-              id="filtro-fecha"
-              type="date"
-              size="small"
-              fullWidth
-              value={fechaFiltro}
-              onChange={(e) => setFechaFiltro(e.target.value)}
-            />
-          </Box>
+          <TextField
+            id="filtro-fecha"
+            label="Filtrar por fecha"
+            type="date"
+            size="small"
+            value={fechaFiltro}
+            onChange={(e) => setFechaFiltro(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            sx={{ minWidth: 204 }}
+          />
           <TextField
             label="Filtrar por estado"
             select
@@ -140,27 +131,25 @@ export function HistorialPedidos() {
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, mt: 2 }}>
           <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                <TableCell>Pedido</TableCell>
-                <TableCell>Fecha</TableCell>
-                {esEncargadoOAdmin && <TableCell>Cliente</TableCell>}
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Total</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+            <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
+                <TableCell align="center">Pedido</TableCell>
+                <TableCell align="center">Fecha</TableCell>
+                {esEncargadoOAdmin && <TableCell align="center">Cliente</TableCell>}
+                <TableCell align="center">Estado</TableCell>
+                <TableCell align="center">Total</TableCell>
+                <TableCell align="center">Acciones</TableCell>
               </TableRow>
-            </TableHead>
             <TableBody>
               {pedidos.map((pedido) => (
                 <TableRow key={pedido.IdPedido} hover>
-                  <TableCell>#{pedido.IdPedido}</TableCell>
-                  <TableCell>{formatoFecha(pedido.FechaPedido)}</TableCell>
-                  {esEncargadoOAdmin && <TableCell>{pedido.ClienteNombre}</TableCell>}
-                  <TableCell>
+                  <TableCell align="center">#{pedido.IdPedido}</TableCell>
+                  <TableCell align="center">{formatoFecha(pedido.FechaPedido)}</TableCell>
+                  {esEncargadoOAdmin && <TableCell align="center">{pedido.ClienteNombre}</TableCell>}
+                  <TableCell align="center">
                     <Chip label={pedido.Estado} size="small" color={colorEstado(pedido.Estado)} />
                   </TableCell>
-                  <TableCell align="right">₡{Math.round(pedido.Total)}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">₡{Math.round(pedido.Total)}</TableCell>
+                  <TableCell align="center">
                     <Button
                       size="small"
                       variant="outlined"

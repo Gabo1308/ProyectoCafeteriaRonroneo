@@ -52,13 +52,10 @@ export default function HeaderRonroneo() {
     localStorage.removeItem("user");
   }
 
-  /*const navItems = [
-    { name: "Productos", link: "/catalog-productos/" },
-    { name: "Combos", link: "/catalog-combos/" },
-    { name: "Menús", link: "/catalog-menu/" },
-    { name: "Preparación", link: "/catalog-preparacion/" },
-    { name: "Mis pedidos", link: "/pedidos" },
-  ];*/
+  const nombreUsuario = usuario
+    ? `${usuario.Nombre || ""} ${usuario.Apellido || ""}`.trim()
+    : "";
+
   const navItems = [
   { name: t("header.products"), link: "/catalog-productos/" },
   { name: t("header.combos"), link: "/catalog-combos/" },
@@ -67,13 +64,6 @@ export default function HeaderRonroneo() {
   { name: t("header.myOrders"), link: "/pedidos" },
   ];
 
-  /*const mantenimientosItems = [
-    { name: "Productos", link: "/admin/productos/" },
-    { name: "Combos", link: "/admin/combos/" },
-    { name: "Menús", link: "/admin/menus/" },
-    { name: "Preparación", link: "/admin/preparacion/" },
-    { name: "Usuarios", link: "/admin/usuarios/" },
-  ];*/
   const mantenimientosItems = [
   { name: t("header.products"), link: "/admin/productos/" },
   { name: t("header.combos"), link: "/admin/combos/" },
@@ -82,16 +72,6 @@ export default function HeaderRonroneo() {
   { name: t("header.users"), link: "/admin/usuarios/" },
   ];
 
-  /*let userItems = [];
-
-  if (usuario) {
-    userItems = [{ name: "Cerrar Sesión", link: "/logout" }];
-  } else {
-    userItems = [
-      { name: "Iniciar Sesión", link: "/login" },
-      { name: "Registrarse", link: "/create" },
-    ];
-  }*/
   let userItems = [];
 
   if (usuario) {
@@ -141,7 +121,6 @@ export default function HeaderRonroneo() {
         <IconButton
           size="large"
           color="primary"
-          /*aria-label="abrir navegacion"*/
           aria-label={t("header.openNavigation")}
           onClick={(event) => setAnchorElPrincipal(event.currentTarget)}
           sx={{ display: { xs: "inline-flex", md: "none" } }}
@@ -195,6 +174,34 @@ export default function HeaderRonroneo() {
             </Button>
           ))}
 
+          {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
+            <>
+              <Button
+                component={Link}
+                to="/carritos-pendientes"
+                size="small"
+                sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
+              >
+                Carritos recibidos
+              </Button>
+              <Button
+                component={Link}
+                to="/estacion"
+                color="primary"
+                size="small"
+                sx={{
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                  minWidth: "auto",
+                  fontWeight: 700,
+                  color: "primary.dark",
+                }}
+              >
+                {usuario.Rol === "Administrador" ? "Estaciones" : "Mi estación"}
+              </Button>
+            </>
+          )}
+
           {usuario?.Rol === "Administrador" && (
             <Button
               color="primary"
@@ -232,11 +239,22 @@ export default function HeaderRonroneo() {
               {item.name}
             </MenuItem>
           ))}
+
+          {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
+            <>
+              <MenuItem component={Link} to="/carritos-pendientes" onClick={cerrarMenus}>
+                Carritos recibidos
+              </MenuItem>
+              <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
+                {usuario.Rol === "Administrador" ? "Estaciones" : "Mi estación"}
+              </MenuItem>
+            </>
+          )}
+
           {usuario?.Rol === "Administrador" && (
             <>
               <Divider />
               <MenuItem disabled>
-                {/*<Typography variant="caption">Mantenimientos</Typography>*/}
                 <Typography variant="caption"> {t("header.maintenance")} </Typography>
               </MenuItem>
               {mantenimientosItems.map((item) => (
@@ -254,7 +272,6 @@ export default function HeaderRonroneo() {
 
         <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
           {usuario && (
-            /*<Tooltip title="Carrito">*/
             <Tooltip title={t("header.cart")}>
               <IconButton size="large" color="inherit" component={Link} to="/carrito">
                 <Badge badgeContent={getCantidadItems()} color="error">
@@ -263,7 +280,7 @@ export default function HeaderRonroneo() {
               </IconButton>
             </Tooltip>
           )}
-          {/*<Tooltip title="Notificaciones">*/}
+          
           <Tooltip title={t("header.notifications")}>
             <IconButton size="large" color="inherit">
               <Badge badgeContent={0} color="primary">
@@ -274,7 +291,6 @@ export default function HeaderRonroneo() {
         </Box>
         <IconButton
           size="large"
-          /*aria-label="cuenta de usuario"*/
           aria-label={t("header.userAccount")}
           onClick={(event) => setAnchorElUser(event.currentTarget)}
           color="inherit"
@@ -282,9 +298,10 @@ export default function HeaderRonroneo() {
           <AccountCircle />
         </IconButton>
         <Menu anchorEl={anchorElUser} open={Boolean(anchorElUser)} onClose={() => setAnchorElUser(null)}>
-          <MenuItem disabled>
-            {/*<Typography variant="subtitle2">Usuario</Typography>*/}
-            <Typography variant="subtitle2"> {t("header.user")} </Typography>
+          <MenuItem disabled sx={{ "&.Mui-disabled": { opacity: 1 } }}>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 700 }}>
+              {nombreUsuario || t("header.user")}
+            </Typography>
           </MenuItem>
           {userItems.map((item) =>
             item.link === "/logout" ? (
@@ -298,22 +315,6 @@ export default function HeaderRonroneo() {
             )
           )}
         </Menu>
-        {/*<Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
-          <DialogTitle>Cerrar sesión</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              ¿Estás seguro de que deseas cerrar sesión?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={cancelarLogout} color="inherit">
-              Cancelar
-            </Button>
-            <Button onClick={confirmarLogout} color="primary" variant="contained">
-              Cerrar sesión
-            </Button>
-          </DialogActions>
-        </Dialog>*/}
         <Dialog open={logoutDialogOpen} onClose={cancelarLogout}>
           <DialogTitle> {t("header.logout")} </DialogTitle>
           <DialogContent>

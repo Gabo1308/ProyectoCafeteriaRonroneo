@@ -1,68 +1,60 @@
 import React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableFooter from "@mui/material/TableFooter";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RemoveIcon from "@mui/icons-material/Remove";
+import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import {
+  Box,
+  Button,
+  IconButton,
+  MenuItem,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Stack from "@mui/material/Stack";
-import PaymentIcon from "@mui/icons-material/Payment";
-import Button from "@mui/material/Button";
 import { useCart } from "../../hooks/useCart";
 import PedidoService from "../../services/PedidoServices";
 
 CartItem.propTypes = {
-  item: PropTypes.object,
-  removeItem: PropTypes.func,
-  updateCantidad: PropTypes.func,
+  item: PropTypes.object.isRequired,
+  removeItem: PropTypes.func.isRequired,
+  updateCantidad: PropTypes.func.isRequired,
+  updateObservaciones: PropTypes.func.isRequired,
 };
 
 const celdaCuerpo = { fontSize: 14 };
 
-function CartItem({ item, removeItem, updateCantidad }) {
+function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
   const subtotal = Math.round(item.Precio * item.Cantidad);
 
   return (
-    <TableRow
-      sx={{
-        "&:nth-of-type(odd)": { backgroundColor: "action.hover" },
-        "&:last-child td, &:last-child th": { border: 0 },
-      }}
-    >
+    <TableRow sx={{ "&:nth-of-type(odd)": { backgroundColor: "action.hover" } }}>
       <TableCell component="th" scope="row" sx={celdaCuerpo}>
         {item.Nombre}
         <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
           {item.Tipo === "producto" ? "Producto" : "Combo"}
         </Typography>
       </TableCell>
-      <TableCell sx={celdaCuerpo}>₡{item.Precio}</TableCell>
+      <TableCell sx={celdaCuerpo}>₡{Math.round(item.Precio)}</TableCell>
       <TableCell sx={celdaCuerpo}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           <IconButton
             size="small"
             onClick={() => updateCantidad(item, item.Cantidad - 1)}
             disabled={item.Cantidad <= 1}
-            aria-label={"Restar " + item.Nombre}
+            aria-label={`Restar ${item.Nombre}`}
           >
             <RemoveIcon fontSize="small" />
           </IconButton>
@@ -70,21 +62,25 @@ function CartItem({ item, removeItem, updateCantidad }) {
           <IconButton
             size="small"
             onClick={() => updateCantidad(item, item.Cantidad + 1)}
-            aria-label={"Sumar " + item.Nombre}
+            aria-label={`Sumar ${item.Nombre}`}
           >
             <AddIcon fontSize="small" />
           </IconButton>
         </Box>
       </TableCell>
-      <TableCell sx={celdaCuerpo}>&cent;{subtotal}</TableCell>
+      <TableCell sx={celdaCuerpo}>₡{subtotal}</TableCell>
+      <TableCell sx={{ minWidth: 220 }}>
+        <TextField
+          label="Observaciones"
+          size="small"
+          value={item.Observaciones || ""}
+          onChange={(event) => updateObservaciones(item, event.target.value)}
+          fullWidth
+        />
+      </TableCell>
       <TableCell align="right" sx={celdaCuerpo}>
-        <Tooltip title={"Quitar " + item.Nombre}>
-          <IconButton
-            color="warning"
-            onClick={() => removeItem(item)}
-            aria-label={"Quitar " + item.Nombre}
-            sx={{ ml: "auto" }}
-          >
+        <Tooltip title={`Quitar ${item.Nombre}`}>
+          <IconButton color="error" onClick={() => removeItem(item)} aria-label={`Quitar ${item.Nombre}`}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -94,37 +90,20 @@ function CartItem({ item, removeItem, updateCantidad }) {
 }
 
 export function Cart() {
-  const { cart, removeItem, cleanCart, getTotal, updateCantidad } = useCart();
+  const { cart, carritoSolicitud, removeItem, cleanCart, getTotal, updateCantidad, updateObservaciones } = useCart();
   const navigate = useNavigate();
+  const [enviando, setEnviando] = React.useState(false);
+  const [metodoEntrega, setMetodoEntrega] = React.useState("Recogida en tienda");
+  const [direccionEntrega, setDireccionEntrega] = React.useState("");
+  const [metodoPago, setMetodoPago] = React.useState("Efectivo");
 
-  const [pagoAbierto, setPagoAbierto] = useState(false);
-  const [enviando, setEnviando] = useState(false);
-  const [telefono, setTelefono] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [metodoPago, setMetodoPago] = useState("Efectivo");
+  const userStr = localStorage.getItem("user");
+  const usuario = userStr && userStr !== "undefined" ? JSON.parse(userStr) : null;
+  const esPersonal = usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador";
 
-  const abrirPago = () => setPagoAbierto(true);
-  const cerrarPago = () => setPagoAbierto(false);
-
-  const confirmarPedido = () => {
-    const userStr = localStorage.getItem("user");
-
-    if (!userStr || userStr === "undefined") {
-      toast.error("Debes iniciar sesion para completar el pedido");
-      navigate("/login");
-      return;
-    }
-
-    if (!telefono || !direccion) {
-      toast.error("Telefono y direccion son obligatorios");
-      return;
-    }
-
-    let usuario;
-    try {
-      usuario = JSON.parse(userStr);
-    } catch (error) {
-      toast.error("Error al leer sesión");
+  const enviarCarrito = () => {
+    if (metodoEntrega === "Entrega a domicilio" && !direccionEntrega.trim()) {
+      toast.error("Debe indicar la dirección de entrega");
       return;
     }
 
@@ -132,144 +111,136 @@ export function Cart() {
       IdProducto: item.Tipo === "producto" ? item.Id : null,
       IdCombo: item.Tipo === "combo" ? item.Id : null,
       Cantidad: item.Cantidad,
-      PrecioUnitario: item.Precio,
-      Subtotal: item.Precio * item.Cantidad,
+      Observaciones: item.Observaciones || "",
     }));
 
-    const pedido = {
-      IdUsuario: usuario.IdUsuario,
-      Nombre: `${usuario.Nombre} ${usuario.Apellido || ""}`.trim(),
-      Correo: usuario.Correo,
-      Telefono: telefono,
-      Direccion: direccion,
-      MetodoPago: metodoPago,
-      Total: getTotal(cart),
-      items,
-    };
-
     setEnviando(true);
-    PedidoService.crearPedido(pedido)
+    PedidoService.enviarCarrito({
+      IdUsuario: usuario.IdUsuario,
+      MetodoEntrega: metodoEntrega,
+      DireccionEntrega: metodoEntrega === "Entrega a domicilio" ? direccionEntrega.trim() : "",
+      MetodoPago: metodoPago,
+      items,
+    })
       .then(() => {
-        toast.success("Pedido realizado con exito");
+        toast.success("Carrito enviado al encargado");
         cleanCart();
-        cerrarPago();
       })
-      .catch((error) => {
-        console.log("ERROR:", error);
-        toast.error("No se pudo completar el pedido");
-      })
+      .catch((error) => toast.error(`No se pudo enviar el carrito: ${error.message}`))
       .finally(() => setEnviando(false));
   };
 
   return (
     <Box sx={{ py: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        <Typography variant="h5" color="primary.main">
-          Mi carrito
-        </Typography>
-        <Tooltip title="Vaciar carrito">
-          <IconButton color="error" onClick={() => cleanCart()} aria-label="Vaciar carrito">
-            <RemoveShoppingCartIcon />
-          </IconButton>
-        </Tooltip>
+        <Typography variant="h4">Carrito</Typography>
+        {cart.length > 0 && (
+          <Tooltip title="Vaciar carrito">
+            <IconButton color="error" onClick={cleanCart} aria-label="Vaciar carrito">
+              <RemoveShoppingCartIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
 
-      <TableContainer component={Paper} variant="outlined">
-        <Table sx={{ minWidth: 500 }} aria-label="Carrito de compras">
-           <TableHead>
-            <TableRow>
-              {["Ítem", "Precio", "Cantidad", "Subtotal", "Acciones"].map((titulo, index) => (
-                <TableCell
-                  key={titulo}
-                  align={index === 4 ? "right" : "left"}
-                  sx={{ backgroundColor: "primary.light", color: "common.white", fontSize: 16 }}
-                >
-                  {titulo}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {cart.map((item) => (
-              <CartItem
-                key={`${item.Tipo}-${item.Id}`}
-                item={item}
-                removeItem={removeItem}
-                updateCantidad={updateCantidad}
-              />
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell
-                colSpan={3}
-                align="right"
-                sx={{ backgroundColor: "primary.main", color: "common.white", fontSize: 16 }}
+      {cart.length === 0 ? (
+        <Typography color="text.secondary">El carrito está vacío.</Typography>
+      ) : (
+        <>
+          <TableContainer component={Paper} variant="outlined">
+            <Table sx={{ minWidth: 800 }} aria-label="Carrito de compras">
+              <TableHead>
+                <TableRow>
+                  {['Ítem', 'Precio', 'Cantidad', 'Subtotal', 'Observaciones', 'Acciones'].map((titulo) => (
+                    <TableCell key={titulo} sx={{ backgroundColor: "primary.light", fontWeight: 700 }}>
+                      {titulo}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {cart.map((item) => (
+                  <CartItem
+                    key={`${item.Tipo}-${item.Id}`}
+                    item={item}
+                    removeItem={removeItem}
+                    updateCantidad={updateCantidad}
+                    updateObservaciones={updateObservaciones}
+                  />
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={3} align="right">
+                    <Typography variant="subtitle1" fontWeight={700}>Total</Typography>
+                  </TableCell>
+                  <TableCell colSpan={3}>
+                    <Typography variant="subtitle1" fontWeight={700}>₡{getTotal(cart)}</Typography>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+
+          {esPersonal ? (
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                startIcon={<ShoppingCartCheckoutIcon />}
+                onClick={() => navigate("/registrar-pedido", { state: carritoSolicitud })}
               >
-                <Typography variant="subtitle1" gutterBottom>
-                  Total
-                </Typography>
-              </TableCell>
-              <TableCell colSpan={2} sx={{ backgroundColor: "primary.main", color: "common.white", fontSize: 16 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  &cent;{getTotal(cart)}
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-        </TableContainer>
-
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-        <Button variant="contained" color="secondary" size="large" startIcon={<PaymentIcon />} onClick={abrirPago} sx={{ fontWeight: 700 }}>
-          Proceder al pago
-        </Button>
-      </Box>
-
-      <Dialog open={pagoAbierto} onClose={cerrarPago} maxWidth="sm" fullWidth>
-        <DialogTitle>Datos de entrega y pago</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              label="Telefono"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Direccion"
-              value={direccion}
-              onChange={(e) => setDireccion(e.target.value)}
-              fullWidth
-              multiline
-              minRows={2}
-              required
-            />
-            <TextField
-              label="Metodo de pago"
-              select
-              value={metodoPago}
-              onChange={(e) => setMetodoPago(e.target.value)}
-              fullWidth
-            >
-              <MenuItem value="Efectivo">Efectivo</MenuItem>
-              <MenuItem value="Tarjeta">Tarjeta</MenuItem>
-            </TextField>
-            <Typography variant="subtitle1" align="right">
-              Total a pagar: &cent;{getTotal(cart)}
-            </Typography>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={cerrarPago} color="inherit">
-            Cancelar
-          </Button>
-          <Button onClick={confirmarPedido} variant="contained" color="secondary" disabled={enviando} sx={{ fontWeight: 700 }}>
-            {enviando ? "Procesando..." : "Confirmar pedido"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+                Continuar con el pedido
+              </Button>
+            </Box>
+          ) : (
+            <Box sx={{ mt: 2, px: 2, py: 1.5, backgroundColor: "#ead8bd", borderRadius: 2 }}>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2 }}>
+                <TextField
+                  label="Método de entrega"
+                  select
+                  size="small"
+                  value={metodoEntrega}
+                  onChange={(event) => setMetodoEntrega(event.target.value)}
+                  sx={{ minWidth: 220 }}
+                >
+                  <MenuItem value="Recogida en tienda">Recogida en tienda</MenuItem>
+                  <MenuItem value="Entrega a domicilio">Entrega a domicilio</MenuItem>
+                </TextField>
+                <TextField
+                  label="Método de pago"
+                  select
+                  size="small"
+                  value={metodoPago}
+                  onChange={(event) => setMetodoPago(event.target.value)}
+                  sx={{ minWidth: 200 }}
+                >
+                  <MenuItem value="Efectivo">Efectivo</MenuItem>
+                  <MenuItem value="Tarjeta">Tarjeta</MenuItem>
+                </TextField>
+              </Box>
+              {metodoEntrega === "Entrega a domicilio" && (
+                <TextField
+                  label="Dirección de entrega"
+                  value={direccionEntrega}
+                  onChange={(event) => setDireccionEntrega(event.target.value)}
+                  fullWidth
+                  multiline
+                  minRows={2}
+                  sx={{ mb: 2 }}
+                />
+              )}
+              <Typography color="text.secondary" sx={{ mb: 1 }}>
+                Un encargado recibirá el carrito y confirmará el pedido.
+              </Typography>
+              <Button variant="contained" color="secondary" onClick={enviarCarrito} disabled={enviando}>
+                {enviando ? "Confirmando..." : "Confirmar carrito"}
+              </Button>
+            </Box>
+          )}
+        </>
+      )}
     </Box>
   );
 }

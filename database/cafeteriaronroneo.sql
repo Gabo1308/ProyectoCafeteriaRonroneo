@@ -30,7 +30,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `carritocombos` (
   `IdCarrito` int(11) NOT NULL,
   `IdCombo` int(11) NOT NULL,
-  `Cantidad` int(11) NOT NULL
+  `Cantidad` int(11) NOT NULL,
+  `Observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -42,15 +43,16 @@ CREATE TABLE `carritocombos` (
 CREATE TABLE `carritoproductos` (
   `IdCarrito` int(11) NOT NULL,
   `IdProducto` int(11) NOT NULL,
-  `Cantidad` int(11) NOT NULL
+  `Cantidad` int(11) NOT NULL,
+  `Observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carritoproductos`
 --
 
-INSERT INTO `carritoproductos` (`IdCarrito`, `IdProducto`, `Cantidad`) VALUES
-(3, 21, 1);
+INSERT INTO `carritoproductos` (`IdCarrito`, `IdProducto`, `Cantidad`, `Observaciones`) VALUES
+(3, 21, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -62,15 +64,23 @@ CREATE TABLE `carritos` (
   `IdCarrito` int(11) NOT NULL,
   `IdCliente` int(11) NOT NULL,
   `FechaCreacion` date NOT NULL,
-  `Estado` tinyint(1) NOT NULL
+  `Estado` tinyint(1) NOT NULL,
+  `EstadoSolicitud` varchar(20) NOT NULL DEFAULT 'Borrador',
+  `FechaEnvio` datetime DEFAULT NULL,
+  `IdEncargado` int(11) DEFAULT NULL,
+  `FechaAtencion` datetime DEFAULT NULL,
+  `MetodoEntrega` varchar(30) NOT NULL DEFAULT 'Recogida en tienda',
+  `DireccionEntrega` varchar(255) DEFAULT NULL,
+  `CostoEnvio` decimal(10,0) NOT NULL DEFAULT 0,
+  `MetodoPago` varchar(20) NOT NULL DEFAULT 'Efectivo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carritos`
 --
 
-INSERT INTO `carritos` (`IdCarrito`, `IdCliente`, `FechaCreacion`, `Estado`) VALUES
-(3, 6, '2026-07-19', 1);
+INSERT INTO `carritos` (`IdCarrito`, `IdCliente`, `FechaCreacion`, `Estado`, `EstadoSolicitud`, `FechaEnvio`, `IdEncargado`, `FechaAtencion`, `MetodoEntrega`, `DireccionEntrega`, `CostoEnvio`, `MetodoPago`) VALUES
+(3, 6, '2026-07-19', 1, 'Procesado', NULL, 8, NULL, 'Recogida en tienda', NULL, 0, 'Efectivo');
 
 -- --------------------------------------------------------
 
@@ -217,6 +227,20 @@ CREATE TABLE `detallepedidos` (
 
 INSERT INTO `detallepedidos` (`IdDetalle`, `IdPedido`, `IdProducto`, `IdCombo`, `Cantidad`, `PrecioUnitario`, `Subtotal`, `Impuesto`, `Observaciones`) VALUES
 (8, 7, 21, NULL, 1, 4200, 4200, 0, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detallepedidoestacion`
+--
+
+CREATE TABLE `detallepedidoestacion` (
+  `IdDetalleEstacion` int(11) NOT NULL,
+  `IdDetalle` int(11) NOT NULL,
+  `IdEstacion` int(11) NOT NULL,
+  `Estado` varchar(20) NOT NULL DEFAULT 'Cola',
+  `Orden` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -424,7 +448,7 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`IdPedido`, `IdCliente`, `IdUsuario`, `IdCarrito`, `FechaPedido`, `Estado`, `Total`, `MetodoEntrega`, `DireccionEntrega`, `CostoEnvio`, `TotalSinImpuesto`) VALUES
-(7, 6, 6, 3, '2026-07-19', '0', 4200, 'Recogida en tienda', NULL, 0, 0);
+(7, 6, 8, 3, '2026-07-19', '0', 4200, 'Recogida en tienda', NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -725,7 +749,8 @@ ALTER TABLE `carritoproductos`
 --
 ALTER TABLE `carritos`
   ADD PRIMARY KEY (`IdCarrito`),
-  ADD KEY `fk_carrito_cliente` (`IdCliente`);
+  ADD KEY `fk_carrito_cliente` (`IdCliente`),
+  ADD KEY `fk_carrito_Usuario` (`IdEncargado`);
 
 --
 -- Indices de la tabla `categoria`
@@ -762,6 +787,14 @@ ALTER TABLE `detallepedidos`
   ADD KEY `fk_detalle_pedido` (`IdPedido`),
   ADD KEY `fk_detalle_producto` (`IdProducto`),
   ADD KEY `fk_detalle_combo` (`IdCombo`);
+
+--
+-- Indices de la tabla `detallepedidoestacion`
+--
+ALTER TABLE `detallepedidoestacion`
+  ADD PRIMARY KEY (`IdDetalleEstacion`),
+  ADD KEY `fk_detalleestacion_detalle` (`IdDetalle`),
+  ADD KEY `fk_detalleestacion_estacion` (`IdEstacion`);
 
 --
 -- Indices de la tabla `estaciones`
@@ -881,6 +914,12 @@ ALTER TABLE `detallepedidos`
   MODIFY `IdDetalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT de la tabla `detallepedidoestacion`
+--
+ALTER TABLE `detallepedidoestacion`
+  MODIFY `IdDetalleEstacion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `estaciones`
 --
 ALTER TABLE `estaciones`
@@ -956,7 +995,8 @@ ALTER TABLE `carritoproductos`
 -- Filtros para la tabla `carritos`
 --
 ALTER TABLE `carritos`
-  ADD CONSTRAINT `fk_carrito_cliente` FOREIGN KEY (`IdCliente`) REFERENCES `clientes` (`IdCliente`);
+  ADD CONSTRAINT `fk_carrito_cliente` FOREIGN KEY (`IdCliente`) REFERENCES `clientes` (`IdCliente`),
+  ADD CONSTRAINT `fk_carrito_Usuario` FOREIGN KEY (`IdEncargado`) REFERENCES `usuarios` (`IdUsuario`);
 
 --
 -- Filtros para la tabla `clientes`
@@ -984,6 +1024,13 @@ ALTER TABLE `detallepedidos`
   ADD CONSTRAINT `fk_detalle_combo` FOREIGN KEY (`IdCombo`) REFERENCES `combos` (`IdCombo`),
   ADD CONSTRAINT `fk_detalle_pedido` FOREIGN KEY (`IdPedido`) REFERENCES `pedidos` (`IdPedido`),
   ADD CONSTRAINT `fk_detalle_producto` FOREIGN KEY (`IdProducto`) REFERENCES `productos` (`IdProducto`);
+
+--
+-- Filtros para la tabla `detallepedidoestacion`
+--
+ALTER TABLE `detallepedidoestacion`
+  ADD CONSTRAINT `fk_detalleestacion_detalle` FOREIGN KEY (`IdDetalle`) REFERENCES `detallepedidos` (`IdDetalle`),
+  ADD CONSTRAINT `fk_detalleestacion_estacion` FOREIGN KEY (`IdEstacion`) REFERENCES `estaciones` (`IdEstacion`);
 
 --
 -- Filtros para la tabla `menuproductos`

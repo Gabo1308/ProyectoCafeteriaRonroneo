@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import PedidoService from '../../services/PedidoServices';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
@@ -11,9 +15,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { useParams } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import PedidoService from '../../services/PedidoServices';
 
 const colorEstado = (estado) => {
   switch (estado) {
@@ -47,6 +48,11 @@ export function DetallePedido() {
   const { id } = useParams();
   const [pedido, setPedido] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [despachando, setDespachando] = useState(false);
+
+  const userStr = localStorage.getItem('user');
+  const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
+  const puedeDespachar = usuario?.Rol === 'Encargado' || usuario?.Rol === 'Administrador';
 
   useEffect(() => {
     PedidoService.getPedido(id)
@@ -59,6 +65,17 @@ export function DetallePedido() {
         setLoaded(true);
       });
   }, [id]);
+
+  const despacharPedido = () => {
+    setDespachando(true);
+    PedidoService.despacharPedido(id)
+      .then((response) => {
+        toast.success('Pedido marcado como entregado');
+        setPedido(response.data);
+      })
+      .catch((err) => toast.error(`No se pudo despachar: ${err.message}`))
+      .finally(() => setDespachando(false));
+  };
 
   if (!loaded) return <p>Cargando...</p>;
 
@@ -91,11 +108,23 @@ export function DetallePedido() {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>{campoFactura('Método de entrega', pedido.MetodoEntrega)}</Grid>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>{campoFactura('Método de pago', pedido.MetodoPago)}</Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
               Estado
             </Typography>
             <Chip label={pedido.Estado} color={colorEstado(pedido.Estado)} sx={{ mt: 0.5 }} />
+            {puedeDespachar && pedido.Estado === 'Procesando' && (
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                sx={{ mt: 1, display: 'block' }}
+                disabled={despachando}
+                onClick={despacharPedido}
+              >
+                {despachando ? 'Despachando...' : 'Marcar como entregado'}
+              </Button>
+            )}
           </Grid>
           {pedido.MetodoEntrega === 'Entrega a domicilio' && (
             <Grid size={{ xs: 12 }}>{campoFactura('Dirección de entrega', pedido.DireccionEntrega)}</Grid>

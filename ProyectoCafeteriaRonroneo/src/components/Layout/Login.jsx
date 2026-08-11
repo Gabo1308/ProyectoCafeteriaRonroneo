@@ -38,7 +38,11 @@ export function Login() {
     UsuarioService.login(usuario)
       .then((response) => {
         if (!response.data?.usuario) {
-          throw new Error(t("auth.serverDidNotReturnUser"));
+          throw new Error(
+            response.data?.mensaje ||
+              response.data?.message ||
+              t("auth.serverDidNotReturnUser"),
+          );
         }
 
         localStorage.setItem("user", JSON.stringify(response.data.usuario));

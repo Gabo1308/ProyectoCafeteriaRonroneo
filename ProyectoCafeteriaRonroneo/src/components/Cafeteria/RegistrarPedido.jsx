@@ -18,13 +18,14 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useCart } from '../../hooks/useCart';
 import PedidoService from '../../services/PedidoServices';
 
 const Impuesto = 0.13;
 const CostoEnvio = 1500;
+const redondearCinco = (monto) => Math.round(monto / 5) * 5;
 
 const formatoFechaHoy = () => new Date().toLocaleDateString('es-CR');
 
@@ -49,7 +50,7 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
   };
 
   const subtotal = item.Precio * item.Cantidad;
-  const impuesto = Math.round(subtotal * Impuesto);
+  const impuesto = redondearCinco(subtotal * Impuesto);
 
   return (
     <TableRow>
@@ -98,8 +99,10 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
 }
 
 export function RegistrarPedido() {
-  const { cart, removeItem, updateCantidad, updateObservaciones, cleanCart } = useCart();
+  const { cart, carritoSolicitud, removeItem, updateCantidad, updateObservaciones, cleanCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const carritoRecibido = location.state || carritoSolicitud;
 
   const userStr = localStorage.getItem('user');
   const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
@@ -134,6 +137,19 @@ export function RegistrarPedido() {
     }
   }, []);
 
+  useEffect(() => {
+    if (carritoRecibido?.IdCliente) {
+      setIdClienteSeleccionado(String(carritoRecibido.IdCliente));
+    }
+    if (carritoRecibido?.MetodoEntrega) {
+      setMetodoEntrega(carritoRecibido.MetodoEntrega);
+      setDireccionEntrega(carritoRecibido.DireccionEntrega || '');
+    }
+    if (carritoRecibido?.MetodoPago) {
+      setMetodoPago(carritoRecibido.MetodoPago);
+    }
+  }, [carritoRecibido]);
+
 const totales = useMemo(() => {
     let totalSinImpuesto = 0;
     let totalImpuestos = 0;
@@ -141,7 +157,7 @@ const totales = useMemo(() => {
     cart.forEach((item) => {
       const subtotal = item.Precio * item.Cantidad;
       totalSinImpuesto += subtotal;
-      totalImpuestos += Math.round(subtotal * Impuesto);
+      totalImpuestos += redondearCinco(subtotal * Impuesto);
     });
 
     const costoEnvio = metodoEntrega === 'Entrega a domicilio' ? CostoEnvio : 0;
@@ -207,6 +223,7 @@ const totales = useMemo(() => {
       CostoEnvio: totales.costoEnvio,
       MetodoPago: metodoPago,
       MontoRecibido: metodoPago === 'Efectivo' ? Number(montoRecibido) : null,
+      IdCarritoSolicitud: carritoRecibido?.IdCarrito,
       items,
     };
 
@@ -379,7 +396,7 @@ const totales = useMemo(() => {
                   />
                   {vuelto !== null && (
                     <Typography color={vuelto < 0 ? 'error' : 'text.primary'}>
-                      Vuelto: ₡{Math.round(vuelto)}
+                      {vuelto < 0 ? 'Monto insuficiente' : `Vuelto: ₡${Math.round(vuelto)}`}
                     </Typography>
                   )}
                 </>
