@@ -194,6 +194,22 @@ export default function HeaderRonroneo() {
               {item.name}
             </Button>
           ))}
+          
+          {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
+            <Button
+              component={Link}
+              to="/estacion"
+              size="small"
+              sx={{
+               textTransform: "none",
+               fontWeight: 700,
+               color: "primary.dark",
+              }}
+            >
+
+              {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
+              </Button>
+              )}
 
           {usuario?.Rol === "Administrador" && (
             <Button
@@ -232,6 +248,13 @@ export default function HeaderRonroneo() {
               {item.name}
             </MenuItem>
           ))}
+
+          {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
+            <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
+              {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
+            </MenuItem>
+          )}
+
           {usuario?.Rol === "Administrador" && (
             <>
               <Divider />
