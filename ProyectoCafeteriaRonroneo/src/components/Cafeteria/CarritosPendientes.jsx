@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useCart } from "../../hooks/useCart";
 import PedidoService from "../../services/PedidoServices";
 
 export function CarritosPendientes() {
+  const { t } = useTranslation();
   const [carritos, setCarritos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [atendiendo, setAtendiendo] = useState(null);
@@ -51,7 +53,7 @@ export function CarritosPendientes() {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h4" sx={{ mb: 2 }}>Carritos recibidos</Typography>
+      <Typography variant="h4" sx={{ mb: 2 }}>{t("header.receivedCarts")}</Typography>
 
       {carritos.length === 0 ? (
         <Typography color="text.secondary">No hay carritos pendientes.</Typography>

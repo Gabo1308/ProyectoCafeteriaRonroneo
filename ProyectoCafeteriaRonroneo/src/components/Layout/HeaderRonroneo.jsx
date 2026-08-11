@@ -182,7 +182,7 @@ export default function HeaderRonroneo() {
                 size="small"
                 sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
               >
-                Carritos recibidos
+                {t("header.receivedCarts")}
               </Button>
               <Button
                 component={Link}
@@ -243,7 +243,7 @@ export default function HeaderRonroneo() {
           {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
             <>
               <MenuItem component={Link} to="/carritos-pendientes" onClick={cerrarMenus}>
-                Carritos recibidos
+                {t("header.receivedCarts")}
               </MenuItem>
               <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
                 {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}

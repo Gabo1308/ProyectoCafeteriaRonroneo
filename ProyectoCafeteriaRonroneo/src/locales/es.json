@@ -19,7 +19,8 @@
     "logoutQuestion": "¿Estás seguro de que deseas cerrar sesión?",
     "cancel": "Cancelar",
     "stations": "Estaciones",
-    "myStation": "Mi estación"
+    "myStation": "Mi estación",
+    "receivedCarts": "Carritos recibidos"
   },
   "common": {
     "loading": "Cargando...",

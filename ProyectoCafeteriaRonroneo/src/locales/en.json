@@ -19,7 +19,8 @@
     "logoutQuestion": "Are you sure you want to log out?",
     "cancel": "Cancel",
     "stations": "Stations",
-    "myStation": "My station"
+    "myStation": "My station",
+    "receivedCarts": "Received carts"
   },
   "common": {
     "loading": "Loading...",
