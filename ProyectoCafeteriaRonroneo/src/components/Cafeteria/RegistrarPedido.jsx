@@ -120,6 +120,8 @@ export function RegistrarPedido() {
   const [numeroTarjeta, setNumeroTarjeta] = useState('');
   const [fechaExpiracion, setFechaExpiracion] = useState('');
   const [cvv, setCvv] = useState('');
+  const [pagoConfirmado, setPagoConfirmado] = useState(false);
+  const [tarjetaUltimos4, setTarjetaUltimos4] = useState('');
 
   const [enviando, setEnviando] = useState(false);
 
@@ -147,6 +149,13 @@ export function RegistrarPedido() {
     }
     if (carritoRecibido?.MetodoPago) {
       setMetodoPago(carritoRecibido.MetodoPago);
+    }
+    if (carritoRecibido?.MontoRecibido) {
+      setMontoRecibido(String(carritoRecibido.MontoRecibido));
+    }
+    if (carritoRecibido?.PagoConfirmado) {
+      setPagoConfirmado(true);
+      setTarjetaUltimos4(carritoRecibido.TarjetaUltimos4 || '');
     }
   }, [carritoRecibido]);
 
@@ -190,7 +199,7 @@ const totales = useMemo(() => {
       toast.error('Debe indicar la dirección de entrega');
       return;
     }
-    if (metodoPago === 'Tarjeta' && (!numeroTarjeta || !fechaExpiracion || !cvv)) {
+    if (metodoPago === 'Tarjeta' && !pagoConfirmado && (!numeroTarjeta || !fechaExpiracion || !cvv)) {
       toast.error('Por favor complete los datos de la tarjeta');
       return;
     }
@@ -368,7 +377,13 @@ const totales = useMemo(() => {
               </TextField>
 
               {metodoPago === 'Tarjeta' ? (
-                <>
+                pagoConfirmado ? (
+                  <TextField
+                    label="Pago con tarjeta"
+                    value={`Tarjeta terminada en ${tarjetaUltimos4}`}
+                    disabled
+                  />
+                ) : <>
                   <TextField
                     label="Número de tarjeta"
                     value={numeroTarjeta}

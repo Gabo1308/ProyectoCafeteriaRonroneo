@@ -72,15 +72,18 @@ CREATE TABLE `carritos` (
   `MetodoEntrega` varchar(30) NOT NULL DEFAULT 'Recogida en tienda',
   `DireccionEntrega` varchar(255) DEFAULT NULL,
   `CostoEnvio` decimal(10,0) NOT NULL DEFAULT 0,
-  `MetodoPago` varchar(20) NOT NULL DEFAULT 'Efectivo'
+  `MetodoPago` varchar(20) NOT NULL DEFAULT 'Efectivo',
+  `MontoRecibido` decimal(10,0) DEFAULT NULL,
+  `TarjetaUltimos4` varchar(4) DEFAULT NULL,
+  `PagoConfirmado` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carritos`
 --
 
-INSERT INTO `carritos` (`IdCarrito`, `IdCliente`, `FechaCreacion`, `Estado`, `EstadoSolicitud`, `FechaEnvio`, `IdEncargado`, `FechaAtencion`, `MetodoEntrega`, `DireccionEntrega`, `CostoEnvio`, `MetodoPago`) VALUES
-(3, 6, '2026-07-19', 1, 'Procesado', NULL, 8, NULL, 'Recogida en tienda', NULL, 0, 'Efectivo');
+INSERT INTO `carritos` (`IdCarrito`, `IdCliente`, `FechaCreacion`, `Estado`, `EstadoSolicitud`, `FechaEnvio`, `IdEncargado`, `FechaAtencion`, `MetodoEntrega`, `DireccionEntrega`, `CostoEnvio`, `MetodoPago`, `MontoRecibido`, `TarjetaUltimos4`, `PagoConfirmado`) VALUES
+(3, 6, '2026-07-19', 1, 'Procesado', NULL, 8, NULL, 'Recogida en tienda', NULL, 0, 'Efectivo', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 

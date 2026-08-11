@@ -152,12 +152,36 @@ class PedidoModel
                 throw new Exception('Metodo de pago invalido');
             }
             $costoEnvio = $metodoEntrega === 'Entrega a domicilio' ? 1500 : 0;
+            $montoRecibidoSql = 'NULL';
+            $tarjetaUltimos4Sql = 'NULL';
+            $pagoConfirmado = 0;
+
+            if ($metodoEntrega === 'Entrega a domicilio' && $metodoPago === 'Efectivo') {
+                $montoRecibido = (float) ($objeto->MontoRecibido ?? 0);
+                if ($montoRecibido <= 0) {
+                    throw new Exception('Debe indicar el monto para pagar en efectivo');
+                }
+                $montoRecibidoSql = $montoRecibido;
+            }
+
+            if ($metodoEntrega === 'Entrega a domicilio' && $metodoPago === 'Tarjeta') {
+                $numeroTarjeta = preg_replace('/\D/', '', (string) ($objeto->NumeroTarjeta ?? ''));
+                $fechaExpiracion = trim((string) ($objeto->FechaExpiracion ?? ''));
+                $cvv = preg_replace('/\D/', '', (string) ($objeto->Cvv ?? ''));
+                if (strlen($numeroTarjeta) !== 16 || !preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $fechaExpiracion) || !in_array(strlen($cvv), [3, 4])) {
+                    throw new Exception('Los datos de la tarjeta estan incompletos');
+                }
+                $tarjetaUltimos4 = substr($numeroTarjeta, -4);
+                $tarjetaUltimos4Sql = "'$tarjetaUltimos4'";
+                $pagoConfirmado = 1;
+            }
 
             $idCarrito = $this->crearCarrito((int) $cliente->IdCliente, $objeto->items);
             $this->enlace->executeSQL_DML(
                 "UPDATE carritos SET EstadoSolicitud='Enviado', FechaEnvio=NOW(),
                     MetodoEntrega='$metodoEntrega', DireccionEntrega='$direccionEntrega',
-                    CostoEnvio=$costoEnvio, MetodoPago='$metodoPago'
+                    CostoEnvio=$costoEnvio, MetodoPago='$metodoPago', MontoRecibido=$montoRecibidoSql,
+                    TarjetaUltimos4=$tarjetaUltimos4Sql, PagoConfirmado=$pagoConfirmado
                  WHERE IdCarrito=$idCarrito;"
             );
 
@@ -198,6 +222,7 @@ class PedidoModel
         $encabezado = $this->enlace->ExecuteSQL(
             "SELECT ca.IdCarrito, ca.IdCliente, ca.EstadoSolicitud, ca.MetodoEntrega,
                     ca.DireccionEntrega, ca.CostoEnvio, ca.MetodoPago,
+                    ca.MontoRecibido, ca.TarjetaUltimos4, ca.PagoConfirmado,
                     cl.Nombre AS ClienteNombre
              FROM carritos ca
              INNER JOIN clientes cl ON ca.IdCliente=cl.IdCliente

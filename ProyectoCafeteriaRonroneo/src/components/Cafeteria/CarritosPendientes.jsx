@@ -32,6 +32,9 @@ export function CarritosPendientes() {
           DireccionEntrega: response.data.DireccionEntrega,
           CostoEnvio: response.data.CostoEnvio,
           MetodoPago: response.data.MetodoPago,
+          MontoRecibido: response.data.MontoRecibido,
+          TarjetaUltimos4: response.data.TarjetaUltimos4,
+          PagoConfirmado: Number(response.data.PagoConfirmado),
         };
         cargarCarrito(response.data.Items || [], solicitud);
         navigate("/carrito", {

@@ -96,14 +96,35 @@ export function Cart() {
   const [metodoEntrega, setMetodoEntrega] = React.useState("Recogida en tienda");
   const [direccionEntrega, setDireccionEntrega] = React.useState("");
   const [metodoPago, setMetodoPago] = React.useState("Efectivo");
+  const [montoRecibido, setMontoRecibido] = React.useState("");
+  const [numeroTarjeta, setNumeroTarjeta] = React.useState("");
+  const [fechaExpiracion, setFechaExpiracion] = React.useState("");
+  const [cvv, setCvv] = React.useState("");
 
   const userStr = localStorage.getItem("user");
   const usuario = userStr && userStr !== "undefined" ? JSON.parse(userStr) : null;
   const esPersonal = usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador";
+  const impuestos = cart.reduce((total, item) => {
+    const impuesto = Math.round(((item.Precio * item.Cantidad) * 0.13) / 5) * 5;
+    return total + impuesto;
+  }, 0);
+  const totalDomicilio = getTotal(cart) + impuestos + 1500;
 
   const enviarCarrito = () => {
     if (metodoEntrega === "Entrega a domicilio" && !direccionEntrega.trim()) {
       toast.error("Debe indicar la dirección de entrega");
+      return;
+    }
+    if (metodoEntrega === "Entrega a domicilio" && metodoPago === "Efectivo" && Number(montoRecibido) < totalDomicilio) {
+      toast.error("El monto para pagar es insuficiente");
+      return;
+    }
+    if (
+      metodoEntrega === "Entrega a domicilio" &&
+      metodoPago === "Tarjeta" &&
+      (numeroTarjeta.replace(/\D/g, "").length !== 16 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(fechaExpiracion) || !/^\d{3,4}$/.test(cvv))
+    ) {
+      toast.error("Complete correctamente los datos de la tarjeta");
       return;
     }
 
@@ -120,6 +141,10 @@ export function Cart() {
       MetodoEntrega: metodoEntrega,
       DireccionEntrega: metodoEntrega === "Entrega a domicilio" ? direccionEntrega.trim() : "",
       MetodoPago: metodoPago,
+      MontoRecibido: metodoEntrega === "Entrega a domicilio" && metodoPago === "Efectivo" ? Number(montoRecibido) : null,
+      NumeroTarjeta: metodoEntrega === "Entrega a domicilio" && metodoPago === "Tarjeta" ? numeroTarjeta : "",
+      FechaExpiracion: metodoEntrega === "Entrega a domicilio" && metodoPago === "Tarjeta" ? fechaExpiracion : "",
+      Cvv: metodoEntrega === "Entrega a domicilio" && metodoPago === "Tarjeta" ? cvv : "",
       items,
     })
       .then(() => {
@@ -221,15 +246,58 @@ export function Cart() {
                 </TextField>
               </Box>
               {metodoEntrega === "Entrega a domicilio" && (
-                <TextField
-                  label="Dirección de entrega"
-                  value={direccionEntrega}
-                  onChange={(event) => setDireccionEntrega(event.target.value)}
-                  fullWidth
-                  multiline
-                  minRows={2}
-                  sx={{ mb: 2 }}
-                />
+                <Box sx={{ mb: 2 }}>
+                  <TextField
+                    label="Dirección de entrega"
+                    value={direccionEntrega}
+                    onChange={(event) => setDireccionEntrega(event.target.value)}
+                    fullWidth
+                    multiline
+                    minRows={2}
+                    sx={{ mb: 2 }}
+                  />
+                  {metodoPago === "Tarjeta" ? (
+                    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                      <TextField
+                        label="Número de tarjeta"
+                        name="numero-tarjeta-nuevo"
+                        autoComplete="new-password"
+                        value={numeroTarjeta}
+                        onChange={(event) => setNumeroTarjeta(event.target.value.replace(/[^0-9 ]/g, ""))}
+                        inputProps={{ maxLength: 19 }}
+                        sx={{ flex: "1 1 300px" }}
+                      />
+                      <TextField
+                        label="Fecha de expiración"
+                        name="fecha-expiracion-nueva"
+                        autoComplete="new-password"
+                        placeholder="MM/AA"
+                        value={fechaExpiracion}
+                        onChange={(event) => setFechaExpiracion(event.target.value)}
+                        sx={{ width: 190 }}
+                      />
+                      <TextField
+                        label="CVV"
+                        name="codigo-seguridad-nuevo"
+                        autoComplete="new-password"
+                        type="password"
+                        value={cvv}
+                        onChange={(event) => setCvv(event.target.value.replace(/\D/g, ""))}
+                        inputProps={{ maxLength: 4 }}
+                        sx={{ width: 140 }}
+                      />
+                    </Box>
+                  ) : (
+                    <TextField
+                      label="Monto con el que pagará"
+                      type="number"
+                      value={montoRecibido}
+                      onChange={(event) => setMontoRecibido(event.target.value)}
+                      helperText={`Total con impuestos y envío: ₡${totalDomicilio}`}
+                      sx={{ minWidth: 300 }}
+                    />
+                  )}
+                </Box>
               )}
               <Typography color="text.secondary" sx={{ mb: 1 }}>
                 Un encargado recibirá el carrito y confirmará el pedido.
