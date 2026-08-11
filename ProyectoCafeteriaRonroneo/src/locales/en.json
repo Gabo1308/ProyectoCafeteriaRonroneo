@@ -40,7 +40,13 @@
   },
   "home": {
     "title": "Ronroneo Coffee Shop",
-    "subtitle": "Enjoy a delicious meal"
+    "subtitle": "Enjoy a delicious meal",
+    "viewProducts": "View products",
+    "viewMenus": "View menus",
+    "viewAll": "View all",
+    "featuredProducts": "Featured products",
+    "popularCombos": "Popular combos",
+    "availableMenus": "Available menus"
   },
   "footer": {
     "brand": "Ronroneo Coffee Shop",

@@ -20,6 +20,8 @@ import FondoRonroneo from '../../assets/fondoRonroneo.png';
 const BASE_URL = import.meta.env.VITE_BASE_URL + 'uploads';
 
 function Carrusel({ titulo, verTodoLink, items, renderCard }) {
+  const { t } = useTranslation();
+
   if (!items || items.length === 0) return null;
 
   return (
@@ -38,7 +40,7 @@ function Carrusel({ titulo, verTodoLink, items, renderCard }) {
           endIcon={<ArrowForwardIcon />}
           sx={{ fontWeight: 700 }}
         >
-          Ver todos
+          {t('home.viewAll')}
         </Button>
       </Stack>
 
@@ -130,7 +132,7 @@ export function Home() {
             size="large"
             sx={{ fontWeight: 700 }}
           >
-            Ver productos
+            {t('home.viewProducts')}
           </Button>
 
           <Button
@@ -141,7 +143,7 @@ export function Home() {
             size="large"
             sx={{ fontWeight: 700 }}
           >
-            Ver menús
+            {t('home.viewMenus')}
           </Button>
         </Stack>
       </Container>
@@ -150,7 +152,7 @@ export function Home() {
         <Carrusel
           titulo={
             <Typography variant="h5" fontWeight={700}>
-              Productos destacados
+              {t('home.featuredProducts')}
             </Typography>
           }
           verTodoLink="/catalog-productos/"
@@ -210,7 +212,7 @@ export function Home() {
         <Carrusel
           titulo={
             <Typography variant="h5" fontWeight={700}>
-              Combos populares
+              {t('home.popularCombos')}
             </Typography>
           }
           verTodoLink="/catalog-combos/"
@@ -240,7 +242,7 @@ export function Home() {
 
                 <CardContent>
                   <Chip
-                    label="Combo"
+                    label={t('cards.combo')}
                     size="small"
                     color="secondary"
                     sx={{ mb: 1 }}
@@ -270,7 +272,7 @@ export function Home() {
         <Carrusel
           titulo={
             <Typography variant="h5" fontWeight={700}>
-              Menús disponibles
+              {t('home.availableMenus')}
             </Typography>
           }
           verTodoLink="/catalog-menu/"

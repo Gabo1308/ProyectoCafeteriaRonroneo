@@ -40,7 +40,13 @@
   },
   "home": {
     "title": "Cafetería Ronroneo",
-    "subtitle": "Disfrute de una buena comida"
+    "subtitle": "Disfrute de una buena comida",
+    "viewProducts": "Ver productos",
+    "viewMenus": "Ver menús",
+    "viewAll": "Ver todos",
+    "featuredProducts": "Productos destacados",
+    "popularCombos": "Combos populares",
+    "availableMenus": "Menús disponibles"
   },
   "footer": {
     "brand": "Cafetería Ronroneo",
