@@ -21,12 +21,18 @@ export function Layout({ children }) {
         flexDirection: "column",
       }}
     >
-      <Header />
+      <Box className="no-print">
+        <Header />
+      </Box>
       <Container component="main" maxWidth="xl" sx={{ py: 2, flex: 1 }}>
-        <Toaster position="top-center" />
+        <Box className="no-print">
+          <Toaster position="top-center" />
+        </Box>
         {children}
       </Container>
-      <Footer />
+      <Box className="no-print">
+        <Footer />
+      </Box>
     </Box>
   );
 }

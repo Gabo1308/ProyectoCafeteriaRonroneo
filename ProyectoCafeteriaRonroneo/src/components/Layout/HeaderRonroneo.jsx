@@ -175,31 +175,44 @@ export default function HeaderRonroneo() {
           ))}
 
           {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
-            <>
-              <Button
-                component={Link}
-                to="/carritos-pendientes"
-                size="small"
-                sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
-              >
-                {t("header.receivedCarts")}
-              </Button>
-              <Button
-                component={Link}
-                to="/estacion"
-                color="primary"
-                size="small"
-                sx={{
-                  textTransform: "none",
-                  whiteSpace: "nowrap",
-                  minWidth: "auto",
-                  fontWeight: 700,
-                  color: "primary.dark",
-                }}
-              >
-                {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
-              </Button>
-            </>
+            <Button
+              component={Link}
+              to="/carritos-pendientes"
+              size="small"
+              sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
+            >
+              {t("header.receivedCarts")}
+            </Button>
+          )}
+
+          {(usuario?.Rol === "Cocina" || usuario?.Rol === "Administrador") && (
+            <Button
+              component={Link}
+              to="/estacion"
+              color="primary"
+              size="small"
+              sx={{
+                textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: "auto",
+                fontWeight: 700,
+                color: "primary.dark",
+              }}
+            >
+              {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
+            </Button>
+          )}
+
+          {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
+            <Button
+              component={Link}
+              to="/dashboard"
+              color="primary"
+              size="small"
+              sx={{ textTransform: "none", whiteSpace: "nowrap", fontWeight: 700, color: "primary.dark" }}
+            >
+              {t("header.dashboard")}
+            </Button>
           )}
 
           {usuario?.Rol === "Administrador" && (
@@ -241,14 +254,21 @@ export default function HeaderRonroneo() {
           ))}
 
           {(usuario?.Rol === "Encargado" || usuario?.Rol === "Administrador") && (
-            <>
-              <MenuItem component={Link} to="/carritos-pendientes" onClick={cerrarMenus}>
-                {t("header.receivedCarts")}
-              </MenuItem>
-              <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
-                {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
-              </MenuItem>
-            </>
+            <MenuItem component={Link} to="/carritos-pendientes" onClick={cerrarMenus}>
+              {t("header.receivedCarts")}
+            </MenuItem>
+          )}
+
+          {(usuario?.Rol === "Cocina" || usuario?.Rol === "Administrador") && (
+            <MenuItem component={Link} to="/dashboard" onClick={cerrarMenus}>
+              {t("header.dashboard")}
+            </MenuItem>
+          )}
+
+          {(usuario?.Rol === "Cocina" || usuario?.Rol === "Administrador") && (
+            <MenuItem component={Link} to="/estacion" onClick={cerrarMenus}>
+              {usuario.Rol === "Administrador" ? t("header.stations") : t("header.myStation")}
+            </MenuItem>
           )}
 
           {usuario?.Rol === "Administrador" && (

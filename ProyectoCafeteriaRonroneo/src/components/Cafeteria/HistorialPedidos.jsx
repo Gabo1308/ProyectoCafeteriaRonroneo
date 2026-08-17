@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import PedidoService from '../../services/PedidoServices';
 
-const ESTADOS = ['Pendiente de pago', 'Aceptada', 'Preparación', 'Procesando', 'Entregada'];
+const Estados = ['Pendiente de pago', 'Aceptada', 'Preparación', 'Procesando', 'Entregada'];
 
 const colorEstado = (estado) => {
   switch (estado) {
@@ -36,13 +36,16 @@ const colorEstado = (estado) => {
 
 const formatoFecha = (fecha) => {
   if (!fecha) return '';
-  return new Date(fecha).toLocaleDateString('es-CR');
+  const soloFecha = String(fecha).split('T')[0];
+  const [anio, mes, dia] = soloFecha.split('-');
+  return `${dia}/${mes}/${anio}`;
 };
 
 export function HistorialPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [fechaFiltro, setFechaFiltro] = useState('');
+  const [fechaDesde, setFechaDesde] = useState('');
+  const [fechaHasta, setFechaHasta] = useState('');
   const [estadoFiltro, setEstadoFiltro] = useState('');
 
   const userStr = localStorage.getItem('user');
@@ -56,8 +59,12 @@ export function HistorialPedidos() {
     }
 
     const filtros = esEncargadoOAdmin
-      ? { fecha: fechaFiltro || undefined, estado: estadoFiltro || undefined }
-      : {};
+  ? {
+      fechaDesde: fechaDesde || undefined,
+      fechaHasta: fechaHasta || undefined,
+      estado: estadoFiltro || undefined,
+    }
+  : {};
 
     const peticion = esEncargadoOAdmin
       ? PedidoService.getHistorialTodos(filtros)
@@ -75,8 +82,8 @@ export function HistorialPedidos() {
   };
 
   useEffect(() => {
-    cargarPedidos();
-  }, [fechaFiltro, estadoFiltro]);
+  cargarPedidos();
+}, [fechaDesde, fechaHasta, estadoFiltro]);
 
   if (!usuario) {
     return (
@@ -97,14 +104,24 @@ export function HistorialPedidos() {
       {esEncargadoOAdmin && (
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3, mt: 2 }}>
           <TextField
-            id="filtro-fecha"
-            label="Filtrar por fecha"
+            id="filtro-fecha-desde"
+            label="Desde"
             type="date"
             size="small"
-            value={fechaFiltro}
-            onChange={(e) => setFechaFiltro(e.target.value)}
+            value={fechaDesde}
+            onChange={(e) => setFechaDesde(e.target.value)}
             slotProps={{ inputLabel: { shrink: true } }}
-            sx={{ minWidth: 204 }}
+            sx={{ minWidth: 170 }}
+          />
+          <TextField
+            id="filtro-fecha-hasta"
+            label="Hasta"
+            type="date"
+            size="small"
+            value={fechaHasta}
+            onChange={(e) => setFechaHasta(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            sx={{ minWidth: 170 }}
           />
           <TextField
             label="Filtrar por estado"
@@ -115,7 +132,7 @@ export function HistorialPedidos() {
             sx={{ minWidth: 200 }}
           >
             <MenuItem value="">Todos los estados</MenuItem>
-            {ESTADOS.map((estado) => (
+            {Estados.map((estado) => (
               <MenuItem key={estado} value={estado}>
                 {estado}
               </MenuItem>
@@ -131,6 +148,7 @@ export function HistorialPedidos() {
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, mt: 2 }}>
           <Table>
+            <TableHead>
             <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
                 <TableCell align="center">Pedido</TableCell>
                 <TableCell align="center">Fecha</TableCell>
@@ -139,6 +157,7 @@ export function HistorialPedidos() {
                 <TableCell align="center">Total</TableCell>
                 <TableCell align="center">Acciones</TableCell>
               </TableRow>
+              </TableHead>
             <TableBody>
               {pedidos.map((pedido) => (
                 <TableRow key={pedido.IdPedido} hover>

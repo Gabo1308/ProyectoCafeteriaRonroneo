@@ -27,6 +27,7 @@ const Roles = [
   { id: 1, nombre: 'Administrador' },
   { id: 2, nombre: 'Cliente' },
   { id: 3, nombre: 'Encargado' },
+  { id: 4, nombre: 'Cocina' },
 ];
 
 const formVacio = { IdUsuario: null, Nombre: '', Apellido: '', Correo: '', IdRol: 3, Contrasena: '', IdEstacion: '' };
@@ -159,7 +160,7 @@ export function GestionUsuarios() {
                   ))}
                 </TextField>
 
-                {form.IdRol === 3 && (
+                {form.IdRol === 4 && (
                   <TextField
                     label="Estación asignada"
                     name="IdEstacion"

@@ -15,6 +15,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import PrintIcon from '@mui/icons-material/Print';
 
 const colorEstado = (estado) => {
   switch (estado) {
@@ -32,7 +33,9 @@ const colorEstado = (estado) => {
 
 const formatoFecha = (fecha) => {
   if (!fecha) return '';
-  return new Date(fecha).toLocaleDateString('es-CR');
+  const soloFecha = String(fecha).split('T')[0];
+  const [anio, mes, dia] = soloFecha.split('-');
+  return `${dia}/${mes}/${anio}`;
 };
 
 const campoFactura = (etiqueta, valor) => (
@@ -93,9 +96,22 @@ export function DetallePedido() {
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h4" color="primary.main" gutterBottom>
-        Factura del pedido #{pedido.IdPedido}
-      </Typography>
+      <Box
+        className="no-print"
+        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}
+      >
+        <Typography variant="h4" color="primary.main" gutterBottom>
+          Factura del pedido #{pedido.IdPedido}
+        </Typography>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<PrintIcon />}
+          onClick={() => window.print()}
+        >
+          Imprimir comprobante
+        </Button>
+      </Box>
 
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, mb: 3 }}>
         <Grid container spacing={3}>

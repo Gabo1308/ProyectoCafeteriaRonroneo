@@ -23,6 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useCart } from "../../hooks/useCart";
 import PedidoService from "../../services/PedidoServices";
@@ -37,6 +38,7 @@ CartItem.propTypes = {
 const celdaCuerpo = { fontSize: 14 };
 
 function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
+  const { t } = useTranslation();
   const subtotal = Math.round(item.Precio * item.Cantidad);
 
   return (
@@ -44,7 +46,7 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
       <TableCell component="th" scope="row" sx={celdaCuerpo}>
         {item.Nombre}
         <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
-          {item.Tipo === "producto" ? "Producto" : "Combo"}
+          {item.Tipo === "producto" ? t("cart.product") : t("cart.combo")}
         </Typography>
       </TableCell>
       <TableCell sx={celdaCuerpo}>₡{Math.round(item.Precio)}</TableCell>
@@ -54,7 +56,7 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
             size="small"
             onClick={() => updateCantidad(item, item.Cantidad - 1)}
             disabled={item.Cantidad <= 1}
-            aria-label={`Restar ${item.Nombre}`}
+            aria-label={t("cart.subtract", { name: item.Nombre })}
           >
             <RemoveIcon fontSize="small" />
           </IconButton>
@@ -62,7 +64,7 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
           <IconButton
             size="small"
             onClick={() => updateCantidad(item, item.Cantidad + 1)}
-            aria-label={`Sumar ${item.Nombre}`}
+            aria-label={t("cart.add", { name: item.Nombre })}
           >
             <AddIcon fontSize="small" />
           </IconButton>
@@ -71,7 +73,7 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
       <TableCell sx={celdaCuerpo}>₡{subtotal}</TableCell>
       <TableCell sx={{ minWidth: 220 }}>
         <TextField
-          label="Observaciones"
+          label={t("cart.observationsLabel")}
           size="small"
           value={item.Observaciones || ""}
           onChange={(event) => updateObservaciones(item, event.target.value)}
@@ -79,8 +81,8 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
         />
       </TableCell>
       <TableCell align="right" sx={celdaCuerpo}>
-        <Tooltip title={`Quitar ${item.Nombre}`}>
-          <IconButton color="error" onClick={() => removeItem(item)} aria-label={`Quitar ${item.Nombre}`}>
+        <Tooltip title={t("cart.remove", { name: item.Nombre })}>
+          <IconButton color="error" onClick={() => removeItem(item)} aria-label={t("cart.remove", { name: item.Nombre })}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -90,6 +92,7 @@ function CartItem({ item, removeItem, updateCantidad, updateObservaciones }) {
 }
 
 export function Cart() {
+  const { t } = useTranslation();
   const { cart, carritoSolicitud, removeItem, cleanCart, getTotal, updateCantidad, updateObservaciones } = useCart();
   const navigate = useNavigate();
   const [enviando, setEnviando] = React.useState(false);
@@ -112,11 +115,11 @@ export function Cart() {
 
   const enviarCarrito = () => {
     if (metodoEntrega === "Entrega a domicilio" && !direccionEntrega.trim()) {
-      toast.error("Debe indicar la dirección de entrega");
+      toast.error(t("cart.errorAddress"));
       return;
     }
     if (metodoEntrega === "Entrega a domicilio" && metodoPago === "Efectivo" && Number(montoRecibido) < totalDomicilio) {
-      toast.error("El monto para pagar es insuficiente");
+      toast.error(t("cart.errorInsufficientAmount"));
       return;
     }
     if (
@@ -124,7 +127,7 @@ export function Cart() {
       metodoPago === "Tarjeta" &&
       (numeroTarjeta.replace(/\D/g, "").length !== 16 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(fechaExpiracion) || !/^\d{3,4}$/.test(cvv))
     ) {
-      toast.error("Complete correctamente los datos de la tarjeta");
+      toast.error(t("cart.errorCardData"));
       return;
     }
 
@@ -148,20 +151,20 @@ export function Cart() {
       items,
     })
       .then(() => {
-        toast.success("Carrito enviado al encargado");
+        toast.success(t("cart.successSent"));
         cleanCart();
       })
-      .catch((error) => toast.error(`No se pudo enviar el carrito: ${error.message}`))
+      .catch((error) => toast.error(t("cart.errorSend", { message: error.message })))
       .finally(() => setEnviando(false));
   };
 
   return (
     <Box sx={{ py: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        <Typography variant="h4">Carrito</Typography>
+        <Typography variant="h4">{t("cart.title")}</Typography>
         {cart.length > 0 && (
-          <Tooltip title="Vaciar carrito">
-            <IconButton color="error" onClick={cleanCart} aria-label="Vaciar carrito">
+          <Tooltip title={t("cart.emptyCart")}>
+            <IconButton color="error" onClick={cleanCart} aria-label={t("cart.emptyCart")}>
               <RemoveShoppingCartIcon />
             </IconButton>
           </Tooltip>
@@ -169,14 +172,21 @@ export function Cart() {
       </Box>
 
       {cart.length === 0 ? (
-        <Typography color="text.secondary">El carrito está vacío.</Typography>
+        <Typography color="text.secondary">{t("cart.empty")}</Typography>
       ) : (
         <>
           <TableContainer component={Paper} variant="outlined">
-            <Table sx={{ minWidth: 800 }} aria-label="Carrito de compras">
+            <Table sx={{ minWidth: 800 }} aria-label={t("cart.tableLabel")}>
               <TableHead>
                 <TableRow>
-                  {['Ítem', 'Precio', 'Cantidad', 'Subtotal', 'Observaciones', 'Acciones'].map((titulo) => (
+                  {[
+                    t("cart.columnItem"),
+                    t("cart.columnPrice"),
+                    t("cart.columnQuantity"),
+                    t("cart.columnSubtotal"),
+                    t("cart.columnObservations"),
+                    t("cart.columnActions"),
+                  ].map((titulo) => (
                     <TableCell key={titulo} sx={{ backgroundColor: "primary.light", fontWeight: 700 }}>
                       {titulo}
                     </TableCell>
@@ -197,7 +207,7 @@ export function Cart() {
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={3} align="right">
-                    <Typography variant="subtitle1" fontWeight={700}>Total</Typography>
+                    <Typography variant="subtitle1" fontWeight={700}>{t("cart.total")}</Typography>
                   </TableCell>
                   <TableCell colSpan={3}>
                     <Typography variant="subtitle1" fontWeight={700}>₡{getTotal(cart)}</Typography>
@@ -216,39 +226,39 @@ export function Cart() {
                 startIcon={<ShoppingCartCheckoutIcon />}
                 onClick={() => navigate("/registrar-pedido", { state: carritoSolicitud })}
               >
-                Continuar con el pedido
+                {t("cart.continueOrder")}
               </Button>
             </Box>
           ) : (
             <Box sx={{ mt: 2, px: 2, py: 1.5, backgroundColor: "#ead8bd", borderRadius: 2 }}>
               <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2 }}>
                 <TextField
-                  label="Método de entrega"
+                  label={t("cart.deliveryMethod")}
                   select
                   size="small"
                   value={metodoEntrega}
                   onChange={(event) => setMetodoEntrega(event.target.value)}
                   sx={{ minWidth: 220 }}
                 >
-                  <MenuItem value="Recogida en tienda">Recogida en tienda</MenuItem>
-                  <MenuItem value="Entrega a domicilio">Entrega a domicilio</MenuItem>
+                  <MenuItem value="Recogida en tienda">{t("cart.pickup")}</MenuItem>
+                  <MenuItem value="Entrega a domicilio">{t("cart.homeDelivery")}</MenuItem>
                 </TextField>
                 <TextField
-                  label="Método de pago"
+                  label={t("cart.paymentMethod")}
                   select
                   size="small"
                   value={metodoPago}
                   onChange={(event) => setMetodoPago(event.target.value)}
                   sx={{ minWidth: 200 }}
                 >
-                  <MenuItem value="Efectivo">Efectivo</MenuItem>
-                  <MenuItem value="Tarjeta">Tarjeta</MenuItem>
+                  <MenuItem value="Efectivo">{t("cart.cash")}</MenuItem>
+                  <MenuItem value="Tarjeta">{t("cart.card")}</MenuItem>
                 </TextField>
               </Box>
               {metodoEntrega === "Entrega a domicilio" && (
                 <Box sx={{ mb: 2 }}>
                   <TextField
-                    label="Dirección de entrega"
+                    label={t("cart.deliveryAddress")}
                     value={direccionEntrega}
                     onChange={(event) => setDireccionEntrega(event.target.value)}
                     fullWidth
@@ -259,7 +269,7 @@ export function Cart() {
                   {metodoPago === "Tarjeta" ? (
                     <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                       <TextField
-                        label="Número de tarjeta"
+                        label={t("cart.cardNumber")}
                         name="numero-tarjeta-nuevo"
                         autoComplete="new-password"
                         value={numeroTarjeta}
@@ -268,7 +278,7 @@ export function Cart() {
                         sx={{ flex: "1 1 300px" }}
                       />
                       <TextField
-                        label="Fecha de expiración"
+                        label={t("cart.expirationDate")}
                         name="fecha-expiracion-nueva"
                         autoComplete="new-password"
                         placeholder="MM/AA"
@@ -289,21 +299,21 @@ export function Cart() {
                     </Box>
                   ) : (
                     <TextField
-                      label="Monto con el que pagará"
+                      label={t("cart.amountToPay")}
                       type="number"
                       value={montoRecibido}
                       onChange={(event) => setMontoRecibido(event.target.value)}
-                      helperText={`Total con impuestos y envío: ₡${totalDomicilio}`}
+                      helperText={t("cart.totalWithTaxes", { amount: totalDomicilio })}
                       sx={{ minWidth: 300 }}
                     />
                   )}
                 </Box>
               )}
               <Typography color="text.secondary" sx={{ mb: 1 }}>
-                Un encargado recibirá el carrito y confirmará el pedido.
+                {t("cart.managerNotice")}
               </Typography>
               <Button variant="contained" color="secondary" onClick={enviarCarrito} disabled={enviando}>
-                {enviando ? "Confirmando..." : "Confirmar carrito"}
+                {enviando ? t("cart.confirming") : t("cart.confirmCart")}
               </Button>
             </Box>
           )}

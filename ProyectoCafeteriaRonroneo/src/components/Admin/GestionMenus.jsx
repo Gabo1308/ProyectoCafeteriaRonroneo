@@ -34,6 +34,14 @@ const formatoHora = (hora) => {
   const hora2 = h === 0 ? 12 : h > 12 ? h - 12 : h;
   return `${hora2}:${String(m).padStart(2, '0')} ${periodo}`;
 };
+
+const formatoFecha = (fecha) => {
+  if (!fecha) return '';
+  const soloFecha = String(fecha).split('T')[0];
+  const [anio, mes, dia] = soloFecha.split('-');
+  return `${dia}/${mes}/${anio}`;
+};
+
 const menuVacio = {
   IdMenu: null,
   Nombre: '',
@@ -308,7 +316,7 @@ export function GestionMenus() {
                     </TableCell>
                     <TableCell>{formatoHora(menu.HoraInicio)} - {formatoHora(menu.HoraFin)}</TableCell>
                     <TableCell>
-                      {new Date(menu.FechaInicio).toLocaleDateString('es-CR')} / {new Date(menu.FechaFin).toLocaleDateString('es-CR')}
+                      {formatoFecha(menu.FechaInicio)} / {formatoFecha(menu.FechaFin)}
                     </TableCell>
                     <TableCell>
                       <Chip label={menu.Estado ? 'Activo' : 'Inactivo'} size="small" color={menu.Estado ? 'success' : 'default'} />

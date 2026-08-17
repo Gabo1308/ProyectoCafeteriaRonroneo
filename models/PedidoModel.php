@@ -475,12 +475,16 @@ class PedidoModel
 
     private function listarConFiltros($whereExtra, $params = [])
     {
-        $fecha = $this->limpiar($params['fecha'] ?? '');
+        $fechaDesde = $this->limpiar($params['fechaDesde'] ?? '');
+        $fechaHasta = $this->limpiar($params['fechaHasta'] ?? '');
         $estado = $this->limpiar($params['estado'] ?? '');
 
         $condiciones = [$whereExtra];
-        if ($fecha !== '') {
-            $condiciones[] = "p.FechaPedido = '$fecha'";
+        if ($fechaDesde !== '') {
+            $condiciones[] = "p.FechaPedido >= '$fechaDesde'";
+        }
+        if ($fechaHasta !== '') {
+            $condiciones[] = "p.FechaPedido <= '$fechaHasta'";
         }
         if ($estado !== '') {
             $condiciones[] = "p.Estado = '$estado'";
@@ -492,7 +496,10 @@ class PedidoModel
                  FROM pedidos p
                  INNER JOIN clientes c ON p.IdCliente = c.IdCliente
                  WHERE $whereFinal
-                 ORDER BY p.FechaPedido DESC, p.IdPedido DESC;";
+                 ORDER BY p.FechaPedido ASC,
+                          FIELD(p.Estado, 'Aceptada', 'Preparación', 'Procesando', 'Entregada') = 0,
+                          FIELD(p.Estado, 'Aceptada', 'Preparación', 'Procesando', 'Entregada') DESC,
+                          p.IdPedido ASC;";
         return $this->enlace->ExecuteSQL($vSql);
     }
 

@@ -10,10 +10,10 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import PedidoService from '../../services/PedidoServices';
 import PreparacionService from '../../services/PreparacionServices';
+import { Link, Navigate } from 'react-router-dom';
 
 function TarjetaLinea({ linea, onGuardar }) {
   const [observaciones, setObservaciones] = useState(linea.Observaciones || '');
@@ -102,6 +102,11 @@ export function PedidoEstacion() {
   const userStr = localStorage.getItem('user');
   const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
   const esAdmin = usuario?.Rol === 'Administrador';
+  const esCocina = usuario?.Rol === 'Cocina';
+
+  if (!esAdmin && !esCocina) {
+    return <Navigate to="/" replace />;
+  }
 
   const idEstacionActiva = esAdmin ? idEstacionVista : usuario?.IdEstacion;
 

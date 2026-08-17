@@ -152,7 +152,7 @@ class UsuarioModel
     {
         try {
             $idRol = (int) ($objeto->IdRol ?? 0);
-            if (!in_array($idRol, [1, 2, 3])) {
+            if (!in_array($idRol, [1, 2, 3, 4])) {
                 throw new Exception('Rol inválido');
             }
 
@@ -196,7 +196,7 @@ class UsuarioModel
             $idUsuario = (int) ($objeto->IdUsuario ?? 0);
             $idRol = (int) ($objeto->IdRol ?? 0);
 
-            if ($idUsuario <= 0 || !in_array($idRol, [1, 2, 3])) {
+            if ($idUsuario <= 0 || !in_array($idRol, [1, 2, 3, 4])) {
                 throw new Exception('Datos inválidos');
             }
 

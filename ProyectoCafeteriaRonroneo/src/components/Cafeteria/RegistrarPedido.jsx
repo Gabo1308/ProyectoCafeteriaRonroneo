@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useCart } from '../../hooks/useCart';
 import PedidoService from '../../services/PedidoServices';
@@ -30,6 +31,7 @@ const redondearCinco = (monto) => Math.round(monto / 5) * 5;
 const formatoFechaHoy = () => new Date().toLocaleDateString('es-CR');
 
 function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
+  const { t } = useTranslation();
   const [textoCantidad, setTextoCantidad] = useState(String(item.Cantidad));
 
   const confirmarCantidad = () => {
@@ -41,7 +43,7 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
     const numero = Number(textoCantidad);
 
     if (!Number.isInteger(numero) || numero < 0) {
-      toast.error('La cantidad debe ser un número entero válido');
+      toast.error(t('registerOrder.errorInvalidQuantity'));
       setTextoCantidad(String(item.Cantidad));
       return;
     }
@@ -56,7 +58,12 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
     <TableRow>
       <TableCell>
         {item.Nombre}
-        <Chip label={item.Tipo === 'producto' ? 'Producto' : 'Combo'} size="small" variant="outlined" sx={{ ml: 1 }} />
+        <Chip
+          label={item.Tipo === 'producto' ? t('registerOrder.product') : t('registerOrder.combo')}
+          size="small"
+          variant="outlined"
+          sx={{ ml: 1 }}
+        />
       </TableCell>
       <TableCell align="right">₡{Math.round(item.Precio)}</TableCell>
       <TableCell align="center" sx={{ width: 110 }}>
@@ -82,23 +89,23 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
       <TableCell sx={{ minWidth: 180 }}>
         <TextField
           size="small"
-          placeholder="Observaciones"
+          placeholder={t('registerOrder.observationsPlaceholder')}
           fullWidth
           value={item.Observaciones || ''}
           onChange={(e) => onObservaciones(item, e.target.value)}
         />
       </TableCell>
       <TableCell align="right">
-        <IconButton color="error" onClick={() => onEliminar(item)} aria-label={'Quitar ' + item.Nombre}>
+        <IconButton color="error" onClick={() => onEliminar(item)} aria-label={t('registerOrder.columnRemove') + ' ' + item.Nombre}>
           <DeleteIcon />
         </IconButton>
       </TableCell>
     </TableRow>
   );
-  
 }
 
 export function RegistrarPedido() {
+  const { t } = useTranslation();
   const { cart, carritoSolicitud, removeItem, updateCantidad, updateObservaciones, cleanCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -131,11 +138,11 @@ export function RegistrarPedido() {
     if (esEncargadoOAdmin) {
       PedidoService.getClientes()
         .then((response) => setClientes(response.data || []))
-        .catch((err) => toast.error(`No se pudo cargar la lista de clientes: ${err.message}`));
+        .catch((err) => toast.error(t('registerOrder.errorLoadClients', { message: err.message })));
     } else {
       PedidoService.getClientePropio(usuario.IdUsuario)
         .then((response) => setClientePropio(response.data))
-        .catch((err) => toast.error(`No se pudieron cargar tus datos: ${err.message}`));
+        .catch((err) => toast.error(t('registerOrder.errorLoadOwnData', { message: err.message })));
     }
   }, []);
 
@@ -159,7 +166,7 @@ export function RegistrarPedido() {
     }
   }, [carritoRecibido]);
 
-const totales = useMemo(() => {
+  const totales = useMemo(() => {
     let totalSinImpuesto = 0;
     let totalImpuestos = 0;
 
@@ -183,30 +190,30 @@ const totales = useMemo(() => {
 
   const registrarPedido = () => {
     if (!usuario) {
-      toast.error('Debes iniciar sesión');
+      toast.error(t('registerOrder.errorLogin'));
       navigate('/login');
       return;
     }
     if (cart.length === 0) {
-      toast.error('Se debe agregar un producto o un combo antes de registrar el pedido');
+      toast.error(t('registerOrder.errorEmptyCart'));
       return;
     }
     if (esEncargadoOAdmin && !idClienteSeleccionado) {
-      toast.error('Debe seleccionar un cliente');
+      toast.error(t('registerOrder.errorSelectClient'));
       return;
     }
     if (metodoEntrega === 'Entrega a domicilio' && !direccionEntrega.trim()) {
-      toast.error('Debe indicar la dirección de entrega');
+      toast.error(t('registerOrder.errorAddress'));
       return;
     }
     if (metodoPago === 'Tarjeta' && !pagoConfirmado && (!numeroTarjeta || !fechaExpiracion || !cvv)) {
-      toast.error('Por favor complete los datos de la tarjeta');
+      toast.error(t('registerOrder.errorCardData'));
       return;
     }
     if (metodoPago === 'Efectivo') {
       const recibido = Number(montoRecibido);
       if (!montoRecibido || Number.isNaN(recibido) || recibido < totales.totalFinal) {
-        toast.error('El monto recibido insuficiente');
+        toast.error(t('registerOrder.errorInsufficientAmount'));
         return;
       }
     }
@@ -239,18 +246,18 @@ const totales = useMemo(() => {
     setEnviando(true);
     PedidoService.crearPedido(payload)
       .then((response) => {
-        toast.success('Pedido registrado con éxito');
+        toast.success(t('registerOrder.successRegistered'));
         cleanCart();
         navigate(`/pedido/${response.data.IdPedido}`);
       })
-      .catch((err) => toast.error(`No se pudo registrar el pedido: ${err.message}`))
+      .catch((err) => toast.error(t('registerOrder.errorRegister', { message: err.message })))
       .finally(() => setEnviando(false));
   };
 
   if (!usuario) {
     return (
       <Box sx={{ py: 4 }}>
-        <Typography color="text.secondary">Debes iniciar sesión para registrar un pedido.</Typography>
+        <Typography color="text.secondary">{t('registerOrder.mustLogin')}</Typography>
       </Box>
     );
   }
@@ -258,19 +265,19 @@ const totales = useMemo(() => {
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Registrar pedido
+        {t('registerOrder.title')}
       </Typography>
 
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, mb: 3 }}>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <TextField label="Fecha" value={formatoFechaHoy()} fullWidth disabled />
+            <TextField label={t('registerOrder.date')} value={formatoFechaHoy()} fullWidth disabled />
           </Grid>
 
           {esEncargadoOAdmin ? (
             <Grid size={{ xs: 12, sm: 6, md: 5 }}>
               <TextField
-                label="Cliente"
+                label={t('registerOrder.client')}
                 select
                 fullWidth
                 required
@@ -287,7 +294,7 @@ const totales = useMemo(() => {
           ) : (
             <Grid size={{ xs: 12, sm: 6, md: 5 }}>
               <TextField
-                label="Cliente"
+                label={t('registerOrder.client')}
                 value={clientePropio ? `${clientePropio.Nombre} — ${clientePropio.Correo}` : `${usuario.Nombre} — ${usuario.Correo}`}
                 fullWidth
                 disabled
@@ -297,27 +304,27 @@ const totales = useMemo(() => {
 
           {esEncargadoOAdmin && (
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField label="Encargado" value={`${usuario.Nombre} ${usuario.Apellido || ''}`} fullWidth disabled />
+              <TextField label={t('registerOrder.manager')} value={`${usuario.Nombre} ${usuario.Apellido || ''}`} fullWidth disabled />
             </Grid>
           )}
 
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
-              label="Método de entrega"
+              label={t('registerOrder.deliveryMethod')}
               select
               fullWidth
               value={metodoEntrega}
               onChange={(e) => setMetodoEntrega(e.target.value)}
             >
-              <MenuItem value="Recogida en tienda">Recogida en tienda</MenuItem>
-              <MenuItem value="Entrega a domicilio">Entrega a domicilio (+₡{CostoEnvio})</MenuItem>
+              <MenuItem value="Recogida en tienda">{t('registerOrder.pickup')}</MenuItem>
+              <MenuItem value="Entrega a domicilio">{t('registerOrder.homeDelivery')} (+₡{CostoEnvio})</MenuItem>
             </TextField>
           </Grid>
 
           {metodoEntrega === 'Entrega a domicilio' && (
             <Grid size={{ xs: 12, sm: 8, md: 5 }}>
               <TextField
-                label="Dirección de entrega"
+                label={t('registerOrder.deliveryAddress')}
                 fullWidth
                 required
                 value={direccionEntrega}
@@ -327,26 +334,26 @@ const totales = useMemo(() => {
           )}
 
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <TextField label="Estado" value="Pendiente de pago" fullWidth disabled />
+            <TextField label={t('registerOrder.status')} value={t('registerOrder.statusPendingPayment')} fullWidth disabled />
           </Grid>
         </Grid>
       </Paper>
-       {cart.length === 0 ? (
+      {cart.length === 0 ? (
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          No hay productos en el pedido. Agrega algún producto o combo del catálogo.
+          {t('registerOrder.noItems')}
         </Typography>
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, mb: 3 }}>
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                <TableCell>Producto / Combo</TableCell>
-                <TableCell align="right">Precio</TableCell>
-                <TableCell align="center">Cantidad</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
-                <TableCell align="right">Impuesto</TableCell>
-                <TableCell>Observaciones</TableCell>
-                <TableCell align="right">Quitar</TableCell>
+                <TableCell>{t('registerOrder.columnProduct')}</TableCell>
+                <TableCell align="right">{t('registerOrder.columnPrice')}</TableCell>
+                <TableCell align="center">{t('registerOrder.columnQuantity')}</TableCell>
+                <TableCell align="right">{t('registerOrder.columnSubtotal')}</TableCell>
+                <TableCell align="right">{t('registerOrder.columnTax')}</TableCell>
+                <TableCell>{t('registerOrder.columnObservations')}</TableCell>
+                <TableCell align="right">{t('registerOrder.columnRemove')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -368,50 +375,52 @@ const totales = useMemo(() => {
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Pago
+              {t('registerOrder.payment')}
             </Typography>
             <Stack spacing={2}>
-              <TextField label="Método de pago" select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
-                <MenuItem value="Efectivo">Efectivo</MenuItem>
-                <MenuItem value="Tarjeta">Tarjeta</MenuItem>
+              <TextField label={t('registerOrder.paymentMethod')} select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
+                <MenuItem value="Efectivo">{t('registerOrder.cash')}</MenuItem>
+                <MenuItem value="Tarjeta">{t('registerOrder.card')}</MenuItem>
               </TextField>
 
               {metodoPago === 'Tarjeta' ? (
                 pagoConfirmado ? (
                   <TextField
-                    label="Pago con tarjeta"
-                    value={`Tarjeta terminada en ${tarjetaUltimos4}`}
+                    label={t('registerOrder.card')}
+                    value={t('registerOrder.cardPaymentDone', { last4: tarjetaUltimos4 })}
                     disabled
                   />
-                ) : <>
-                  <TextField
-                    label="Número de tarjeta"
-                    value={numeroTarjeta}
-                    onChange={(e) => setNumeroTarjeta(e.target.value)}
-                    placeholder="•••• •••• •••• ••••"
-                  />
-                  <Stack direction="row" spacing={2}>
+                ) : (
+                  <>
                     <TextField
-                      label="Fecha de expiración"
-                      value={fechaExpiracion}
-                      onChange={(e) => setFechaExpiracion(e.target.value)}
-                      placeholder="MM/AA"
-                      fullWidth
+                      label={t('registerOrder.cardNumber')}
+                      value={numeroTarjeta}
+                      onChange={(e) => setNumeroTarjeta(e.target.value)}
+                      placeholder="•••• •••• •••• ••••"
                     />
-                    <TextField label="CVV" value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="123" fullWidth />
-                  </Stack>
-                </>
+                    <Stack direction="row" spacing={2}>
+                      <TextField
+                        label={t('registerOrder.expirationDate')}
+                        value={fechaExpiracion}
+                        onChange={(e) => setFechaExpiracion(e.target.value)}
+                        placeholder="MM/AA"
+                        fullWidth
+                      />
+                      <TextField label="CVV" value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="123" fullWidth />
+                    </Stack>
+                  </>
+                )
               ) : (
                 <>
                   <TextField
-                    label="Monto recibido"
+                    label={t('registerOrder.amountReceived')}
                     type="number"
                     value={montoRecibido}
                     onChange={(e) => setMontoRecibido(e.target.value)}
                   />
                   {vuelto !== null && (
                     <Typography color={vuelto < 0 ? 'error' : 'text.primary'}>
-                      {vuelto < 0 ? 'Monto insuficiente' : `Vuelto: ₡${Math.round(vuelto)}`}
+                      {vuelto < 0 ? t('registerOrder.insufficientAmount') : t('registerOrder.change', { amount: Math.round(vuelto) })}
                     </Typography>
                   )}
                 </>
@@ -423,25 +432,25 @@ const totales = useMemo(() => {
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Resumen
+              {t('registerOrder.summary')}
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography>Total sin impuesto</Typography>
+              <Typography>{t('registerOrder.totalWithoutTax')}</Typography>
               <Typography>₡{Math.round(totales.totalSinImpuesto)}</Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography>Impuestos (13%)</Typography>
+              <Typography>{t('registerOrder.taxes')}</Typography>
               <Typography>₡{Math.round(totales.totalImpuestos)}</Typography>
             </Box>
             {totales.costoEnvio > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography>Costo de envío</Typography>
+                <Typography>{t('registerOrder.shippingCost')}</Typography>
                 <Typography>₡{totales.costoEnvio}</Typography>
               </Box>
             )}
             <Divider sx={{ my: 1 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h6">Total</Typography>
+              <Typography variant="h6">{t('registerOrder.total')}</Typography>
               <Typography variant="h6" color="primary.main">
                 ₡{Math.round(totales.totalFinal)}
               </Typography>
@@ -456,7 +465,7 @@ const totales = useMemo(() => {
               onClick={registrarPedido}
               sx={{ fontWeight: 700 }}
             >
-              {enviando ? 'Registrando...' : 'Registrar pedido'}
+              {enviando ? t('registerOrder.registering') : t('registerOrder.registerButton')}
             </Button>
           </Paper>
         </Grid>

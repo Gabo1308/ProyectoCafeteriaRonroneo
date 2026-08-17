@@ -28,6 +28,7 @@ require_once "models/PreparacionModel.php";
 require_once "models/UsuarioModel.php";
 require_once "models/RolModel.php";
 require_once "models/PedidoModel.php";
+require_once "models/DashboardModel.php";
 
 /***--- Agregar todos los controladores*/
 require_once "controllers/ProductoController.php";
@@ -38,6 +39,7 @@ require_once "controllers/MenuController.php";
 require_once "controllers/PreparacionController.php";
 require_once "controllers/UsuarioController.php";
 require_once "controllers/PedidoController.php";
+require_once "controllers/DashboardController.php";
 
 //Enrutador
 require_once "routes/RoutesController.php";

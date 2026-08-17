@@ -20,6 +20,7 @@ import { GestionCombos } from './components/Admin/GestionCombos.jsx';
 import { GestionMenus } from './components/Admin/GestionMenus.jsx';
 import { GestionPreparacion } from './components/Admin/GestionPreparacion.jsx';
 import { GestionUsuarios } from './components/Admin/GestionUsuarios.jsx';
+import { Dashboard } from './components/Admin/Dashboard.jsx';
 import { PedidoEstacion } from "./components/Cafeteria/PedidoEstacion";
 import { Login } from "./components/Layout/Login";
 import { Registrar } from "./components/Layout/Registrar";
@@ -110,6 +111,10 @@ const rutas = createBrowserRouter(
           element: <GestionUsuarios />,
         },
         {
+          path: '/dashboard',
+          element: <Dashboard />,
+        },
+        {
           path: "/login",
           element: <Login />,
         },
@@ -141,6 +146,7 @@ const rutas = createBrowserRouter(
           path: "/estacion",
           element: <PedidoEstacion />,
         },
+        
       ], 
     }, 
   ], ); 
