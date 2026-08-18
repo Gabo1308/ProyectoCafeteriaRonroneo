@@ -435,24 +435,24 @@ export function RegistrarPedido() {
               {t('registerOrder.summary')}
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography>{t('registerOrder.totalWithoutTax')}</Typography>
-              <Typography>₡{Math.round(totales.totalSinImpuesto)}</Typography>
+            <Typography>{t('registerOrder.totalWithoutTax')}</Typography>
+            <Typography>₡{Math.round(totales.totalSinImpuesto).toLocaleString('en-US')}</Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
               <Typography>{t('registerOrder.taxes')}</Typography>
-              <Typography>₡{Math.round(totales.totalImpuestos)}</Typography>
+              <Typography>₡{Math.round(totales.totalImpuestos).toLocaleString('en-US')}</Typography>
             </Box>
             {totales.costoEnvio > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography>{t('registerOrder.shippingCost')}</Typography>
-                <Typography>₡{totales.costoEnvio}</Typography>
+                <Typography>₡{totales.costoEnvio.toLocaleString('en-US')}</Typography>
               </Box>
             )}
             <Divider sx={{ my: 1 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h6">{t('registerOrder.total')}</Typography>
               <Typography variant="h6" color="primary.main">
-                ₡{Math.round(totales.totalFinal)}
+                ₡{Math.round(totales.totalFinal).toLocaleString('en-US')}
               </Typography>
             </Box>
             <Button

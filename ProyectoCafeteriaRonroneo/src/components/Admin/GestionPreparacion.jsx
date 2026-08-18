@@ -22,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import PreparacionService from '../../services/PreparacionServices';
 import ProductoService from '../../services/ProductosServices';
 
@@ -34,6 +35,7 @@ const formVacio = {
 };
 
 export function GestionPreparacion() {
+  const { t } = useTranslation();
   const [preparaciones, setPreparaciones] = useState([]);
   const [preparacionesEliminadas, setPreparacionesEliminadas] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -57,7 +59,7 @@ export function GestionPreparacion() {
       })
       .catch((err) => {
         setLoaded(true);
-        toast.error(`Error al cargar datos: ${err.message}`);
+        toast.error(t('admin.loadError', { message: err.message }));
       });
   };
 
@@ -112,11 +114,11 @@ export function GestionPreparacion() {
     event.preventDefault();
 
     if (!form.IdProducto) {
-      toast.error('Debe seleccionar un producto');
+      toast.error(t('adminPreparation.productRequired'));
       return;
     }
     if (form.Estaciones.some((fila) => !fila.IdEstacion)) {
-      toast.error('Todas las filas deben tener una estacion seleccionada');
+      toast.error(t('adminPreparation.rowsRequireStation'));
       return;
     }
 
@@ -124,46 +126,46 @@ export function GestionPreparacion() {
     const hayDuplicados = idsEstaciones.some((id, index) => idsEstaciones.indexOf(id) !== index);
     
     if (hayDuplicados) {
-      toast.error('No puede repetir la misma estación dentro del mismo proceso de preparación');
+      toast.error(t('adminPreparation.duplicateStation'));
       return;
     }
 
     PreparacionService.guardarPreparacion(form)
       .then(() => {
-        toast.success('Preparacion guardada');
+        toast.success(t('adminPreparation.saved'));
         limpiarFormulario();
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo guardar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.saveError', { message: err.message })));
   };
 
   const eliminarPreparacion = (idProducto) => {
     PreparacionService.deletePreparacion(idProducto)
       .then(() => {
-        toast.success('Preparacion eliminada');
+        toast.success(t('adminPreparation.deleted'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.deleteError', { message: err.message })));
   };
 
   const restaurarPreparacion = (idProducto) => {
     PreparacionService.restorePreparacion(idProducto)
       .then(() => {
-        toast.success('Preparacion restaurada');
+        toast.success(t('adminPreparation.restored'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.restoreError', { message: err.message })));
   };
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p>{t('commonExtra.loading')}</p>;
 
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Mantenimiento de preparación
+        {t('adminPreparation.pageTitle')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Define la ruta de estaciones y el orden en que pasa cada producto durante su preparación.
+        {t('adminPreparation.subtitle')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -172,18 +174,18 @@ export function GestionPreparacion() {
             <CardContent component="form" onSubmit={guardarPreparacion}>
               <Stack spacing={2}>
                 <Typography variant="h6">
-                  {form.esNueva ? 'Nueva ruta de preparación' : 'Editar ruta de preparación'}
+                  {form.esNueva ? t('adminPreparation.new') : t('adminPreparation.edit')}
                 </Typography>
 
                 <TextField
-                  label="Producto"
+                  label={t('adminPreparation.product')}
                   value={form.IdProducto}
                   onChange={cambiarProducto}
                   select
                   required
                   fullWidth
                   disabled={!form.esNueva}
-                  helperText={!form.esNueva ? 'El producto no se puede cambiar al editar' : ''}
+                  helperText={!form.esNueva ? t('adminPreparation.productCannotChange') : ''}
                 >
                   {productos.map((producto) => (
                     <MenuItem key={producto.IdProducto} value={producto.IdProducto}>
@@ -192,7 +194,7 @@ export function GestionPreparacion() {
                   ))}
                 </TextField>
 
-                <Typography variant="subtitle2">Estaciones en orden</Typography>
+                <Typography variant="subtitle2">{t('adminPreparation.stationsInOrder')}</Typography>
 
                 <Stack spacing={1}>
                   {form.Estaciones.map((fila, index) => (
@@ -206,7 +208,7 @@ export function GestionPreparacion() {
                       }}
                     >
                       <TextField
-                        label="Estación"
+                        label={t('adminPreparation.station')}
                         select
                         size="small"
                         value={fila.IdEstacion}
@@ -221,7 +223,7 @@ export function GestionPreparacion() {
                         ))}
                       </TextField>
                       <TextField
-                        label="Orden"
+                        label={t('adminPreparation.order')}
                         type="number"
                         size="small"
                         value={fila.Orden}
@@ -232,7 +234,7 @@ export function GestionPreparacion() {
                         color="error"
                         onClick={() => quitarEstacion(index)}
                         disabled={form.Estaciones.length === 1}
-                        aria-label="Quitar estación"
+                        aria-label={t('adminPreparation.removeStation')}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -241,15 +243,15 @@ export function GestionPreparacion() {
                 </Stack>
 
                 <Button variant="outlined" startIcon={<AddIcon />} onClick={agregarEstacion}>
-                  Agregar estación
+                  {t('adminPreparation.addStation')}
                 </Button>
 
                 <Stack direction="row" spacing={1}>
                   <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
-                    Guardar
+                    {t('admin.save')}
                   </Button>
                   <Button variant="outlined" onClick={limpiarFormulario} fullWidth>
-                    Nuevo
+                    {t('admin.new')}
                   </Button>
                 </Stack>
               </Stack>
@@ -262,9 +264,9 @@ export function GestionPreparacion() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Producto</TableCell>
-                  <TableCell>Cant. de pasos</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminPreparation.product')}</TableCell>
+                  <TableCell>{t('adminPreparation.stepsCount')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -284,7 +286,7 @@ export function GestionPreparacion() {
                           startIcon={<EditIcon />}
                           onClick={() => editarPreparacion(preparacion)}
                         >
-                          Editar
+                          {t('admin.edit')}
                         </Button>
                         <Button
                           size="small"
@@ -293,7 +295,7 @@ export function GestionPreparacion() {
                           startIcon={<DeleteIcon />}
                           onClick={() => eliminarPreparacion(preparacion.IdPreparacion)}
                         >
-                          Eliminar
+                          {t('admin.delete')}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -304,16 +306,16 @@ export function GestionPreparacion() {
           </TableContainer>
 
           <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-            Preparaciones desactivadas
+            {t('adminPreparation.disabledPreparations')}
           </Typography>
 
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Producto</TableCell>
-                  <TableCell>Cant. de pasos</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminPreparation.product')}</TableCell>
+                  <TableCell>{t('adminPreparation.stepsCount')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -332,7 +334,7 @@ export function GestionPreparacion() {
                         variant="contained"
                         onClick={() => restaurarPreparacion(preparacion.IdPreparacion)}
                       >
-                        Restaurar
+                        {t('admin.restore')}
                       </Button>
                     </TableCell>
                   </TableRow>

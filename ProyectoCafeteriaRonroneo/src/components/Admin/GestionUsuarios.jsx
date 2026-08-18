@@ -19,20 +19,23 @@ import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import UsuarioService from '../../services/UsuarioServices';
 import PreparacionService from '../../services/PreparacionServices';
 
-const Roles = [
-  { id: 1, nombre: 'Administrador' },
-  { id: 2, nombre: 'Cliente' },
-  { id: 3, nombre: 'Encargado' },
-  { id: 4, nombre: 'Cocina' },
-];
-
 const formVacio = { IdUsuario: null, Nombre: '', Apellido: '', Correo: '', IdRol: 3, Contrasena: '', IdEstacion: '' };
 
 export function GestionUsuarios() {
+  const { t } = useTranslation();
+
+  const Roles = [
+    { id: 1, nombre: t('adminUsers.administrator') },
+    { id: 2, nombre: t('adminUsers.client') },
+    { id: 3, nombre: t('adminUsers.manager') },
+    { id: 4, nombre: t('adminUsers.kitchen') },
+  ];
+
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosEliminados, setUsuariosEliminados] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
@@ -49,7 +52,7 @@ export function GestionUsuarios() {
       })
       .catch((err) => {
         setLoaded(true);
-        toast.error(`Error al cargar usuarios: ${err.message}`);
+        toast.error(t('adminUsers.loadError', { message: err.message }));
       });
   };
 
@@ -79,13 +82,13 @@ export function GestionUsuarios() {
     event.preventDefault();
 
     if (!form.IdUsuario && !form.Contrasena) {
-      toast.error('La contraseña es obligatoria al crear un usuario');
+      toast.error(t('adminUsers.passwordRequired'));
       return;
     }
 
     if (form.Contrasena) {
       if (form.Contrasena.length < 15) {
-        toast.error('La contraseña debe tener al menos 15 caracteres');
+        toast.error(t('adminUsers.passwordLength'));
         return;
       }
 
@@ -100,7 +103,7 @@ export function GestionUsuarios() {
       }
 
       if (!tieneSimbolo) {
-        toast.error('La contraseña debe tener al menos un carácter especial (+, *, !, @, etc.)');
+        toast.error(t('adminUsers.passwordSpecial'));
         return;
       }
     }
@@ -109,37 +112,37 @@ export function GestionUsuarios() {
 
     accion
       .then(() => {
-        toast.success(form.IdUsuario ? 'El usuario fue actualizado' : 'El usuario fue creado');
+        toast.success(form.IdUsuario ? t('adminUsers.updated') : t('adminUsers.created'));
         limpiarFormulario();
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo guardar el usuario: ${err.message}`));
+      .catch((err) => toast.error(t('admin.saveError', { message: err.message })));
   };
 
   const eliminarUsuario = (idUsuario) => {
     UsuarioService.deleteUsuario(idUsuario)
       .then(() => {
-        toast.success('El usuario eliminado');
+        toast.success(t('adminUsers.deleted'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.deleteError', { message: err.message })));
   };
 
   const restaurarUsuario = (idUsuario) => {
     UsuarioService.restoreUsuario(idUsuario)
       .then(() => {
-        toast.success('Usuario restaurado');
+        toast.success(t('adminUsers.restored'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.restoreError', { message: err.message })));
   };
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p>{t('commonExtra.loading')}</p>;
 
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Mantenimiento de usuarios
+        {t('adminUsers.title')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -147,12 +150,12 @@ export function GestionUsuarios() {
           <Card variant="outlined" sx={{ borderRadius: 2 }}>
             <CardContent component="form" onSubmit={guardarUsuario}>
               <Stack spacing={2}>
-                <Typography variant="h6">{form.IdUsuario ? 'Editar usuario' : 'Nuevo usuario'}</Typography>
+                <Typography variant="h6">{form.IdUsuario ? t('adminUsers.edit') : t('adminUsers.new')}</Typography>
 
-                <TextField label="Nombre" name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
-                <TextField label="Apellido" name="Apellido" value={form.Apellido} onChange={actualizarCampo} required fullWidth />
-                <TextField label="Correo" name="Correo" value={form.Correo} onChange={actualizarCampo} required fullWidth />
-                <TextField label="Rol" name="IdRol" select value={form.IdRol} onChange={actualizarCampo} required fullWidth>
+                <TextField label={t('adminUsers.name')} name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
+                <TextField label={t('auth.lastName')} name="Apellido" value={form.Apellido} onChange={actualizarCampo} required fullWidth />
+                <TextField label={t('adminUsers.email')} name="Correo" value={form.Correo} onChange={actualizarCampo} required fullWidth />
+                <TextField label={t('adminUsers.role')} name="IdRol" select value={form.IdRol} onChange={actualizarCampo} required fullWidth>
                   {Roles.map((rol) => (
                     <MenuItem key={rol.id} value={rol.id}>
                       {rol.nombre}
@@ -162,7 +165,7 @@ export function GestionUsuarios() {
 
                 {form.IdRol === 4 && (
                   <TextField
-                    label="Estación asignada"
+                    label={t('adminUsers.station')}
                     name="IdEstacion"
                     select
                     value={form.IdEstacion}
@@ -178,22 +181,22 @@ export function GestionUsuarios() {
                   </TextField>
                 )}
                 <TextField
-                  label={form.IdUsuario ? 'Nueva contraseña (opcional)' : 'Contraseña'}
+                  label={form.IdUsuario ? t('adminUsers.optionalPassword') : t('adminUsers.password')}
                   name="Contrasena"
                   type="password"
                   value={form.Contrasena}
                   onChange={actualizarCampo}
                   fullWidth
                   required={!form.IdUsuario}
-                  helperText={form.IdUsuario ? 'Déjalo en blanco para no cambiarla' : ''}
+                  helperText={form.IdUsuario ? t('adminUsers.passwordHelp') : ''}
                 />
 
                 <Stack direction="row" spacing={1}>
                   <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
-                    Guardar
+                    {t('admin.save')}
                   </Button>
                   <Button variant="outlined" onClick={limpiarFormulario} fullWidth>
-                    Nuevo
+                    {t('admin.new')}
                   </Button>
                 </Stack>
               </Stack>
@@ -206,10 +209,10 @@ export function GestionUsuarios() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell align="center">Nombre</TableCell>
-                  <TableCell align="center">Correo</TableCell>
-                  <TableCell align="center">Rol</TableCell>
-                  <TableCell align="center">Acciones</TableCell>
+                  <TableCell align="center">{t('adminUsers.name')}</TableCell>
+                  <TableCell align="center">{t('adminUsers.email')}</TableCell>
+                  <TableCell align="center">{t('adminUsers.role')}</TableCell>
+                  <TableCell align="center">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -223,10 +226,10 @@ export function GestionUsuarios() {
                     <TableCell align="right">
                       <Stack direction="row" spacing={1} justifyContent="flex-end">
                         <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => editarUsuario(usuario)}>
-                          Editar
+                          {t('admin.edit')}
                         </Button>
                         <Button size="small" color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarUsuario(usuario.IdUsuario)}>
-                          Eliminar
+                          {t('admin.delete')}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -237,17 +240,17 @@ export function GestionUsuarios() {
           </TableContainer>
 
           <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-            Usuarios desactivados
+              {t('adminUsers.inactiveTitle')}
           </Typography>
 
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell align="center">Nombre</TableCell>
-                  <TableCell align="center">Correo</TableCell>
-                  <TableCell align="center">Rol</TableCell>
-                  <TableCell align="center">Acciones</TableCell>
+                  <TableCell align="center">{t('adminUsers.name')}</TableCell>
+                  <TableCell align="center">{t('adminUsers.email')}</TableCell>
+                  <TableCell align="center">{t('adminUsers.role')}</TableCell>
+                  <TableCell align="center">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -260,7 +263,7 @@ export function GestionUsuarios() {
                     </TableCell>
                     <TableCell align="right">
                       <Button size="small" color="success" variant="contained" onClick={() => restaurarUsuario(usuario.IdUsuario)}>
-                        Restaurar
+                        {t('admin.restore')}
                       </Button>
                     </TableCell>
                   </TableRow>

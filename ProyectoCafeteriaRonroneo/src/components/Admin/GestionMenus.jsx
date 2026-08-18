@@ -23,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import MenuService from '../../services/MenuServices';
 import ProductoService from '../../services/ProductosServices';
 import ComboService from '../../services/CombosServices';
@@ -56,6 +57,7 @@ const menuVacio = {
 };
 
 export function GestionMenus() {
+  const { t } = useTranslation();
   const [menus, setMenus] = useState([]);
   const [menusEliminados, setMenusEliminados] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -79,7 +81,7 @@ export function GestionMenus() {
       })
       .catch((err) => {
         setLoaded(true);
-        toast.error(`Error al cargar datos: ${err.message}`);
+        toast.error(t('admin.loadError', { message: err.message }));
       });
   };
 
@@ -105,9 +107,9 @@ export function GestionMenus() {
     MenuService.uploadImagenMenu(archivo)
       .then(async (response) => {
         setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
-        toast.success('Imagen copiada en uploads');
+        toast.success(t('adminMenus.imageUploaded'));
       })
-      .catch((err) => toast.error(`No se pudo subir la imagen: ${err.message}`))
+      .catch((err) => toast.error(t('admin.uploadError', { message: err.message })))
       .finally(() => {
         setSubiendoImagen(false);
         event.target.value = '';
@@ -150,11 +152,11 @@ export function GestionMenus() {
     event.preventDefault();
 
     if (form.FechaInicio > form.FechaFin) {
-      toast.error('La fecha de inicio no puede ser mayor que la fecha de fin');
+      toast.error(t('adminMenus.invalidDates'));
       return;
     }
     if (form.HoraInicio >= form.HoraFin) {
-      toast.error('La hora de inicio debe ser menor que la hora de fin');
+      toast.error(t('adminMenus.invalidHours'));
       return;
     }
 
@@ -163,40 +165,40 @@ export function GestionMenus() {
 
     accion
       .then(() => {
-        toast.success(form.IdMenu ? 'Menu actualizado' : 'Menu creado');
+        toast.success(form.IdMenu ? t('adminMenus.updated') : t('adminMenus.created'));
         limpiarFormulario();
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo guardar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.saveError', { message: err.message })));
   };
 
   const eliminarMenu = (idMenu) => {
     MenuService.deleteMenu(idMenu)
       .then(() => {
-        toast.success('Menu eliminado');
+        toast.success(t('adminMenus.deleted'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.deleteError', { message: err.message })));
   };
 
   const restaurarMenu = (idMenu) => {
     MenuService.restoreMenu(idMenu)
       .then(() => {
-        toast.success('Menu restaurado');
+        toast.success(t('adminMenus.restored'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.restoreError', { message: err.message })));
   };
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p>{t('commonExtra.loading')}</p>;
 
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Mantenimiento de menus
+        {t('adminMenus.pageTitle')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Define disponibilidad, horarios y productos que pertenecen a cada menu.
+        {t('adminMenus.subtitle')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -204,13 +206,13 @@ export function GestionMenus() {
           <Card variant="outlined" sx={{ borderRadius: 2 }}>
             <CardContent component="form" onSubmit={guardarMenu}>
               <Stack spacing={2}>
-                <Typography variant="h6">{form.IdMenu ? 'Editar menu' : 'Nuevo menu'}</Typography>
-                <TextField label="Nombre" name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
-                <TextField label="Descripcion" name="Descripcion" value={form.Descripcion} onChange={actualizarCampo} multiline minRows={2} fullWidth />
+                <Typography variant="h6">{form.IdMenu ? t('adminMenus.editMenu') : t('adminMenus.newMenu')}</Typography>
+                <TextField label={t('adminUsers.name')} name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
+                <TextField label={t('common.description')} name="Descripcion" value={form.Descripcion} onChange={actualizarCampo} multiline minRows={2} fullWidth />
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
-                      label="Fecha inicio"
+                      label={t('adminMenus.startDate')}
                       name="FechaInicio"
                       value={form.FechaInicio}
                       onChange={actualizarCampo}
@@ -223,7 +225,7 @@ export function GestionMenus() {
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
-                      label="Fecha fin"
+                      label={t('adminMenus.endDate')}
                       name="FechaFin"
                       value={form.FechaFin}
                       onChange={actualizarCampo}
@@ -235,25 +237,25 @@ export function GestionMenus() {
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField label="Hora inicio" name="HoraInicio" value={form.HoraInicio} onChange={actualizarCampo} type="time" InputLabelProps={{ shrink: true }} required fullWidth />
+                    <TextField label={t('adminMenus.startTime')} name="HoraInicio" value={form.HoraInicio} onChange={actualizarCampo} type="time" InputLabelProps={{ shrink: true }} required fullWidth />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField label="Hora fin" name="HoraFin" value={form.HoraFin} onChange={actualizarCampo} type="time" InputLabelProps={{ shrink: true }} required fullWidth />
+                    <TextField label={t('adminMenus.endTime')} name="HoraFin" value={form.HoraFin} onChange={actualizarCampo} type="time" InputLabelProps={{ shrink: true }} required fullWidth />
                   </Grid>
                 </Grid>
-                <TextField label="Dias disponibles" name="DiasDisponibles" value={form.DiasDisponibles} onChange={actualizarCampo} fullWidth />
+                <TextField label={t('adminMenus.availableDays')} name="DiasDisponibles" value={form.DiasDisponibles} onChange={actualizarCampo} fullWidth />
                 <Stack spacing={1}>
                   <Button variant="outlined" component="label" startIcon={<UploadFileIcon />} disabled={subiendoImagen}>
-                    {subiendoImagen ? 'Subiendo imagen...' : 'Seleccionar imagen'}
+                    {subiendoImagen ? t('adminProducts.uploading') : t('admin.image')}
                     <input type="file" hidden accept="image/*" onChange={subirImagen} />
                   </Button>
-                  <TextField label="Imagen en uploads" name="Imagen" value={form.Imagen} onChange={actualizarCampo} fullWidth />
+                  <TextField label={t('adminProducts.imageInUploads')} name="Imagen" value={form.Imagen} onChange={actualizarCampo} fullWidth />
                   {form.Imagen && (
                     <Box component="img" src={`${BASE_URL}/${form.Imagen}`} alt={form.Nombre} sx={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2 }} />
                   )}
                 </Stack>
                 <Divider>
-                  <Chip label="Productos del menu" />
+                  <Chip label={t('adminMenus.menuProducts')} />
                 </Divider>
                 <Autocomplete
                   multiple
@@ -262,10 +264,10 @@ export function GestionMenus() {
                   onChange={actualizarProductosSeleccionados}
                   getOptionLabel={(producto) => `${producto.Nombre} - ${producto.Categoria}`}
                   isOptionEqualToValue={(option, value) => option.IdProducto === value.IdProducto}
-                  renderInput={(params) => <TextField {...params} label="Buscar productos por nombre" />}
+                  renderInput={(params) => <TextField {...params} label={t('adminMenus.searchProducts')} />}
                 />
                 <Divider>
-                  <Chip label="Combos del menu" />
+                  <Chip label={t('adminMenus.menuCombos')} />
                 </Divider>
                 <Autocomplete
                   multiple
@@ -274,14 +276,14 @@ export function GestionMenus() {
                   onChange={actualizarCombosSeleccionados}
                   getOptionLabel={(combo) => `${combo.Nombre} - ${combo.MenuNombre}`}
                   isOptionEqualToValue={(option, value) => option.IdCombo === value.IdCombo}
-                  renderInput={(params) => <TextField {...params} label="Buscar combos por nombre" />}
+                  renderInput={(params) => <TextField {...params} label={t('adminMenus.searchCombos')} />}
                 />
                 <Stack direction="row" spacing={1}>
                   <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
-                    Guardar
+                    {t('admin.save')}
                   </Button>
                   <Button variant="outlined" startIcon={<AddIcon />} onClick={limpiarFormulario} fullWidth>
-                    Nuevo
+                    {t('admin.new')}
                   </Button>
                 </Stack>
               </Stack>
@@ -294,12 +296,12 @@ export function GestionMenus() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Menu</TableCell>
-                  <TableCell>Horario</TableCell>
-                  <TableCell>Vigencia</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminProducts.image')}</TableCell>
+                  <TableCell>{t('adminMenus.title')}</TableCell>
+                  <TableCell>{t('adminMenus.schedule')}</TableCell>
+                  <TableCell>{t('adminMenus.validity')}</TableCell>
+                  <TableCell>{t('commonExtra.status')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -319,15 +321,15 @@ export function GestionMenus() {
                       {formatoFecha(menu.FechaInicio)} / {formatoFecha(menu.FechaFin)}
                     </TableCell>
                     <TableCell>
-                      <Chip label={menu.Estado ? 'Activo' : 'Inactivo'} size="small" color={menu.Estado ? 'success' : 'default'} />
+                      <Chip label={menu.Estado ? t('admin.active') : t('admin.inactive')} size="small" color={menu.Estado ? 'success' : 'default'} />
                     </TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={1} justifyContent="flex-end">
                         <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => editarMenu(menu)}>
-                          Editar
+                          {t('admin.edit')}
                         </Button>
                         <Button size="small" color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarMenu(menu.IdMenu)}>
-                          Eliminar
+                          {t('admin.delete')}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -338,19 +340,19 @@ export function GestionMenus() {
           </TableContainer>
 
           <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-            Menus desactivados
+            {t('adminMenus.disabledMenus')}
           </Typography>
 
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Menu</TableCell>
-                  <TableCell>Horario</TableCell>
-                  <TableCell>Vigencia</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminProducts.image')}</TableCell>
+                  <TableCell>{t('adminMenus.title')}</TableCell>
+                  <TableCell>{t('adminMenus.schedule')}</TableCell>
+                  <TableCell>{t('adminMenus.validity')}</TableCell>
+                  <TableCell>{t('commonExtra.status')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -365,14 +367,14 @@ export function GestionMenus() {
                         {menu.Descripcion}
                       </Typography>
                     </TableCell>
-                    <TableCell>{menu.HoraInicio} - {menu.HoraFin}</TableCell>
-                    <TableCell>{menu.FechaInicio} / {menu.FechaFin}</TableCell>
+                     <TableCell>{formatoHora(menu.HoraInicio)} - {formatoHora(menu.HoraFin)}</TableCell>
+                    <TableCell>{formatoFecha(menu.FechaInicio)} / {formatoFecha(menu.FechaFin)}</TableCell>
                     <TableCell>
-                      <Chip label="Inactivo" size="small" color="default" />
+                      <Chip label={t('admin.inactive')} size="small" color="default" />
                     </TableCell>
                     <TableCell align="right">
                       <Button size="small" color="success" variant="contained" onClick={() => restaurarMenu(menu.IdMenu)}>
-                        Restaurar
+                        {t('admin.restore')}
                       </Button>
                     </TableCell>
                   </TableRow>

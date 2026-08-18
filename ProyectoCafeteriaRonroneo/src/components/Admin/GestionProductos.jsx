@@ -23,6 +23,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import ProductoService from "../../services/ProductosServices";
 import CategoriaService from "../../services/CategoriaServices";
 import IngredienteService from "../../services/IngredienteServices";
@@ -39,6 +40,7 @@ const productoVacio = {
 };
 
 export function GestionProductos() {
+  const { t } = useTranslation();
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [catalogoIngredientes, setCatalogoIngredientes] = useState([]);
@@ -75,7 +77,7 @@ export function GestionProductos() {
       )
       .catch((err) => {
         setLoaded(true);
-        toast.error(`Error al cargar datos: ${err.message}`);
+        toast.error(t("admin.loadError", { message: err.message }));
       });
   };
 
@@ -100,9 +102,9 @@ export function GestionProductos() {
     ProductoService.uploadImagenProducto(archivo)
       .then(async (response) => {
         setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
-        toast.success("Imagen copiada en uploads");
+        toast.success(t("adminProducts.imageUploaded"));
       })
-      .catch((err) => toast.error(`No se pudo subir la imagen: ${err.message}`))
+      .catch((err) => toast.error(t("admin.uploadError", { message: err.message })))
       .finally(() => {
         setSubiendoImagen(false);
         event.target.value = "";
@@ -150,7 +152,7 @@ export function GestionProductos() {
     if (
       form.ingredientes.some((idIngrediente) => !idsCatalogo.has(idIngrediente))
     ) {
-      toast.error("La seleccion contiene un ingrediente que no existe");
+      toast.error(t("adminProducts.invalidIngredient"));
       return;
     }
 
@@ -161,14 +163,18 @@ export function GestionProductos() {
     accion
       .then(() => {
         toast.success(
-          form.IdProducto ? "Producto actualizado" : "Producto creado",
+          form.IdProducto
+            ? t("adminProducts.updated")
+            : t("adminProducts.created"),
         );
         limpiarFormulario();
         cargarDatos();
       })
       .catch((err) =>
         toast.error(
-          `No se pudo guardar: ${err.response?.data?.mensaje || err.message}`,
+          t("admin.saveError", {
+            message: err.response?.data?.mensaje || err.message,
+          }),
         ),
       );
   };
@@ -176,30 +182,30 @@ export function GestionProductos() {
   const eliminarProducto = (idProducto) => {
     ProductoService.deleteProducto(idProducto)
       .then(() => {
-        toast.success("Producto eliminado");
+        toast.success(t("adminProducts.deleted"));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+      .catch((err) => toast.error(t("admin.deleteError", { message: err.message })));
   };
 
   const restaurarProducto = (idProducto) => {
     ProductoService.restoreProducto(idProducto)
       .then(() => {
-        toast.success("Producto restaurado");
+        toast.success(t("adminProducts.restored"));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
+      .catch((err) => toast.error(t("admin.restoreError", { message: err.message })));
   };
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p>{t("commonExtra.loading")}</p>;
 
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Mantenimiento de productos
+        {t("headerExtra.productMaintenance")}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Administra productos, categorías, imágenes, ingredientes y precios.
+        {t("adminProducts.subtitle")}
       </Typography>
 
       <Grid container spacing={3}>
@@ -211,10 +217,12 @@ export function GestionProductos() {
             <CardContent component="form" onSubmit={guardarProducto}>
               <Stack spacing={2}>
                 <Typography variant="h6">
-                  {form.IdProducto ? "Editar producto" : "Nuevo producto"}
+                  {form.IdProducto
+                    ? t("adminProducts.editProduct")
+                    : t("adminProducts.newProduct")}
                 </Typography>
                 <TextField
-                  label="Nombre"
+                  label={t("adminUsers.name")}
                   name="Nombre"
                   value={form.Nombre}
                   onChange={actualizarCampo}
@@ -222,7 +230,7 @@ export function GestionProductos() {
                   fullWidth
                 />
                 <TextField
-                  label="Categoria"
+                  label={t("common.category")}
                   name="IdCategoria"
                   value={form.IdCategoria}
                   onChange={actualizarCampo}
@@ -240,7 +248,7 @@ export function GestionProductos() {
                   ))}
                 </TextField>
                 <TextField
-                  label="Descripcion"
+                  label={t("common.description")}
                   name="Descripcion"
                   value={form.Descripcion}
                   onChange={actualizarCampo}
@@ -270,13 +278,13 @@ export function GestionProductos() {
                       );
                     })
                   }
-                  noOptionsText="No hay ingredientes coincidentes"
+                  noOptionsText={t("adminProducts.noIngredients")}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Buscar ingredientes"
-                      placeholder="Escriba para buscar"
-                      helperText="Seleccione ingredientes del catalogo predefinido."
+                      label={t("adminProducts.searchIngredients")}
+                      placeholder={t("adminProducts.searchPlaceholder")}
+                      helperText={t("adminProducts.ingredientsHelp")}
                     />
                   )}
                 />
@@ -288,8 +296,8 @@ export function GestionProductos() {
                     disabled={subiendoImagen}
                   >
                     {subiendoImagen
-                      ? "Subiendo imagen..."
-                      : "Seleccionar imagen"}
+                      ? t("adminProducts.uploading")
+                      : t("admin.image")}
                     <input
                       type="file"
                       hidden
@@ -298,16 +306,16 @@ export function GestionProductos() {
                     />
                   </Button>
                   <TextField
-                    label="Imagen en uploads"
+                    label={t("adminProducts.imageInUploads")}
                     name="Imagen"
                     value={form.Imagen}
                     onChange={actualizarCampo}
-                    helperText="Tambien puede escribir el nombre si la imagen ya existe en uploads."
+                    helperText={t("adminProducts.imageHelp")}
                     fullWidth
                   />
                 </Stack>
                 <TextField
-                  label="Precio"
+                  label={t("common.price")}
                   name="Precio"
                   value={form.Precio}
                   onChange={actualizarCampo}
@@ -337,7 +345,7 @@ export function GestionProductos() {
                     fullWidth
                     sx={{ fontWeight: 700 }}
                   >
-                    Guardar
+                    {t("admin.save")}
                   </Button>
                   <Button
                     variant="outlined"
@@ -345,7 +353,7 @@ export function GestionProductos() {
                     onClick={limpiarFormulario}
                     fullWidth
                   >
-                    Nuevo
+                    {t("admin.new")}
                   </Button>
                 </Stack>
               </Stack>
@@ -362,12 +370,12 @@ export function GestionProductos() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: "primaryLight.main" }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Producto</TableCell>
-                  <TableCell>Categoria</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t("adminProducts.image")}</TableCell>
+                  <TableCell>{t("commonExtra.item")}</TableCell>
+                  <TableCell>{t("common.category")}</TableCell>
+                  <TableCell align="right">{t("common.price")}</TableCell>
+                  <TableCell>{t("commonExtra.status")}</TableCell>
+                  <TableCell align="right">{t("admin.actions")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -403,7 +411,7 @@ export function GestionProductos() {
                     <TableCell align="right">₡{producto.Precio}</TableCell>
                     <TableCell>
                       <Chip
-                        label={producto.Estado ? "Activo" : "Inactivo"}
+                        label={producto.Estado ? t("admin.active") : t("admin.inactive")}
                         size="small"
                         color={producto.Estado ? "success" : "default"}
                       />
@@ -420,7 +428,7 @@ export function GestionProductos() {
                           startIcon={<EditIcon />}
                           onClick={() => editarProducto(producto)}
                         >
-                          Editar
+                          {t("admin.edit")}
                         </Button>
                         <Button
                           size="small"
@@ -429,7 +437,7 @@ export function GestionProductos() {
                           startIcon={<DeleteIcon />}
                           onClick={() => eliminarProducto(producto.IdProducto)}
                         >
-                          Eliminar
+                          {t("admin.delete")}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -439,7 +447,7 @@ export function GestionProductos() {
             </Table>
           </TableContainer>
           <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-            Productos desactivados
+            {t("adminProducts.disabledProducts")}
           </Typography>
 
           <TableContainer
@@ -450,12 +458,12 @@ export function GestionProductos() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: "primaryLight.main" }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Producto</TableCell>
-                  <TableCell>Categoría</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t("adminProducts.image")}</TableCell>
+                  <TableCell>{t("commonExtra.item")}</TableCell>
+                  <TableCell>{t("common.category")}</TableCell>
+                  <TableCell align="right">{t("common.price")}</TableCell>
+                  <TableCell>{t("commonExtra.status")}</TableCell>
+                  <TableCell align="right">{t("admin.actions")}</TableCell>
                 </TableRow>
               </TableHead>
 
@@ -496,7 +504,7 @@ export function GestionProductos() {
                     <TableCell align="right">₡{producto.Precio}</TableCell>
 
                     <TableCell>
-                      <Chip label="Inactivo" size="small" color="default" />
+                      <Chip label={t("admin.inactive")} size="small" color="default" />
                     </TableCell>
 
                     <TableCell align="right">
@@ -506,7 +514,7 @@ export function GestionProductos() {
                         variant="contained"
                         onClick={() => restaurarProducto(producto.IdProducto)}
                       >
-                        Restaurar
+                        {t("admin.restore")}
                       </Button>
                     </TableCell>
                   </TableRow>

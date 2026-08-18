@@ -8,21 +8,28 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import { Bar, Pie } from 'react-chartjs-2';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
   Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
   Legend,
-} from "recharts";
+  Title,
+} from 'chart.js';
 import DashboardServices from "../../services/DashboardServices";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 const coloresEstado = ["#8d6e63", "#ffb74d", "#4db6ac", "#e57373", "#64b5f6", "#a1887f"];
 
 export function Dashboard() {
@@ -107,17 +114,39 @@ export function Dashboard() {
                 {t("dashboard.topProductos")}
               </Typography>
               {topProductos.length === 0 ? (
-                <Typography color="text.secondary">{t("dashboard.sinDatos")}</Typography>
+              <Typography color="text.secondary">{t('dashboard.sinDatos')}</Typography>
               ) : (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topProductos}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="nombre" tick={{ fontSize: 12 }} />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="cantidad" fill="#8d6e63" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                (() => {
+                  const dataProductos = {
+                    labels: topProductos.map((p) => p.nombre),
+                    datasets: [
+                      {
+                        label: t('dashboard.topProductos'),
+                        data: topProductos.map((p) => p.cantidad),
+                        backgroundColor: 'rgba(141, 110, 99, 0.7)',
+                        borderColor: 'rgb(141, 110, 99)',
+                        borderRadius: 6,
+                      },
+                    ],
+                  };
+                  const opcionesProductos = {
+                    responsive: true,
+                    plugins: {
+                      legend: { display: false },
+                    },
+                    scales: {
+                      y: {
+                        min: 0,
+                        ticks: { precision: 0 },
+                      },
+                      x: {
+                        ticks: { color: 'rgb(0, 0, 0)' },
+                      },
+                    },
+                  };
+                  
+                  return <Bar data={dataProductos} options={opcionesProductos} />;
+                })()
               )}
             </CardContent>
           </Card>
@@ -130,28 +159,43 @@ export function Dashboard() {
                 {t("dashboard.pedidosPorEstado")}
               </Typography>
               {pedidosPorEstado.length === 0 ? (
-                <Typography color="text.secondary">{t("dashboard.sinDatos")}</Typography>
-              ) : (
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={pedidosPorEstado}
-                      dataKey="cantidad"
-                      nameKey="estado"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label
-                    >
-                      {pedidosPorEstado.map((_, index) => (
-                        <Cell key={index} fill={coloresEstado[index % coloresEstado.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
+            <Typography color="text.secondary">{t('dashboard.sinDatos')}</Typography>
+            ) : (
+              (() => {
+                const dataEstados = {
+                  labels: pedidosPorEstado.map((p) => p.estado),
+                  datasets: [
+                    {
+                      data: pedidosPorEstado.map((p) => p.cantidad),
+                      backgroundColor: [
+                        'rgba(141, 110, 99, 0.7)',
+                        'rgba(255, 183, 77, 0.7)',
+                        'rgba(77, 182, 172, 0.7)',
+                        'rgba(229, 115, 115, 0.7)',
+                        'rgba(100, 181, 246, 0.7)',
+                      ],
+                      borderColor: [
+                        'rgb(141, 110, 99)',
+                        'rgb(255, 183, 77)',
+                        'rgb(77, 182, 172)',
+                        'rgb(229, 115, 115)',
+                        'rgb(100, 181, 246)',
+                      ],
+                      borderWidth: 1,
+                    },
+                  ],
+                };
+                
+                const opcionesEstados = {
+                  responsive: true,
+                  plugins: {
+                    legend: { position: 'bottom' },
+                  },
+                };
+
+                return <Pie data={dataEstados} options={opcionesEstados} />;
+              })()
+            )}
             </CardContent>
           </Card>
         </Grid>

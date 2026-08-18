@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import ComboService from '../../services/CombosServices';
 import MenuService from '../../services/MenuServices';
 import ProductoService from '../../services/ProductosServices';
@@ -39,6 +40,7 @@ const comboVacio = {
 };
 
 export function GestionCombos() {
+  const { t } = useTranslation();
   const [combos, setCombos] = useState([]);
   const [combosEliminados, setCombosEliminados] = useState([]);
   const [menus, setMenus] = useState([]);
@@ -61,7 +63,7 @@ export function GestionCombos() {
       })
       .catch((err) => {
         setLoaded(true);
-        toast.error(`Error al cargar datos: ${err.message}`);
+        toast.error(t('admin.loadError', { message: err.message }));
       });
   };
 
@@ -87,9 +89,9 @@ export function GestionCombos() {
     ComboService.uploadImagenCombo(archivo)
       .then((response) => {
         setForm((actual) => ({ ...actual, Imagen: response.data.fileName }));
-        toast.success('Imagen copiada en uploads');
+        toast.success(t('adminCombos.imageUploaded'));
       })
-      .catch((err) => toast.error(`No se pudo subir la imagen: ${err.message}`))
+      .catch((err) => toast.error(t('admin.uploadError', { message: err.message })))
       .finally(() => {
         setSubiendoImagen(false);
         event.target.value = '';
@@ -142,40 +144,40 @@ export function GestionCombos() {
 
     accion
       .then(() => {
-        toast.success(form.IdCombo ? 'Combo actualizado' : 'Combo creado');
+        toast.success(form.IdCombo ? t('adminCombos.updated') : t('adminCombos.created'));
         limpiarFormulario();
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo guardar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.saveError', { message: err.message })));
   };
 
   const eliminarCombo = (idCombo) => {
     ComboService.deleteCombo(idCombo)
       .then(() => {
-        toast.success('Combo eliminado');
+        toast.success(t('adminCombos.deleted'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo eliminar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.deleteError', { message: err.message })));
   };
 
   const restaurarCombo = (idCombo) => {
     ComboService.restoreCombo(idCombo)
       .then(() => {
-        toast.success('Combo restaurado');
+        toast.success(t('adminCombos.restored'));
         cargarDatos();
       })
-      .catch((err) => toast.error(`No se pudo restaurar: ${err.message}`));
+      .catch((err) => toast.error(t('admin.restoreError', { message: err.message })));
   };
 
-  if (!loaded) return <p>Cargando...</p>;
+  if (!loaded) return <p>{t('commonExtra.loading')}</p>;
 
   return (
     <Box sx={{ py: 2 }}>
       <Typography variant="h4" color="primary.main" gutterBottom>
-        Mantenimiento de combos
+        {t('adminCombos.pageTitle')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Crea combos con productos, cantidades, menú asociado y precio especial.
+        {t('adminCombos.subtitle')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -183,29 +185,29 @@ export function GestionCombos() {
           <Card variant="outlined" sx={{ borderRadius: 2 }}>
             <CardContent component="form" onSubmit={guardarCombo}>
               <Stack spacing={2}>
-                <Typography variant="h6">{form.IdCombo ? 'Editar combo' : 'Nuevo combo'}</Typography>
-                <TextField label="Nombre" name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
-                <TextField label="Menu" name="IdMenu" value={form.IdMenu} onChange={actualizarCampo} required select fullWidth>
+                <Typography variant="h6">{form.IdCombo ? t('adminCombos.editCombo') : t('adminCombos.newCombo')}</Typography>
+                <TextField label={t('adminUsers.name')} name="Nombre" value={form.Nombre} onChange={actualizarCampo} required fullWidth />
+                <TextField label={t('comboDetail.menu')} name="IdMenu" value={form.IdMenu} onChange={actualizarCampo} required select fullWidth>
                   {menus.map((menu) => (
                     <MenuItem key={menu.IdMenu} value={menu.IdMenu}>
                       {menu.Nombre}
                     </MenuItem>
                   ))}
                 </TextField>
-                <TextField label="Descripcion" name="Descripcion" value={form.Descripcion} onChange={actualizarCampo} multiline minRows={2} fullWidth />
+                <TextField label={t('common.description')} name="Descripcion" value={form.Descripcion} onChange={actualizarCampo} multiline minRows={2} fullWidth />
                 <Stack spacing={1}>
                   <Button variant="outlined" component="label" startIcon={<UploadFileIcon />} disabled={subiendoImagen}>
-                    {subiendoImagen ? 'Subiendo imagen...' : 'Seleccionar imagen'}
+                    {subiendoImagen ? t('adminProducts.uploading') : t('admin.image')}
                     <input type="file" hidden accept="image/*" onChange={subirImagen} />
                   </Button>
-                  <TextField label="Imagen en uploads" name="Imagen" value={form.Imagen} onChange={actualizarCampo} fullWidth />
+                  <TextField label={t('adminProducts.imageInUploads')} name="Imagen" value={form.Imagen} onChange={actualizarCampo} fullWidth />
                   {form.Imagen && (
                     <Box component="img" src={`${BASE_URL}/${form.Imagen}`} alt={form.Nombre} sx={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2 }} />
                   )}
                 </Stack>
-                <TextField label="Precio" name="Precio" value={form.Precio} onChange={actualizarCampo} type="number" required fullWidth />
+                <TextField label={t('common.price')} name="Precio" value={form.Precio} onChange={actualizarCampo} type="number" required fullWidth />
                 <Divider>
-                  <Chip label="Productos del combo" />
+                  <Chip label={t('adminCombos.comboProducts')} />
                 </Divider>
                 <Autocomplete
                   multiple
@@ -214,7 +216,7 @@ export function GestionCombos() {
                   onChange={actualizarProductosSeleccionados}
                   getOptionLabel={(producto) => `${producto.Nombre} - ${producto.Categoria}`}
                   isOptionEqualToValue={(option, value) => option.IdProducto === value.IdProducto}
-                  renderInput={(params) => <TextField {...params} label="Buscar productos por nombre" />}
+                  renderInput={(params) => <TextField {...params} label={t('adminCombos.searchProducts')} />}
                 />
                 <Stack spacing={1} sx={{ maxHeight: 260, overflowY: 'auto', pr: 1 }}>
                   {productosSeleccionados.map((producto) => (
@@ -233,7 +235,7 @@ export function GestionCombos() {
                     >
                       <Typography variant="body2">{producto.Nombre}</Typography>
                       <TextField
-                        label="Cant."
+                        label={t('commonExtra.quantity')}
                         type="number"
                         size="small"
                         value={productosCombo[producto.IdProducto] || 1}
@@ -244,10 +246,10 @@ export function GestionCombos() {
                 </Stack>
                 <Stack direction="row" spacing={1}>
                   <Button type="submit" variant="contained" color="secondary" startIcon={<SaveIcon />} fullWidth sx={{ fontWeight: 700 }}>
-                    Guardar
+                    {t('admin.save')}
                   </Button>
                   <Button variant="outlined" startIcon={<AddIcon />} onClick={limpiarFormulario} fullWidth>
-                    Nuevo
+                    {t('admin.new')}
                   </Button>
                 </Stack>
               </Stack>
@@ -260,12 +262,12 @@ export function GestionCombos() {
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Combo</TableCell>
-                  <TableCell>Menu</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminProducts.image')}</TableCell>
+                  <TableCell>{t('commonExtra.combo')}</TableCell>
+                  <TableCell>{t('comboDetail.menu')}</TableCell>
+                  <TableCell align="right">{t('common.price')}</TableCell>
+                  <TableCell>{t('commonExtra.status')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -283,15 +285,15 @@ export function GestionCombos() {
                     <TableCell>{combo.MenuNombre}</TableCell>
                     <TableCell align="right">₡{Math.round(combo.Precio)}</TableCell>
                     <TableCell>
-                      <Chip label={combo.Estado ? 'Activo' : 'Inactivo'} size="small" color={combo.Estado ? 'success' : 'default'} />
+                      <Chip label={combo.Estado ? t('admin.active') : t('admin.inactive')} size="small" color={combo.Estado ? 'success' : 'default'} />
                     </TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={1} justifyContent="flex-end">
                         <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => editarCombo(combo)}>
-                          Editar
+                          {t('admin.edit')}
                         </Button>
                         <Button size="small" color="error" variant="outlined" startIcon={<DeleteIcon />} onClick={() => eliminarCombo(combo.IdCombo)}>
-                          Eliminar
+                          {t('admin.delete')}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -302,19 +304,19 @@ export function GestionCombos() {
           </TableContainer>
 
           <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-            Combos desactivados
+            {t('adminCombos.disabledCombos')}
           </Typography>
 
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'primaryLight.main' }}>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Combo</TableCell>
-                  <TableCell>Menu</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('adminProducts.image')}</TableCell>
+                  <TableCell>{t('commonExtra.combo')}</TableCell>
+                  <TableCell>{t('comboDetail.menu')}</TableCell>
+                  <TableCell align="right">{t('common.price')}</TableCell>
+                  <TableCell>{t('commonExtra.status')}</TableCell>
+                  <TableCell align="right">{t('admin.actions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -332,11 +334,11 @@ export function GestionCombos() {
                     <TableCell>{combo.MenuNombre}</TableCell>
                     <TableCell align="right">₡{Math.round(combo.Precio)}</TableCell>
                     <TableCell>
-                      <Chip label="Inactivo" size="small" color="default" />
+                      <Chip label={t('admin.inactive')} size="small" color="default" />
                     </TableCell>
                     <TableCell align="right">
                       <Button size="small" color="success" variant="contained" onClick={() => restaurarCombo(combo.IdCombo)}>
-                        Restaurar
+                        {t('admin.restore')}
                       </Button>
                     </TableCell>
                   </TableRow>
