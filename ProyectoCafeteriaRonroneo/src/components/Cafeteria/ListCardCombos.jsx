@@ -56,7 +56,7 @@ export function ListCardCombos({ data, isShopping = false }) {
                 component="img"
                 image={`${BASE_URL}/${item.Imagen}`}
                 alt={item.Nombre}
-                sx={{ width: '100%', height: 180, objectFit: 'cover' }}
+                sx={{ width: '100%', height: 220, objectFit: 'contain', objectPosition: 'center',backgroundColor: 'primaryLight.main',p:1, }}
               />
               <CardContent sx={{ flexGrow: 1 }}>
                 <Chip
