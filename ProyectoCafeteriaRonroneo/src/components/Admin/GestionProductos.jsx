@@ -28,6 +28,8 @@ import ProductoService from "../../services/ProductosServices";
 import CategoriaService from "../../services/CategoriaServices";
 import IngredienteService from "../../services/IngredienteServices";
 
+//Revisado
+
 const productoVacio = {
   IdProducto: null,
   IdCategoria: "",
