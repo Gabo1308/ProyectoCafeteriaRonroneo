@@ -27,6 +27,7 @@ import PedidoService from '../../services/PedidoServices';
 const Impuesto = 0.13;
 const CostoEnvio = 1500;
 const redondearCinco = (monto) => Math.round(monto / 5) * 5;
+const formatoMonto = (monto) => Number(monto).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const formatoFechaHoy = () => new Date().toLocaleDateString('es-CR');
 
@@ -65,7 +66,7 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
           sx={{ ml: 1 }}
         />
       </TableCell>
-      <TableCell align="right">₡{Math.round(item.Precio)}</TableCell>
+      <TableCell align="right">₡{formatoMonto(item.Precio)}</TableCell>
       <TableCell align="center" sx={{ width: 110 }}>
         <TextField
           size="small"
@@ -84,7 +85,7 @@ function FilaDetalle({ item, onCantidadCommit, onEliminar, onObservaciones }) {
           sx={{ width: 80 }}
         />
       </TableCell>
-      <TableCell align="right">₡{Math.round(subtotal)}</TableCell>
+      <TableCell align="right">₡{formatoMonto(subtotal)}</TableCell>
       <TableCell align="right">₡{impuesto}</TableCell>
       <TableCell sx={{ minWidth: 180 }}>
         <TextField
@@ -420,7 +421,7 @@ export function RegistrarPedido() {
                   />
                   {vuelto !== null && (
                     <Typography color={vuelto < 0 ? 'error' : 'text.primary'}>
-                      {vuelto < 0 ? t('registerOrder.insufficientAmount') : t('registerOrder.change', { amount: Math.round(vuelto) })}
+                      {vuelto < 0 ? t('registerOrder.insufficientAmount') : t('registerOrder.change', { amount: formatoMonto(vuelto) })}
                     </Typography>
                   )}
                 </>
@@ -436,11 +437,11 @@ export function RegistrarPedido() {
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography>{t('registerOrder.totalWithoutTax')}</Typography>
-            <Typography>₡{Math.round(totales.totalSinImpuesto).toLocaleString('en-US')}</Typography>
+            <Typography>₡{formatoMonto(totales.totalSinImpuesto).toLocaleString('en-US')}</Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
               <Typography>{t('registerOrder.taxes')}</Typography>
-              <Typography>₡{Math.round(totales.totalImpuestos).toLocaleString('en-US')}</Typography>
+              <Typography>₡{formatoMonto(totales.totalImpuestos).toLocaleString('en-US')}</Typography>
             </Box>
             {totales.costoEnvio > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
@@ -452,7 +453,7 @@ export function RegistrarPedido() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h6">{t('registerOrder.total')}</Typography>
               <Typography variant="h6" color="primary.main">
-                ₡{Math.round(totales.totalFinal).toLocaleString('en-US')}
+                ₡{formatoMonto(totales.totalFinal).toLocaleString('en-US')}
               </Typography>
             </Box>
             <Button
