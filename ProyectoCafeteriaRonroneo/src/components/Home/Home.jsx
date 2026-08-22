@@ -10,7 +10,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ProductoService from '../../services/ProductosServices';
 import ComboService from '../../services/CombosServices';
@@ -66,6 +66,13 @@ function Carrusel({ titulo, verTodoLink, items, renderCard }) {
 
 export function Home() {
   const { t } = useTranslation();
+
+  const userStr = localStorage.getItem('user');
+  const usuario = userStr && userStr !== 'undefined' ? JSON.parse(userStr) : null;
+
+  if (usuario?.Rol === 'Cocina') {
+    return <Navigate to="/estacion" replace />;
+  }
 
   const [productos, setProductos] = useState([]);
   const [combos, setCombos] = useState([]);
